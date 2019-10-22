@@ -105,6 +105,8 @@ class menu{
 	}
 
 	public function breadcrumbs(){
+		if (!$this->current) return;
+
 		$this->parents($this->current,$parents);
 		if(!$parents)
 			echo '<li><a href="/">CRM</a></li><li>'.$this->nodes_id[$this->current]['m_menu_name'].'</li>';
