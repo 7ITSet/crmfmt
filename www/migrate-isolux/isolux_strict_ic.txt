@@ -1,0 +1,26 @@
+{
+	"id":"134051",
+	"sku":"\u0421\u041d195057",
+	"multiplicity":"1.0000",
+	"minOrder":1,
+	"maxOrder":"30000.0000",
+	"prices":{
+		"GENERAL":{
+			"regular":"5145.0000",
+			"old":"0.0000"
+		},
+		"SWH":{
+			"regular":"4961.2500",
+			"old":"0.0000"
+		},
+		"WH":{
+			"regular":"4593.7500",
+			"old":"0.0000"
+		}
+	},
+	"promotions":[],
+	"supplyType":"2.0000",
+	"inStockCount":"0.0000",
+	"minSaleQty":"1.0000",
+	"modalClass":"general_swh_wh"
+}

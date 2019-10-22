@@ -1,0 +1,22 @@
+#Order Deny,Allow
+#Deny from all
+#Allow from 89.179.68.31
+php_value display_errors 1
+php_flag register_globals off
+php_value max_input_vars 10000
+
+Options -Indexes
+
+RewriteBase /
+RewriteEngine on
+
+# Existed file.
+RewriteCond %{REQUEST_FILENAME} -f [OR]
+RewriteCond %{REQUEST_FILENAME} -d
+RewriteRule .+ - [L]
+
+# Pages.
+RewriteRule ^(.*[^/])$ $1/ [R,L]
+RewriteRule (^$|^[-/_a-zA-Z0-9]*/$) index.php?path=$1 [QSA,L]
+
+ErrorDocument 404 /404.php
