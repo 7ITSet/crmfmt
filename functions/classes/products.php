@@ -504,7 +504,7 @@ class products{
 			if(!empty($_POST['attr_required_val'])){
 				$data['attr_required_val'] = json_decode($_POST['attr_required_val']);
 				if($attr_required_count != count($data['attr_required_val'])){
-					header('Location: '.url().'?error');
+					header('Location: '.url().'?error&action=change&m_products_id='.$data['m_products_id']);
 					exit;
 				}
 			} else {
