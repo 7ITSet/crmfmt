@@ -351,7 +351,7 @@ if ($id = get('m_products_attributes_list_id')) {
 										<section class="col col-6">
 											<label class="label">Наименование для URL (единый указатель для атрибута) <span class="obligatory_elem">*</span></label>
 											<label class="input">
-												<input type="text" pattern="^[A-Za-z_-]+$" name="m_products_attributes_list_name_url" placeholder="только латиница, минус и подчеркивание">
+												<input type="text" pattern="^[0-9A-Za-z_-]+$" name="m_products_attributes_list_name_url" placeholder="только латиница, цифры, минус и подчеркивание">
 											</label>
 										</section>
 									</div>

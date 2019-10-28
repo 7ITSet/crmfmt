@@ -101,6 +101,12 @@ if($products->categories_nodes){
 						</div>
 					</div>
 				</div>
+                <footer class="save_cat">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fa fa-save"></i>
+                        Сохранить данные
+                    </button>
+                </footer>
 			</div>
 		</article>
 <?
