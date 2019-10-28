@@ -163,7 +163,7 @@ if(isset($_GET['error']))
 								<section class="col col-4">
 									<label class="label">URL (указатель страницы, допускаются латинские буквы, цифры, символы, без пробелов) <span class="obligatory_elem">*</span></label>
 									<label class="input">
-										<input type="text" name="menu_url" value="<?=$item_menu['url']?>">
+										<input type="text" pattern="^[A-Za-z_-]+$" name="menu_url" value="<?=$item_menu['url']?>">
 									</label>
 								</section>
 								<section class="col col-4">
@@ -482,9 +482,9 @@ if(isset($_GET['error']))
 										</label>
 									</section>
 									<section class="col col-4">
-										<label class="label">URL (указатель страницы, допускаются латинские буквы, цифры, символы, без пробелов) <span class="obligatory_elem">*</span></label>
+										<label class="label">URL (указатель страницы) <span class="obligatory_elem">*</span></label>
 										<label class="input">
-											<input type="text" name="menu_url">
+											<input type="text" name="menu_url" pattern="^[0-9A-Za-z_-]+$" placeholder="только латиница, цифры, минус и подчеркивание">
 										</label>
 									</section>
 									<section class="col col-4">

@@ -162,6 +162,11 @@ if($p){
 				<a href="javascript:void(0);" title="Изменить позицию (ниже)" class="btn btn-xs btn-default changepos" data-value="'.$products_['m_products_order'].'" data-type="text" data-pk="'.$products_['m_products_id'].'" data-name="m_products_order_down" data-placement="left">
 					<i class="fa fa-angle-down"></i>
 				</a>&nbsp;&nbsp;
+				
+				<a href="#" title="Посмотреть на сайте" class="btn btn-xs btn-default eye">
+				    <i class="fa fa-eye"></i>
+                </a>
+				
 				<a href="/companies/products/new/?action=change&m_products_id='.$products_['m_products_id'].'" title="Редактировать" class="btn btn-primary btn-xs btn-default change" data-type="text">
 					<i class="fa fa-pencil"></i>
 				</a>

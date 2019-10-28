@@ -346,15 +346,15 @@ if(isset($_GET['error']))
 												<i></i>
 											</label>
 										</th>
-										<th style="width:2%">Артикул</th>
-										<th style="width:32%">Наименование</th>
+										<th style="width:1%">Артикул</th>
+										<th style="width:30%">Наименование</th>
 										<th style="width:5%">Ед.&nbsp;изм.</th>
 										<th style="width:5%">Цена</th>
-										<th style="width:20%">Категории</th>
+										<th style="width:18%">Категории</th>
                                         <th style="width:10%">Дата последнего изменения</th>
 										<th style="width:7%">Показывать</th>
 										<th style="width:2%">Порядок</th>
-										<th style="width:17%">Управление</th>
+										<th style="width:20%">Управление</th>
 									</tr>
 								</thead>
 

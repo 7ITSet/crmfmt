@@ -1598,5 +1598,3 @@ if(isset($_GET['error']))
 <script type="text/javascript" src="/js/plugin/fancybox/helpers/jquery.fancybox-thumbs.js"></script>
 <script type="text/javascript" src="/js/plugin/fancybox/helpers/jquery.fancybox-buttons.js"></script>
 <script src="/js/plugin/tinymce/tinymce.min.js"></script>
-
-<!-- тест Зейд -->

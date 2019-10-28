@@ -3817,6 +3817,21 @@ body.nooverflow {
   background-color: #FFC;
   border: 1px dashed #A7A7A7;
 }
+footer.save_cat {
+    overflow: hidden;
+    display: block;
+    padding: 5px 14px 10px;
+    color: #333;
+    background: #fafafa;
+}
+footer.save_cat .btn {
+    float: right;
+    height: 31px;
+    margin: 10px 30px 5px;
+    padding: 0px 25px;
+    font: 300 15px/29px 'Open Sans', Helvetica, Arial, sans-serif;
+    cursor: pointer;
+}
 /*
 	 * CUSTOM STYLES
 	 */
@@ -19559,7 +19574,7 @@ button {
 .table-condensed.table > tfoot > tr > th,
 .table-condensed.table > thead > tr > td,
 .table-condensed.table > thead > tr > th {
-  padding: 5px 10px !important;
+  padding: 5px 9px !important;
 }
 /*
  * small stats
