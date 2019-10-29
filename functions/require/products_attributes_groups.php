@@ -343,9 +343,12 @@ foreach($products->attr_groups as $_group){
 		<td>';
 		$type=array(1=>'Текстовый',2=>'Числовой',3=>'Логический');
 		$_group['m_products_attributes_groups_list_id']=explode('|',$_group['m_products_attributes_groups_list_id']);
-		foreach($_group['m_products_attributes_groups_list_id'] as $_attr)
-			echo $products->attr_id[$_attr][0]['m_products_attributes_list_name'].' ['.$type[$products->attr_id[$_attr][0]['m_products_attributes_list_type']].($products->attr_id[$_attr][0]['m_products_attributes_list_unit']?', '.$products->attr_id[$_attr][0]['m_products_attributes_list_unit']:'').($products->attr_id[$_attr][0]['m_products_attributes_list_comment']?', ('.$products->attr_id[$_attr][0]['m_products_attributes_list_comment'].')':'').']<br/>';
-echo	'</td>
+		foreach($_group['m_products_attributes_groups_list_id'] as $_attr) {
+			if (!empty($products->attr_id[$_attr])) {
+				echo $products->attr_id[$_attr][0]['m_products_attributes_list_name'].' ['.$type[$products->attr_id[$_attr][0]['m_products_attributes_list_type']].($products->attr_id[$_attr][0]['m_products_attributes_list_unit']?', '.$products->attr_id[$_attr][0]['m_products_attributes_list_unit']:'').($products->attr_id[$_attr][0]['m_products_attributes_list_comment']?', ('.$products->attr_id[$_attr][0]['m_products_attributes_list_comment'].')':'').']<br/>';
+			}
+		}
+		echo	'</td>
 		<td>';
 
     if($_group['m_products_attributes_groups_required']){
