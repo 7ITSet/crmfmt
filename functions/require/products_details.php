@@ -601,18 +601,36 @@ if (get('action') == 'change' && $id = get('m_products_id')) {
 											} ?>
 
 										<label class="label">Группа атрибутов</label>
-										<select name="m_products_attributes_groups_id" id="d123" class="autoselect" placeholder="выберите из списка...">
-											<option value="0" checked>выберите из списка...</option>
-											<?
-												foreach ($products->attr_groups as $_group) {
-													if (!$_group[0]['m_products_attributes_groups_required']) {
-														echo '<option data="' . $_group[0]['m_products_attributes_groups_list_id'] . '" value="' . $_group[0]['m_products_attributes_groups_id'] . '" >',
-															$_group[0]['m_products_attributes_groups_name'],
-															'</option>';
-													}
-												}
-												?>
-										</select>
+										<?$productAttributesGroupsId = $product['products_attributes_groups_id']?>
+										<div class="row">
+											<div class="col col-xs-12 col-sm-6">
+												<select name="m_products_attributes_groups_id" id="attr-group" class="autoselect" <?=$productAttributesGroupsId ? 'disabled' : '';?> placeholder="выберите из списка...">
+													<option value="0" checked>выберите из списка...</option>
+													<?
+														foreach ($products->attr_groups as $_group) {
+															if (!$_group[0]['m_products_attributes_groups_required']) {
+																echo '<option ' . ($productAttributesGroupsId == $_group[0]['m_products_attributes_groups_id'] ? 'selected' : '') . ' data="' . $_group[0]['m_products_attributes_groups_list_id'] . '" value="' . $_group[0]['m_products_attributes_groups_id'] . '">',
+																	$_group[0]['m_products_attributes_groups_name'],
+																	'</option>';
+															}
+														}
+														?>
+												</select>
+											</div>
+											<?if ($productAttributesGroupsId) {?>
+											<div class="col-xs-12 col-sm-6">
+												<a id="d123-edit" class="btn btn-primary">
+													<i class="fa fa-edit"></i>
+													Редактировать
+												</a>
+											</div>
+											<script>
+												$('#d123-edit').on("click", function () {
+													$("#attr-group").prop("disabled", false);
+												});
+											</script>
+											<? } ?>
+										</div>
 									</section>
 
 									<div id="attr">
