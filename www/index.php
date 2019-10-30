@@ -249,6 +249,7 @@ ob_start();
 
 	<!-- JQUERY SELECT2 INPUT -->
 	<script src="/js/plugin/select2/select2.min.js"></script>
+	<script src="/js/plugin/select2/select2.sortable.js"></script>
 
 	<!-- browser msie issue fix -->
 	<script src="/js/plugin/msie-fix/jquery.mb.browser.min.js"></script>
@@ -312,7 +313,8 @@ ob_start();
 
 			$("div.toolbar").html('<div class="text-right"><img src="img/logo.png" alt="SmartAdmin" style="width: 111px; margin-top: 3px; margin-right: 10px;"></div>');
 
-			$('select.autoselect').select2();
+			var $input = $("select.autoselect");
+			$input.select2().select2Sortable();;
 
 			$('.datatable').each(function(index, el) {
 				var order = [],

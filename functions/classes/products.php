@@ -34,7 +34,7 @@ class products{
 		$q='SELECT * FROM `formetoo_cdb`.`m_info_units`;';
 		$this->units_id=$sql->query($q,'m_info_units_id');
 
-		$q='SELECT * FROM `formetoo_main`.`m_products_attributes_list` ORDER BY `m_products_attributes_list_name`;';
+		$q='SELECT * FROM `formetoo_main`.`m_products_attributes_list`;';
 		$this->attr_id=$sql->query($q,'m_products_attributes_list_id');
 
 		$q='SELECT * FROM `formetoo_main`.`m_products_attributes_groups`;';
