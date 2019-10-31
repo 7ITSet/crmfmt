@@ -366,8 +366,13 @@ if ($id = get('m_products_attributes_list_id')) {
 										</section>
 										<section class="col col-6">
 											<label class="label">Ед. измерения</label>
-											<a href="#" id="m_products_attributes_list_unit" data-type="select2" data-pk="1" data-original-title="Укажите теги"></a>
-											<input type="hidden" name="m_products_attributes_list_unit" />
+                                            <select name="m_products_price_currency" class="autoselect" placeholder="выберите из списка...">
+                                                <option value="1" selected>Рубль</option>
+                                                <option value="2">Доллар</option>
+                                                <option value="3">Евро</option>
+                                            </select>
+<!--											<a href="#" id="m_products_attributes_list_unit" data-type="select2" data-pk="1" data-original-title="Укажите теги"></a>-->
+<!--											<input type="hidden" name="m_products_attributes_list_unit" />-->
 										</section>
 									</div>
 									<div class="row">
