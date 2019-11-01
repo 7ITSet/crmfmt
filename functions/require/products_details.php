@@ -7,6 +7,8 @@ if (get('action') == 'change' && $id = get('m_products_id')) {
 	$q = 'SELECT * FROM `formetoo_main`.`m_products` WHERE `m_products_id`=' . $id . ' LIMIT 1;';
 	$product = $sql->query($q)[0];
 
+	
+	$productAttributesGroupsId = $product['products_attributes_groups_id'];
 	//атрибуты
 	$q = 'SELECT * FROM `formetoo_main`.`m_products_attributes`
 			LEFT JOIN `formetoo_main`.`m_products_attributes_list` ON
@@ -324,9 +326,7 @@ if (get('action') == 'change' && $id = get('m_products_id')) {
 					<div>
 						<div class="widget-body">
 							<form id="products-add" class="smart-form" method="post">
-								<header>
-									Основные данные
-								</header>
+								<header>Основные данные</header>
 								<fieldset>
 									<div class="row">
 										<section class="col col-8">
@@ -422,9 +422,7 @@ if (get('action') == 'change' && $id = get('m_products_id')) {
 									</div>
 								</fieldset>
 
-								<header>
-									SEO-параметры
-								</header>
+								<header>SEO-параметры</header>
 								<fieldset>
 									<div class="row">
 										<section class="col col-6">
@@ -450,9 +448,7 @@ if (get('action') == 'change' && $id = get('m_products_id')) {
 									</div>
 								</fieldset>
 
-								<header>
-									Скидки
-								</header>
+								<header>Скидки</header>
 								<fieldset>
 									<div id="price">
 										<?
@@ -551,9 +547,7 @@ if (get('action') == 'change' && $id = get('m_products_id')) {
 											?>
 									</div>
 								</fieldset>
-								<header>
-									Параметры
-								</header>
+								<header>Параметры</header>
 								<fieldset>
 									<section>
 										<label class="label">Описание товара</label>
@@ -584,24 +578,23 @@ if (get('action') == 'change' && $id = get('m_products_id')) {
 													?>
 												<? foreach ($products->attr_groups as $_group) {
 														if ($_group[0]['m_products_attributes_groups_required']) {
-															?>
+														?>
 													</select>
 													<input id="attr_required_hidden" name="attr_required_val" type="hidden" value="">
 													<div id="attr_required">
-														<?php
-																	foreach ($attr_required_array_value as $attr_required_array_value_item) {
-																		echo '<div style="margin-top: 10px"><label style="width: 20%">' . $attr_required_array_value_item['m_products_attributes_list_name'] . ' (' . $attr_required_array_value_item['m_products_attributes_list_unit'] . ')</label><input style="width: 70%" name="m_products_attributes_required_value[]" data-id="' . $attr_required_array_value_item['m_products_attributes_list_id'] . '" type="text" value="' . $attr_required_array_value_item['m_products_attributes_value'] . '"></div>';
-																	}
-																	?>
+														<?
+														foreach ($attr_required_array_value as $attr_required_array_value_item) {
+															echo '<div style="margin-top: 10px"><label style="width: 20%">' . $attr_required_array_value_item['m_products_attributes_list_name'] . ' (' . $attr_required_array_value_item['m_products_attributes_list_unit'] . ')</label><input style="width: 70%" name="m_products_attributes_required_value[]" data-id="' . $attr_required_array_value_item['m_products_attributes_list_id'] . '" type="text" value="' . $attr_required_array_value_item['m_products_attributes_value'] . '"></div>';
+														}
+														?>
 													</div>
 												</section>
-										<?
+												<?
 													break;
 												}
 											} ?>
 
 										<label class="label">Группа атрибутов</label>
-										<?$productAttributesGroupsId = $product['products_attributes_groups_id']?>
 										<div class="row">
 											<div class="col col-xs-12 col-sm-6">
 												<select name="m_products_attributes_groups_id" id="attr-group" class="autoselect" <?=$productAttributesGroupsId ? 'disabled' : '';?> placeholder="выберите из списка...">
@@ -624,133 +617,13 @@ if (get('action') == 'change' && $id = get('m_products_id')) {
 													Редактировать
 												</a>
 											</div>
-											<script>
-												$('#d123-edit').on("click", function () {
-													$("#attr-group").prop("disabled", false);
-												});
-											</script>
 											<? } ?>
 										</div>
 									</section>
 
-									<div id="attr">
-										<?
-											if ($attr) {
-												foreach ($attr as $_attr) {
-													if (!in_array($_attr['m_products_attributes_list_id'], $attr_required_array)) {
-														?>
-													<div class="multirow">
-														<div class="row">
-															<section class="col col-4 attr_name">
-																<label class="label"></label>
-																<select name="m_products_attributes_list_id[]" style="width:100%" class="autoselect" placeholder="выберите из списка...">
-																	<?
-																					$type = array(1 => 'Текстовый', 2 => 'Числовой', 3 => 'Логический');
-																					foreach ($products->attr_id as $__attr) {
-
-																						$__attr = $__attr[0];
-																						echo '<option data-type="' . $_attr['m_products_attributes_list_id'] . '" value="' . $__attr['m_products_attributes_list_id'] . '" ' . ($_attr['m_products_attributes_list_id'] == $__attr['m_products_attributes_list_id'] ? 'selected ' : '') . '>
-																		' . $__attr['m_products_attributes_list_name'] . ' [' . $type[$__attr['m_products_attributes_list_type']] . ($__attr['m_products_attributes_list_unit'] ? ', ' . $__attr['m_products_attributes_list_unit'] : '') . ($__attr['m_products_attributes_list_comment'] ? ', (' . $__attr['m_products_attributes_list_comment'] . ')' : '') . ']
-																	</option>';
-																					}
-																					?>
-																</select>
-															</section>
-															<section class="col col-5 attr_value">
-																<label class="label"></label>
-																<label class="input">
-																	<i></i>
-																	<input type="text" name="m_products_attributes_value[]" data-type="<?= $_attr['m_products_attributes_list_id']; ?>" data-list-type="<?= $_attr['m_products_attributes_list_type']; ?>" suggest="<?= $_attr['m_products_attributes_list_id'] ?>" placeholder="значение (два пробела для подсказки)" value="<?= $_attr['m_products_attributes_value'] ?>">
-
-																	<!--                                                                   value="--><? //= ($_attr['m_products_attributes_list_type'] == 1 ? $attr_values[$_attr['m_products_attributes_value']][0]['m_products_attributes_values_value'] : $_attr['m_products_attributes_value']) 
-																																																														?>
-																	<!--">-->
-																</label>
-															</section>
-															<section class="col col-3 add_attr">
-																<label class="label"></label>
-																<div class="btn-group btn-labeled multirow-btn">
-																	<a class="btn btn-info add" href="javascript:void(0);"><span class="btn-label"><i class="glyphicon glyphicon-plus"></i></span>Добавить</a>
-																	<a class="btn btn-info dropdown-toggle" data-toggle="dropdown" href="javascript:void(0);">
-																		<span class="caret"></span>
-																	</a>
-																	<ul class="dropdown-menu">
-																		<li>
-																			<a href="javascript:void(0);" class="add">Добавить
-																				атрибут</a>
-																		</li>
-																		<li>
-																			<a href="javascript:void(0);" class="delete">Удалить
-																				атрибут</a>
-																		</li>
-																	</ul>
-																</div>
-															</section>
-														</div>
-													</div>
-											<?
-														}
-													}
-												} else {
-													?>
-											<div class="multirow">
-												<div class="row">
-													<section class="col col-3">
-														<label class="label"></label>
-														<select name="m_products_attributes_list_id[]" style="width:100%" class="autoselect" placeholder="выберите из списка...">
-															<?
-
-																	//                                                        $group = [];
-																	//                                                        foreach ($products->attr_groups as $_group){
-																	//                                                            $group[] = $_group[0]['m_products_attributes_groups_list_id'];
-																	//                                                        }
-
-																	$type = array(1 => 'Текстовый', 2 => 'Числовой', 3 => 'Логический');
-																	foreach ($products->attr_id as $_attr) {
-																		$_attr = $_attr[0];
-																		//																echo '<option value="'.$_attr['m_products_attributes_list_id'].'" '.(in_array($_attr['m_products_attributes_list_id'],$group['m_products_attributes_groups_list_id'])?'selected ':'').'>
-																		//                                                                echo '<option value="'.$_attr['m_products_attributes_list_id'].'" '.(in_array($_attr['m_products_attributes_list_id'],$group)?'selected ':'').'>
-																		echo '<option value="' . $_attr['m_products_attributes_list_id'] . '">
-																		' . $_attr['m_products_attributes_list_name'] . ' [' . $type[$_attr['m_products_attributes_list_type']] . ($_attr['m_products_attributes_list_unit'] ? ', ' . $_attr['m_products_attributes_list_unit'] : '') . ($_attr['m_products_attributes_list_comment'] ? ', (' . $_attr['m_products_attributes_list_comment'] . ')' : '') . ']
-																	</option>';
-																	}
-																	?>
-														</select>
-													</section>
-													<section class="col col-6">
-														<label class="label"></label>
-														<label class="input">
-															<i></i>
-															<input type="text" name="m_products_attributes_value[]" suggest="" placeholder="значение (два пробела для подсказки)">
-														</label>
-													</section>
-													<section class="col col-3">
-														<label class="label"></label>
-														<div class="btn-group btn-labeled multirow-btn">
-															<a class="btn btn-info add" href="javascript:void(0);"><span class="btn-label"><i class="glyphicon glyphicon-plus"></i></span>Добавить</a>
-															<a class="btn btn-info dropdown-toggle" data-toggle="dropdown" href="javascript:void(0);">
-																<span class="caret"></span>
-															</a>
-															<ul class="dropdown-menu">
-																<li>
-																	<a href="javascript:void(0);" class="add">Добавить атрибут</a>
-																</li>
-																<li>
-																	<a href="javascript:void(0);" class="delete">Удалить атрибут</a>
-																</li>
-															</ul>
-														</div>
-													</section>
-												</div>
-											</div>
-										<?
-											}
-											?>
-									</div>
+									<div id="attr"><!--Здесь появятся аттрибуты--></div>
 								</fieldset>
-								<header>
-									Дополнительные опции
-								</header>
+								<header>Дополнительные опции</header>
 								<fieldset>
 									<div class="row">
 										<section class="col col-4">
@@ -784,9 +657,7 @@ if (get('action') == 'change' && $id = get('m_products_id')) {
 										</section>
 									</div>
 								</fieldset>
-								<header>
-									Фото товара
-								</header>
+								<header>Фото товара</header>
 								<fieldset>
 									<section>
 										<div id="fileupload"></div>
@@ -1234,9 +1105,7 @@ if (get('action') == 'change' && $id = get('m_products_id')) {
 					<div>
 						<div class="widget-body">
 							<form id="products-add" class="smart-form" method="post">
-								<header>
-									Основные данные
-								</header>
+								<header>Основные данные</header>
 								<fieldset>
 									<div class="row">
 										<section class="col col-8">
@@ -1329,9 +1198,7 @@ if (get('action') == 'change' && $id = get('m_products_id')) {
 									</div>
 								</fieldset>
 
-								<header>
-									SEO-параметры
-								</header>
+								<header>SEO-параметры</header>
 								<fieldset>
 									<div class="row">
 										<section class="col col-6">
@@ -1357,9 +1224,7 @@ if (get('action') == 'change' && $id = get('m_products_id')) {
 									</div>
 								</fieldset>
 
-								<header>
-									Скидки
-								</header>
+								<header>Скидки</header>
 								<fieldset>
 									<div id="price">
 										<div class="multirow">
@@ -1406,9 +1271,7 @@ if (get('action') == 'change' && $id = get('m_products_id')) {
 										</div>
 									</div>
 								</fieldset>
-								<header>
-									Параметры
-								</header>
+								<header>Параметры</header>
 								<fieldset>
 									<section>
 										<label class="label">Описание товара</label>
@@ -1453,7 +1316,7 @@ if (get('action') == 'change' && $id = get('m_products_id')) {
 										} ?>
 									<section>
 										<label class="label">Группа атрибутов</label>
-										<select name="m_products_attributes_groups_id" id="d123" class="autoselect" placeholder="выберите из списка...">
+										<select name="m_products_attributes_groups_id" id="attr-group" class="autoselect" placeholder="выберите из списка...">
 											<option value="0" checked>выберите из списка...</option>
 											<?
 												foreach ($products->attr_groups as $_group) {
@@ -1467,64 +1330,9 @@ if (get('action') == 'change' && $id = get('m_products_id')) {
 										</select>
 									</section>
 
-
-									<div id="attr" class="new_prod_attr">
-										<div class="multirow">
-											<div class="row">
-												<section class="col col-3 attr_name">
-													<label class="label"></label>
-													<select name="m_products_attributes_list_id[]" style="width:100%" class="autoselect" placeholder="выберите из списка...">
-														<?
-
-															//                                                    $group = [];
-															//                                                    foreach ($products->attr_groups as $_group){
-															//                                                        $group[] = $_group[0]['m_products_attributes_groups_list_id'];
-															//                                                    }
-
-															$type = array(1 => 'Текстовый', 2 => 'Числовой', 3 => 'Логический');
-															foreach ($products->attr_id as $_attr) {
-																$_attr = $_attr[0];
-
-																//															echo '<option data-type="'.$_attr['m_products_attributes_list_type'].'" value="'.$_attr['m_products_attributes_list_id'].'" '.(in_array($_attr['m_products_attributes_list_id'],$group['m_products_attributes_groups_list_id'])?'selected ':'').'>
-																//                                                            echo '<option data-type="'.$_attr['m_products_attributes_list_type'].'" value="'.$_attr['m_products_attributes_list_id'].'" '.(in_array($_attr['m_products_attributes_list_id'],$group)?'selected ':'').'>
-																echo '<option data-type="' . $_attr['m_products_attributes_list_type'] . '" value="' . $_attr['m_products_attributes_list_id'] . '">
-																	' . $_attr['m_products_attributes_list_name'] . ' [' . $type[$_attr['m_products_attributes_list_type']] . ($_attr['m_products_attributes_list_unit'] ? ', ' . $_attr['m_products_attributes_list_unit'] : '') . ($_attr['m_products_attributes_list_comment'] ? ', (' . $_attr['m_products_attributes_list_comment'] . ')' : '') . ']
-																</option>';
-															}
-															?>
-													</select>
-												</section>
-												<section class="col col-6 attr_value">
-													<label class="label"></label>
-													<label class="input">
-														<i></i>
-														<input type="text" name="m_products_attributes_value[]" suggest="" placeholder="значение (два пробела для подсказки)">
-													</label>
-												</section>
-												<section class="col col-3 add_attr">
-													<label class="label"></label>
-													<div class="btn-group btn-labeled multirow-btn">
-														<a class="btn btn-info add" href="javascript:void(0);"><span class="btn-label"><i class="glyphicon glyphicon-plus"></i></span>Добавить</a>
-														<a class="btn btn-info dropdown-toggle" data-toggle="dropdown" href="javascript:void(0);">
-															<span class="caret"></span>
-														</a>
-														<ul class="dropdown-menu">
-															<li>
-																<a href="javascript:void(0);" class="add">Добавить атрибут</a>
-															</li>
-															<li>
-																<a href="javascript:void(0);" class="delete">Удалить атрибут</a>
-															</li>
-														</ul>
-													</div>
-												</section>
-											</div>
-										</div>
-									</div>
+									<div id="attr"><!--Здесь появятся аттрибуты--></div>
 								</fieldset>
-								<header>
-									Дополнительные опции
-								</header>
+								<header>Дополнительные опции</header>
 								<fieldset>
 									<div class="row">
 										<section class="col col-4">
@@ -1557,9 +1365,7 @@ if (get('action') == 'change' && $id = get('m_products_id')) {
 										</section>
 									</div>
 								</fieldset>
-								<header>
-									Фото товара
-								</header>
+								<header>Фото товара</header>
 								<fieldset>
 									<section>
 										<div id="fileupload"></div>
@@ -1656,4 +1462,32 @@ if (get('action') == 'change' && $id = get('m_products_id')) {
 			}
 		});
 	}
+	
+	$('#d123-edit').on("click", function () {
+		$("#attr-group").prop("disabled", false);
+	});
+
+	function renderAttributesGroup(attirbutes_group_id, products_id) {
+		$.post(
+			"/ajax/product_detail_attributes.php",
+			{
+				attirbutes_group_id,
+				products_id
+			},
+			function(data){
+				if(data != "ERROR"){
+					$("#attr").html(data);
+				}
+			}
+		);
+	}
+
+	$('#attr-group').on('change', function (e) {
+		e.val != 0 && renderAttributesGroup(e.val, <?=get('m_products_id') ? get('m_products_id') : ''?>);
+	});
+	<?
+	if (!empty($productAttributesGroupsId)) {
+		echo 'renderAttributesGroup("'.$productAttributesGroupsId.'", "'.get('m_products_id').'");';
+	}
+	?>
 </script>

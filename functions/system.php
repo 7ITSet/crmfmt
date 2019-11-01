@@ -26,8 +26,12 @@ global $sql;
 	if(is_array($param)){
 		foreach($param as &$param_){
 			$param_=str_replace($s,$r,$param_);
-			if(!$html){
+			if(!$html && !is_array($param)){
 				$param_=htmlspecialchars($param_);
+				$param_=strip_tags($param_);
+			}
+			if(is_array($param_)){
+				$param_=htmlspecialchars($param_[0]);
 				$param_=strip_tags($param_);
 			}
 			$param_=$sql->real_escape($param_);

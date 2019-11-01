@@ -465,7 +465,8 @@ class products{
 		$data['m_products_prices_limit_price[]']=array(null,null,18,null,1);
 		$data['m_products_prices_price[]']=array(null,null,18,null,1);
 
-		$data['m_products_attributes_list_id[]']=array(null,10,null,null,1);
+		//$data['m_products_attributes_list_id[]']=array(null,10,null,null,1);
+		$data['m_products_attributes_list_id[]']=array();
 		$data['m_products_attributes_value[]']=array();
 
 		$data['m_products_contragents_id']=array(1,null,null,10,1);
@@ -516,16 +517,20 @@ class products{
 		}
 
 			//добавляем атрибуты
+			
 			$sql->query('DELETE FROM `formetoo_main`.`m_products_attributes` WHERE `m_products_attributes_product_id`='.$data['m_products_id'].';');
-			if($data['m_products_attributes_value[]'][0]!=''&&$count=sizeof($data['m_products_attributes_value[]'])){
+			if(isset($data['m_products_attributes_list_id[]'])!=''&&$count=sizeof($data['m_products_attributes_list_id[]'])){
 				$q='INSERT INTO `formetoo_main`.`m_products_attributes` (`m_products_attributes_product_id`,`m_products_attributes_list_id`,`m_products_attributes_value`) VALUES ';
-				for($i=0;$i<$count;$i++)
-					if($data['m_products_attributes_value[]'][$i])
+				foreach($data['m_products_attributes_list_id[]'] as $key => $value) {
+					if($value) {
 						$q.='(
 							\''.$data['m_products_id'].'\',
-							\''.$data['m_products_attributes_list_id[]'][$i].'\',
-							\''.$data['m_products_attributes_value[]'][$i].'\'
+							\''.$value.'\',
+							\''.$data['m_products_attributes_value[]'][$key].'\'
 						),';
+					}
+				}
+				
 				if(!($sql->query(substr($q,0,-1).';')))
 					elogs();
 			}
@@ -559,7 +564,6 @@ class products{
 					exit;
 				}
 			}
-
 
 			//добавляем скидки
 			$sql->query('DELETE FROM `formetoo_main`.`m_products_prices` WHERE `m_products_prices_product_id`='.$data['m_products_id'].';');
