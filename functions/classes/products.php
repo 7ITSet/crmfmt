@@ -446,8 +446,8 @@ class products{
 	}
 
 	public static function products_change(){
-
 		global $sql,$e,$user,$info;
+
 		$data['m_products_id']=array(1,null,null,10,1);
 		$data['m_products_name']=array(1,null,180);
 		$data['m_products_unit']=array(1,null,3,null,1);
@@ -474,8 +474,10 @@ class products{
 		$data['m_products_exist']=array(null,null,3);
 		$data['m_products_desc']=array(null,null,65000);
 
-		array_walk($data,'check');
+		$data['slug']=array(1,null,255);
 
+		array_walk($data,'check');
+		
 		if(!$e){
 
 			$data['m_products_show_site']=$data['m_products_show_site']?1:0;
@@ -615,6 +617,7 @@ class products{
 			$m_products_foto = $foto;
 			$m_products_date = 	$data['m_products_date'];
 			$m_products_update = $data['m_products_update'];
+			$slug = $data['slug'];
 
 			if(!empty($_POST['seo_parameters'][0])){
 				$m_products_seo_title = $_POST['seo_parameters'][0];
@@ -651,7 +654,8 @@ class products{
 				`m_products_update`='$m_products_update',
 				`m_products_seo_title`='$m_products_seo_title',
 				`m_products_seo_keywords`='$m_products_seo_keywords',
-				`m_products_seo_description`='$m_products_seo_description'
+				`m_products_seo_description`='$m_products_seo_description',
+				`slug`='$slug'
 				WHERE `m_products_id`='$m_products_id';";
 
 			if($sql->query($q))

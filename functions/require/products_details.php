@@ -1237,12 +1237,22 @@ if (get('action') == 'change' && $id = get('m_products_id')) {
 								<header>
 									Основные данные
 								</header>
-								<section class="sticky_product_name">
-									<label class="label">Наименование (название товара) <span class="obligatory_elem">*</span></label>
-									<label class="input">
-										<input type="text" name="m_products_name">
-									</label>
-								</section>
+								<fieldset>
+									<div class="row">
+										<section class="col col-8">
+											<label class="label">Наименование (название товара) <span class="obligatory_elem">*</span></label>
+											<label class="input">
+												<input type="text" name="m_products_name" value="">
+											</label>
+										</section>
+										<section class="col col-4">
+											<label class="label">Алиас <span class="obligatory_elem">*</span></label>
+											<label class="input">
+												<input type="text" name="slug" value="">
+											</label>
+										</section>
+									</div>
+								</fieldset>
 								<fieldset>
 									<section>
 										<label class="label">Нахождение в категориях (выбор категории, в которой будет отображен товар) <span class="obligatory_elem">*</span></label>
@@ -1612,3 +1622,38 @@ if (get('action') == 'change' && $id = get('m_products_id')) {
 <script type="text/javascript" src="/js/plugin/fancybox/helpers/jquery.fancybox-thumbs.js"></script>
 <script type="text/javascript" src="/js/plugin/fancybox/helpers/jquery.fancybox-buttons.js"></script>
 <script src="/js/plugin/tinymce/tinymce.min.js"></script>
+
+<script src="/js/libs/speakingurl.js"></script>
+<script>
+	let source = $('input[name="m_products_name"]');
+  let target = $('input[name="slug"]');
+	slugify(source, target);
+
+	function slugify(source, target) {
+		var option = {
+			separator: '_',
+			mark: true
+		}
+
+		if (target.val() !== '' && target.val() !== undefined) {
+			target.data('locked', true);
+		}
+
+		target.on('keyup change', function() {
+			if (target.val() === '' || target.val() === undefined) {
+				target.data('locked', false);
+			}
+		});
+
+		source.on('keyup change', function() {
+			if (true === target.data('locked')) {
+				return;
+			}
+			if (target.is('input') || target.is('textarea')) {
+				target.val(getSlug(source.val(), option));
+			} else {
+				target.text(getSlug(source.val(), option));
+			}
+		});
+	}
+</script>
