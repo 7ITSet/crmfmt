@@ -1438,7 +1438,7 @@ if (get('action') == 'change' && $id = get('m_products_id')) {
 	function slugify(source, target) {
 		var option = {
 			separator: '_',
-			mark: true
+			//mark: true
 		}
 
 		if (target.val() !== '' && target.val() !== undefined) {
