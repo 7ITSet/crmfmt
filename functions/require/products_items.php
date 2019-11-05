@@ -337,7 +337,7 @@ if(isset($_GET['error']))
 
 						<div class="table-responsive">
 
-							<table class="table table-bordered table-striped table-condensed table-hover smart-form has-tickbox table_sort" id="products_list" width="100%">
+							<table class="datatable table table-bordered table-striped table-condensed table-hover smart-form has-tickbox table_sort" id="products_list" width="100%">
 								<thead>
 									<tr>
 										<th style="width:2%" class="no-order">
