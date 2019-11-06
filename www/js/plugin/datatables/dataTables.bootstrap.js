@@ -3,7 +3,7 @@ $.extend( true, $.fn.dataTable.defaults, {
 	"sDom":
 		"<'dt-toolbar'<'col-xs-12 col-sm-6'f><'col-xs-12 col-sm-6'l>r>"+
 		"t"+
-		"<'dt-toolbar-footer'<'col-xs-12 col-sm-6'i><'col-xs-12 col-sm-6'p>>",
+		"<'dt-toolbar-footer'<'col-xs-12 col-sm-6'i><'col-xs-12 col-sm-6'lp>>",
 	"oLanguage": {
 		"sLengthMenu": "_MENU_",
 		"sSearch": "",
