@@ -1096,8 +1096,18 @@ if (get('action') == 'change' && $id = get('m_products_id')) {
 
 		<div class="row">
 			<article class="col-lg-6 sortable-grid ui-sortable">
+                <div class="control_header">
+                    <button type="submit" class="btn control_btn">
+                        <i class="fa fa-save"></i>
+                        Сохранить
+                    </button>
+                    <button type="submit" class="btn control_btn">
+                        <i class="fa fa-eye"></i>
+                        Посмотреть
+                    </button>
+                </div>
 				<div class="jarviswidget" id="wid-id-30" data-widget-colorbutton="false" data-widget-editbutton="false" data-widget-fullscreenbutton="false" data-widget-custombutton="false" data-widget-sortable="false" style="" role="widget">
-					<header>
+                    <header>
 						<span class="widget-icon"> <i class="fa fa-edit"></i> </span>
 						<h2>Добавить товарную позицию</h2>
 						<span class="obligatory">* помечены поля, обязательные для заполнения.</span>
@@ -1438,7 +1448,7 @@ if (get('action') == 'change' && $id = get('m_products_id')) {
 	function slugify(source, target) {
 		var option = {
 			separator: '_',
-			mark: true
+			//mark: true
 		}
 
 		if (target.val() !== '' && target.val() !== undefined) {

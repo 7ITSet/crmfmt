@@ -3437,6 +3437,20 @@ article.sortable-grid {
 .widget-content-padding .well {
   margin-bottom: 0px;
 }
+.control_header {
+    position: relative;
+    overflow: hidden;
+    text-align: right;
+    margin: 0 1em 1em;
+}
+button.control_btn {
+    background: #C0C0C0;
+    margin-left: .4em;
+}
+button.control_btn:hover {
+    background: #808080;
+    color: #fff;
+}
 /*
 	 * HEADER
 	 */
@@ -17629,7 +17643,7 @@ time.icon span {
   margin-top: 70px;
 }
 .page-title {
-  margin: 12px 0 28px;
+  margin: 12px 0 0;
 }
 .page-title span {
   font-size: 16px;

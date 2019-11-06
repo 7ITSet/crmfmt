@@ -1752,6 +1752,52 @@ if(isset($_GET['error']))
 											</label>
 										</section>
 									</div>
+                                    <label class="label">Телефоны</label>
+                                    <div  id="telephones-p">
+                                        <div class="multirow">
+                                            <div class="row">
+                                                <section class="col col-3">
+                                                    <label class="input">
+                                                        <i class="icon-append fa fa-phone"></i>
+                                                        <input type="text" name="m_contragents_tel_numb[]"  placeholder="номер">
+                                                    </label>
+                                                </section>
+                                                <section class="col col-3">
+                                                    <label class="input">
+                                                        <select name="m_contragents_tel_type[]" style="width:100%" class="autoselect">
+                                                            <?
+                                                            $telType=$info->getTelType();
+                                                            foreach($telType as $_telType)
+                                                                echo '<option value="'.$_telType[0]['m_info_tel_type_id'].'">'.$_telType[0]['m_info_tel_type_name'].'</option>';
+                                                            ?>
+                                                        </select>
+                                                    </label>
+                                                </section>
+                                                <section class="col col-3">
+                                                    <label class="input">
+                                                        <i class="icon-append fa fa-info"></i>
+                                                        <input type="text" name="m_contragents_tel_comment[]" placeholder="комментарий">
+                                                    </label>
+                                                </section>
+                                                <section class="col col-3">
+                                                    <div class="btn-group btn-labeled multirow-btn">
+                                                        <a class="btn btn-info add" href="javascript:void(0);"><span class="btn-label"><i class="glyphicon glyphicon-plus"></i></span>Добавить</a>
+                                                        <a class="btn btn-info dropdown-toggle" data-toggle="dropdown" href="javascript:void(0);">
+                                                            <span class="caret"></span>
+                                                        </a>
+                                                        <ul class="dropdown-menu">
+                                                            <li>
+                                                                <a href="javascript:void(0);" class="add">Добавить номер</a>
+                                                            </li>
+                                                            <li>
+                                                                <a href="javascript:void(0);" class="delete">Удалить номер</a>
+                                                            </li>
+                                                        </ul>
+                                                    </div>
+                                                </section>
+                                            </div>
+                                        </div>
+                                    </div>
 									<div class="row">
 										<section class="col col-4">
 											<label class="label">Пол</label>
@@ -1783,6 +1829,32 @@ if(isset($_GET['error']))
 											<textarea name="m_contragents_comment" rows="3" class="custom-scroll"></textarea> 
 										</label>
 									</section>
+                                    <section>
+                                        <label class="label">Адрес для доставки 1</label>
+                                        <label class="input">
+                                            <input type="text" name="first_adress">
+                                        </label>
+                                    </section>
+                                    <section>
+                                        <label class="label">Адрес для доставки 2</label>
+                                        <label class="input">
+                                            <input type="text" name="second_adress">
+                                        </label>
+                                    </section>
+                                    <div class="row">
+                                        <section class="col col-5">
+                                            <label class="label">ИНН</label>
+                                            <label class="input">
+                                                <input type="text" name="inn">
+                                            </label>
+                                        </section>
+                                        <section class="col col-5">
+                                            <label class="label">СНИЛС</label>
+                                            <label class="input">
+                                                <input type="text" name="snils">
+                                            </label>
+                                        </section>
+                                    </div>
 								</fieldset>
 								<header>
 									Паспортные данные
@@ -1822,7 +1894,7 @@ if(isset($_GET['error']))
 										</section>
 									</div>
 									<div class="row">
-										<section class="col col-10">
+										<section class="col col-4">
 											<label class="label">
 												Скан паспорта
 											</label>
@@ -1840,52 +1912,6 @@ if(isset($_GET['error']))
 									Контактные данные
 								</header>
 								<fieldset>
-									<label class="label">Телефоны</label>
-									<div  id="telephones-p">
-										<div class="multirow">
-											<div class="row">
-												<section class="col col-3">
-													<label class="input">
-														<i class="icon-append fa fa-phone"></i>
-														<input type="text" name="m_contragents_tel_numb[]"  placeholder="номер">
-													</label>
-												</section>
-												<section class="col col-3">
-													<label class="input">
-														<select name="m_contragents_tel_type[]" style="width:100%" class="autoselect">
-															<? 
-																$telType=$info->getTelType();
-																foreach($telType as $_telType)
-																	echo '<option value="'.$_telType[0]['m_info_tel_type_id'].'">'.$_telType[0]['m_info_tel_type_name'].'</option>';
-															?>
-														</select>
-													</label>
-												</section>
-												<section class="col col-3">
-													<label class="input">
-														<i class="icon-append fa fa-info"></i>
-														<input type="text" name="m_contragents_tel_comment[]" placeholder="комментарий">
-													</label>
-												</section>
-												<section class="col col-3">
-													<div class="btn-group btn-labeled multirow-btn">
-														<a class="btn btn-info add" href="javascript:void(0);"><span class="btn-label"><i class="glyphicon glyphicon-plus"></i></span>Добавить</a>
-														<a class="btn btn-info dropdown-toggle" data-toggle="dropdown" href="javascript:void(0);">
-															<span class="caret"></span>
-														</a>
-														<ul class="dropdown-menu">
-															<li>
-																<a href="javascript:void(0);" class="add">Добавить номер</a>
-															</li>
-															<li>
-																<a href="javascript:void(0);" class="delete">Удалить номер</a>
-															</li>
-														</ul>
-													</div>
-												</section>
-											</div>
-										</div>
-									</div>
 									<section>
 											<label class="label">Адрес для корреспонденции</label>
 											<label class="input">
@@ -1902,6 +1928,66 @@ if(isset($_GET['error']))
 											</label>
 										</section>
 									</div>
+                                    <div class="row">
+                                        <section class="col col-4">
+                                            <label class="label">Индекс</label>
+                                            <label class="input">
+                                                <input type="text" name="index">
+                                            </label>
+                                        </section>
+                                        <section class="col col-4">
+                                            <label class="label">Область/Край</label>
+                                            <label class="input">
+                                                <input type="text" name="oblast">
+                                            </label>
+                                        </section>
+                                        <section class="col col-4">
+                                            <label class="label">Район</label>
+                                            <label class="input">
+                                                <input type="text" name="district">
+                                            </label>
+                                        </section>
+                                    </div>
+                                    <div class="row">
+                                        <section class="col col-4">
+                                            <label class="label">Населенный пункт</label>
+                                            <label class="input">
+                                                <input type="text" name="locality">
+                                            </label>
+                                        </section>
+                                        <section class="col col-4">
+                                            <label class="label">Улица</label>
+                                            <label class="input">
+                                                <input type="text" name="street">
+                                            </label>
+                                        </section>
+                                        <section class="col col-4">
+                                            <label class="label">Дом</label>
+                                            <label class="input">
+                                                <input type="text" name="house">
+                                            </label>
+                                        </section>
+                                    </div>
+                                    <div class="row">
+                                        <section class="col col-4">
+                                            <label class="label">Корпус</label>
+                                            <label class="input">
+                                                <input type="text" name="housing">
+                                            </label>
+                                        </section>
+                                        <section class="col col-4">
+                                            <label class="label">Строение</label>
+                                            <label class="input">
+                                                <input type="text" name="building">
+                                            </label>
+                                        </section>
+                                        <section class="col col-4">
+                                            <label class="label">Квартира/помещение/оффис</label>
+                                            <label class="input">
+                                                <input type="text" name="apt">
+                                            </label>
+                                        </section>
+                                    </div>
 								</fieldset>
 								<footer>
 									<button type="submit" class="btn btn-primary">
