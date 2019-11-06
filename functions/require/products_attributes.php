@@ -93,7 +93,8 @@ if ($id = get('m_products_attributes_list_id')) {
 			select2: {
 				tags: [' . implode(',', $units) . '],
 				placeholder: "Укажите теги",
-				tokenSeparators: [","]
+				tokenSeparators: [","],
+				maximumSelectionSize: 1
 			}
 		});
 		$("#m_products_attributes_list_unit").on("save",function(e,params){
@@ -262,7 +263,8 @@ if ($id = get('m_products_attributes_list_id')) {
 		select2: {
 			tags: [' . implode(',', $units) . '],
 			placeholder: "Укажите теги",
-			tokenSeparators: [","]
+			tokenSeparators: [","],
+			maximumSelectionSize: 1
 		}
 	});
 	$("#m_products_attributes_list_unit").on("save",function(e,params){
@@ -366,13 +368,8 @@ if ($id = get('m_products_attributes_list_id')) {
 										</section>
 										<section class="col col-6">
 											<label class="label">Ед. измерения</label>
-                                            <select name="m_products_attributes_unit" class="autoselect" placeholder="выберите из списка...">
-                                                <option value="1" selected>см</option>
-                                                <option value="2">кг</option>
-                                                <option value="3">мл</option>
-                                            </select>
-<!--											<a href="#" id="m_products_attributes_list_unit" data-type="select2" data-pk="1" data-original-title="Укажите теги"></a>-->
-<!--											<input type="hidden" name="m_products_attributes_list_unit" />-->
+												<a href="#" id="m_products_attributes_list_unit" data-type="select2" data-pk="1" data-original-title="Укажите теги"></a>
+												<input type="hidden" name="m_products_attributes_list_unit" />
 										</section>
 									</div>
 									<div class="row">
