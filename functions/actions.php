@@ -66,6 +66,9 @@ if($action=post('action')){
 		case 'site_page_change':
 			$site->page_change();
 			break;
+		case 'settings_page_change':
+			$settings->page_change();
+			break;
 		case 'm_orders_add':
 			$orders->orders_add();
 			break;

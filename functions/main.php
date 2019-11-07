@@ -37,6 +37,9 @@ $orders=new orders;
 //сайт
 require_once('classes/site.php');
 $site=new site;
+//страница настроек
+require_once('classes/settings.php');
+$settings=new settings;
 
 //навигация по страницам
 require_once('navigator.php');
