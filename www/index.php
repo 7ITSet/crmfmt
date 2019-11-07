@@ -201,25 +201,14 @@ ob_start();
 
 		<!-- MAIN CONTENT -->
 		<div id="content">
-			<div class="row header_title">
+
+			<div class="row">
 				<div class="col-xs-12 col-sm-7 col-md-7 col-lg-4">
 					<h1 class="page-title txt-color-blueDark">
 						<?= $current['m_content_h1'] ?>
 					</h1>
 				</div>
 			</div>
-            <div class="row control_header_row">
-                <div class="control_header">
-                    <button type="submit" class="btn btn-primary control_btn">
-                        <i class="fa fa-save"></i>
-                        Сохранить
-                    </button>
-                    <button type="submit" class="btn btn-primary control_btn">
-                        <i class="fa fa-eye"></i>
-                        Посмотреть
-                    </button>
-                </div>
-            </div>
 
 			<?= $current['m_content_content'] ?>
 
