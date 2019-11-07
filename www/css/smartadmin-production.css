@@ -3437,19 +3437,24 @@ article.sortable-grid {
 .widget-content-padding .well {
   margin-bottom: 0px;
 }
+.control_header_row {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: #eeefef;
+    width: 100%;
+    padding: 5px 0;
+    box-sizing: border-box;
+    margin: auto;
+}
 .control_header {
     position: relative;
     overflow: hidden;
     text-align: right;
-    margin: 0 1em 1em;
+    width: 100%;
 }
 button.control_btn {
-    background: #C0C0C0;
     margin-left: .4em;
-}
-button.control_btn:hover {
-    background: #808080;
-    color: #fff;
 }
 /*
 	 * HEADER
