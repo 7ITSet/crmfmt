@@ -15541,6 +15541,14 @@ textarea.clone {
 .smart-form .radio i {
   border-radius: 50%;
 }
+.label_checkbox {
+    display: flex;
+    margin-bottom: 5px;
+    color: #333;
+}
+div.label_checkbox input[type="checkbox"] {
+    margin: 2px 5px 0 0;
+}
 .smart-form .radio input + i:after,
 .smart-form .checkbox input + i:after {
   position: absolute;
