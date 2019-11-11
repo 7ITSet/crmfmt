@@ -369,42 +369,41 @@ if ($id = get('m_products_attributes_list_id')) {
 									<div class="row">
 										<section class="col col-4">
 											<label class="label">Параметры</label>
-											<label class="checkbox">
+											<div class="label_checkbox">
 												<input type="checkbox" name="m_products_attributes_list_main" checked="checked" value="1" />
 												<i></i>
 												Основной
-											</label>
-											<label class="checkbox">
+											</div>
+											<div class="label_checkbox">
 												<input type="checkbox" name="m_products_attributes_list_required" value="0" />
 												<i></i>
 												Обязателен для заполнения
-											</label>
+											</div>
 										</section>
 										<section class="col col-4">
 											<label class="label">&nbsp;</label>
-											<label class="checkbox">
+											<div class="label_checkbox">
 												<input type="checkbox" name="m_products_attributes_list_site_search" value="1" />
 												<i></i>
 												Участвует в поиске
-											</label>
-											<label class="checkbox">
+											</div>
+											<div class="label_checkbox">
 												<input type="checkbox" name="m_products_attributes_list_site_filter" value="1" />
 												<i></i>
 												Участвует в фильтрах
-											</label>
+											</div>
 										</section>
 										<section class="col col-4">
 											<label class="label">&nbsp;</label>
-											<label class="checkbox">
+											<div class="label_checkbox">
 												<input type="checkbox" name="m_products_attributes_list_site_open" value="1" />
 												<i></i>
 												Раскрыт по умолчанию
-											</label>
-											<label class="checkbox">
+											</div>
+											<div class="label_checkbox">
 												<input type="checkbox" name="m_products_attributes_list_active" value="1" />
-												<i></i>
-												Активен
-											</label>
+												<span class="input_name">Активен</span>
+											</div>
 										</section>
 									</div>
 									<section>

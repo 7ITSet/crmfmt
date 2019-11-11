@@ -1736,6 +1736,42 @@ if(isset($_GET['error']))
 									Основные данные
 								</header>
 								<fieldset>
+                                    <div class="row">
+                                        <section class="col col-4">
+                                            <label class="label">Дата создания карточки</label>
+                                            <label class="input">
+                                                <i class="icon-append fa fa-calendar"></i>
+                                                <input type="text" name="m_contragents_create_date" class="datepicker" data-mask="99.99.9999">
+                                                <input type="hidden" name="m_contragents_create_date">
+                                            </label>
+                                        </section>
+                                        <section class="col col-4">
+                                            <label class="label">Дата изменения</label>
+                                            <label class="input">
+                                                <i class="icon-append fa fa-calendar"></i>
+                                                <input type="text" name="m_contragents_change_date" class="datepicker" data-mask="99.99.9999">
+                                                <input type="hidden" name="m_contragents_change_date">
+                                            </label>
+                                        </section>
+                                        <section class="col col-4">
+                                            <label class="label">Баланс</label>
+                                            <label class="input">
+                                                <input type="text" name="contragents_balance">
+                                            </label>
+                                        </section>
+                                        <section class="col col-4">
+                                            <label class="label">Срок доверия</label>
+                                            <label class="input">
+                                                <input type="text" name="contragents_trust_period">
+                                            </label>
+                                        </section>
+                                        <section class="col col-4">
+                                            <label class="label">Лимит доверия</label>
+                                            <label class="input">
+                                                <input type="text" name="contragents_trust_limit">
+                                            </label>
+                                        </section>
+                                    </div>
 									<div class="row">
 										<section class="col col-6">
 											<label class="label">ФИО</label>
