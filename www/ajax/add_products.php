@@ -20,7 +20,6 @@ if(!$e){
 	$data['m_products_show_site']=0;
 	$data['m_products_show_price']=0;
 	$data['m_products_date']=$data['m_products_update']=dt();
-	$data['m_products_categories_id[]']='1263923105';
 	$data['m_products_price_general']=(float)str_replace(array(' ',','),array('','.'),$data['m_products_price_general']);
 	
 	$q='INSERT `formetoo_main`.`m_products` SET
@@ -29,7 +28,6 @@ if(!$e){
 		`m_products_name`=\''.$data['m_products_name'].'\',
 		`m_products_unit`='.$data['m_products_unit'].',
 		`m_products_price_general`='.$data['m_products_price_general'].',
-		`m_products_categories_id`=\''.$data['m_products_categories_id[]'].'\',
 		`m_products_show_site`='.$data['m_products_show_site'].',
 		`m_products_show_price`='.$data['m_products_show_price'].',
 		`m_products_date`=\''.$data['m_products_date'].'\',
@@ -38,6 +36,19 @@ if(!$e){
 		echo $data['m_products_id'];
 	else
 		echo 'false';
+
+	//удаляем привязанные категории к продукту
+	$q='DELETE FROM `formetoo_main`.`m_products_category` WHERE `product_id`=\''.$data['m_products_id'].'\';';
+	if(!($sql->query($q))){
+		elogs();
+	}
+	
+	//добавляем привязанные категории к продукту
+	$q='INSERT INTO `formetoo_main`.`m_products_category` (`product_id`,`category_id`) VALUES (\''.$data['m_products_id'].'\', \'1263923105\');';
+		
+	if(!($sql->query($q))){
+		elogs();
+	}
 }
 //else print_r($e);
 unset($sql);

@@ -14,75 +14,36 @@ $units_id=$sql->query($q,'m_info_units_id');
 $q='SELECT * FROM `formetoo_main`.`m_products_categories`;';
 $categories=$sql->query($q,'m_products_categories_id');
 
-$w=trim(get('search',array('\\','%','_','\''),array('\\\\','\%','\_','\\\'')));
-$w=explode(' ',$w);
-
 $limit=get('limit')?get('limit'):20;
 $page=get('page')?get('page'):1;
 $start=$limit*$page-$limit;
 $category=get('category');
 
-$ql='SELECT COUNT(`m_products_id`) FROM `formetoo_main`.`m_products` WHERE (`m_products_id` LIKE \'%'.implode(' ',$w).'%\' OR `m_products_name` LIKE \'%'.implode(' ',$w).'%\') '.($category?'AND `m_products_categories_id` LIKE \'%'.$category.'%\'':'').';';
+$ql='SELECT COUNT(`product_id`) FROM `formetoo_main`.`m_products_category` WHERE `category_id`='.$category.';';
 
-$q='SELECT `m_products_id`,
-			`m_products_categories_id`,
-			`m_products_name`,
-			`m_products_unit`,
-			`m_products_price_general`,
-			`m_products_foto`,
-			`m_products_show_site`,
-			`m_products_order`,
-			`m_products_update`
-			FROM `formetoo_main`.`m_products`
-			WHERE
-			(`m_products_id` LIKE \'%'.implode(' ',$w).'%\' OR
-			`m_products_name` LIKE \'%'.implode(' ',$w).'%\')
-			'.($category?'AND `m_products_categories_id` LIKE \'%'.$category.'%\'':'').'
-			ORDER BY `m_products_date` DESC,`m_products_name`,`m_products_order`
-			LIMIT '.$start.','.$limit.';';
+$q = 'SELECT `m_products`.*, GROUP_CONCAT(`m_products_category`.`category_id` SEPARATOR \'|\') AS categories_id FROM `formetoo_main`.`m_products` 
+				LEFT JOIN `formetoo_main`.`m_products_category` 
+					ON `m_products_category`.`product_id`=`m_products`.`m_products_id`
+				GROUP BY `m_products_category`.`product_id`
+				ORDER BY `m_products_date` DESC,`m_products_name`,`m_products_order`
+				LIMIT '.$start.','.$limit.';';
 	
-if($res=$sql->query($q))
+	
+if ($res=$sql->query($q))
 	$p=$res;
-else{
-	$like=[];
-	foreach($w as $_w){
-		if (mb_strlen($_w,'utf-8')<3) continue;
-		$like[]='`m_products_name` LIKE \'%'.$_w.'%\'';
-	}
-	$like=implode(' AND ',$like);
-	$q='SELECT `m_products_id`,
-			`m_products_categories_id`,
-			`m_products_name`,
-			`m_products_unit`,
-			`m_products_price_general`,
-			`m_products_foto`,
-			`m_products_show_site`,
-			`m_products_order`,
-			`m_products_update`
-			FROM `formetoo_main`.`m_products`
-			WHERE (
-			'.($like?$like.' OR':'').'
-			`m_products_id` LIKE \'%'.implode(' ',$w).'%\')
-			'.($category?'AND `m_products_categories_id` LIKE \'%'.$category.'%\'':'').' 
-			ORDER BY `m_products_date` DESC, `m_products_name`,`m_products_order`
-			LIMIT '.$start.','.$limit.';';
-	$ql='SELECT COUNT(`m_products_id`) FROM `formetoo_main`.`m_products` WHERE (`m_products_id` LIKE \'%'.implode(' ',$w).'%\''.($like?' OR '.$like:'').') '.($category?'AND `m_products_categories_id` LIKE \'%'.$category.'%\'':'').' ;';
-	if($res=$sql->query($q))
-		$p=$res;
-}
 
-if($p){
+if ($p){
 	$res=$sql->query($ql);
 	echo '<tr style="display:none" count="'.$res[0]['COUNT(`m_products_id`)'].'" page="'.$page.'"></tr>';
-	$i=0;
-	$k=0;
+	$i = 0;
+	$k = 0;
 
 	foreach($p as $products_){
-		$m_products_categories_id=array();
-		$products_['m_products_categories_id']=explode('|',$products_['m_products_categories_id']);
-		if($products_['m_products_categories_id'][0])
-			foreach($products_['m_products_categories_id'] as $t_)
-				$m_products_categories_id[]=$categories[$t_][0]['m_products_categories_name'];
+		$categories_list = array();
+		$categories_id = explode('|',$products_['categories_id']);
+		foreach($categories_id as $t_) {
+			$categories_list[] = $categories[$t_][0]['m_products_categories_name'];
+		}
 		
 	/* 	$m_products_links=array();
 		$products_['m_products_links']=explode('|',$products_['m_products_links']);
@@ -97,31 +58,17 @@ if($p){
 					<i></i>
 				</label>
 			</td>
-			<td>
-				'.$products_['m_products_id'].'
-			</td>
-			<td>',
-				$products_['m_products_name'],
-			'</td>
-			<td>',
-				$units_id[$products_['m_products_unit']][0]['m_info_units_name'],
-			'</td>
-			<td>',
-					$products_['m_products_price_general'],
-				'
-			</td>
-			<td>',
-				implode('<br/>',$m_products_categories_id),
-			'</td>
-			<td>',
-                $products_['m_products_update'],
-			'</td>
+			<td>'.$products_['m_products_id'].'</td>
+			<td>',$products_['m_products_name'],'</td>
+			<td>',$units_id[$products_['m_products_unit']][0]['m_info_units_name'],'</td>
+			<td>',$products_['m_products_price_general'],'</td>
+			<td>',implode('<br/>',$categories_list),'</td>
+			<td>',$products_['m_products_update'],'</td>
 			<td>
 				<label class="checkbox">
 				  <input type="checkbox" class="checkbox style-0 show" data-name="m_products_show_site" '.($products_['m_products_show_site']==1?'checked':'').' data-pk="'.$products_['m_products_id'].'">
 				  <span>На сайте</span>
 				</label>
-				
 			</td>
 			<td>
 				<a href="#" class="m_products_order" data-type="text" data-pk="'.$products_['m_products_id'].'" data-name="m_products_order" data-title="Порядковый номер">',
@@ -151,21 +98,20 @@ if($p){
 				</div>
                 
                 
-                			<a title="Сделать копию товара" class="btn btn-success btn-xs copy_product" href="/copyProduct.php?id='.$products_['m_products_id'].'"><i class="fa fa-copy"></i></a>
-                            
-                            &nbsp;
+				<a title="Сделать копию товара" class="btn btn-success btn-xs copy_product" href="/copyProduct.php?id='.$products_['m_products_id'].'">
+					<i class="fa fa-copy"></i>
+				</a>
+         &nbsp;
 				<a href="javascript:void(0);" title="Изменить позицию (выше)" class="btn btn-xs btn-default changepos" data-value="'.$products_['m_products_order'].'" data-type="text" data-pk="'.$products_['m_products_id'].'" data-name="m_products_order_up" data-placement="left">
 					<i class="fa fa-angle-up"></i>
 				</a>
-                
-
 				<a href="javascript:void(0);" title="Изменить позицию (ниже)" class="btn btn-xs btn-default changepos" data-value="'.$products_['m_products_order'].'" data-type="text" data-pk="'.$products_['m_products_id'].'" data-name="m_products_order_down" data-placement="left">
 					<i class="fa fa-angle-down"></i>
 				</a>&nbsp;&nbsp;
 				
 				<a href="#" title="Посмотреть на сайте" class="btn btn-xs btn-default eye">
-				    <i class="fa fa-eye"></i>
-                </a>
+				  <i class="fa fa-eye"></i>
+        </a>
 				
 				<a href="/companies/products/new/?action=change&m_products_id='.$products_['m_products_id'].'" title="Редактировать" class="btn btn-primary btn-xs btn-default change" data-type="text">
 					<i class="fa fa-pencil"></i>
@@ -179,4 +125,3 @@ if($p){
 }
 
 unset($sql);
-?>

@@ -28,7 +28,12 @@ class products{
 
 		/* $q='SELECT * FROM `formetoo_main`.`m_products` ORDER BY `m_products_name`,`m_products_date` DESC;';
 		$this->products_id=$sql->query($q,'m_products_id'); */
-		$q='SELECT `m_products_id`,`m_products_unit`,`m_products_categories_id`,`m_products_name`,`m_products_date` FROM `formetoo_main`.`m_products` ORDER BY `m_products_name`,`m_products_date` DESC;';
+		
+		$q = 'SELECT `m_products`.`m_products_id`, `m_products`.`m_products_unit`,`m_products`.`m_products_name`,`m_products`.`m_products_date`, GROUP_CONCAT(`m_products_category`.`category_id` SEPARATOR \'|\') AS categories_id FROM `formetoo_main`.`m_products` 
+			LEFT JOIN `formetoo_main`.`m_products_category` 
+				ON `m_products_category`.`product_id`=`m_products`.`m_products_id` 
+			GROUP BY `m_products_category`.`product_id` 
+			ORDER BY `m_products_name`,`m_products_date` DESC;';
 		$this->products_id=$sql->query($q,'m_products_id');
 
 		$q='SELECT * FROM `formetoo_cdb`.`m_info_units`;';
@@ -54,15 +59,20 @@ class products{
 		foreach($categories as &$categories_)
 			$categories[$categories_['m_products_categories_id']]=$categories_;
 		//привязываем услуги к категориям
-		if($this->products_id)
-			foreach($this->products_id as $t)
-				if($ct=explode('|',$t[0]['m_products_categories_id']))
+		if($this->products_id) {
+			foreach($this->products_id as $t) {
+				if($ct=explode('|',$t[0]['categories_id'])) {
 					//пробегаемся по каждой категории услуги
-					foreach($ct as $ct_)
+					foreach($ct as $ct_) {
 						//если эта категория существует
-						if(isset($this->categories_nodes_id[$ct_]))
+						if(isset($this->categories_nodes_id[$ct_])) {
 							//добавляем услугу в категорию
 							$categories[$ct_]['items'][]=$t[0];
+						}
+					}
+				}
+			}
+		}
 		return $categories;
 	}
 
@@ -171,6 +181,33 @@ class products{
 		echo '</ol>';
 	}
 
+	public function product_categories_display($parent=0, $selected_categories_id = []){
+		echo '<ol class="dd-list">';
+		//перебираем дочерние пункты текущего пункта
+		foreach($this->categories_nodes_parent[$parent] as $nodes_parent__){
+			//выводим пункт меню
+			echo '<li class="dd-item dd3-item" data-id="'.$nodes_parent__['m_products_categories_id'].'">
+					<div class="dd-handle dd3-handle">&nbsp;</div>
+					<div class="dd3-content">
+						<span class="pull-left">
+							<div class="checkbox no-margin">
+								<label>
+								  <input type="checkbox" class="checkbox style-0 show" name="selected_categories_id[]" '.(in_array($nodes_parent__['m_products_categories_id'], $selected_categories_id)?'checked':'').' value="'.$nodes_parent__['m_products_categories_id'].'">
+								  <span class="font-xs"></span>
+								</label>
+							</div>
+						</span>
+						<a href="#" class="editable" id="m_products_categories_name_'.$nodes_parent__['m_products_categories_id'].'">'.
+						$nodes_parent__['m_products_categories_name'].
+						'</a>
+					</div>',
+					//если у текущего дочернего пункта есть подпункты рекурсивно выводим их
+					isset($this->categories_nodes_parent[$nodes_parent__['m_products_categories_id']])?$this->product_categories_display($nodes_parent__['m_products_categories_id'], $selected_categories_id):'',
+				'</li>';
+		}
+		echo '</ol>';
+	}
+
 	public static function categories_add(){
 		global $sql,$e;
 		$data['m_products_categories_name']=array(1,null,180);
@@ -217,7 +254,7 @@ class products{
 		$data['m_products_price_general']=array(1,null,18);
 		$data['m_products_price_currency']=array(1,null,null,1,1);
 		$data['m_products_miltiplicity']=array(null,null,18);
-		$data['m_products_categories_id[]']=array(1);
+		$data['selected_categories_id[]']=array(1);
 		$data['m_products_links[]']=array();
 
 		$data['idfoto[]']=array();
@@ -310,10 +347,6 @@ class products{
 					elogs();
 			}
 
-
-
-
-
 			//добавялем атрибуты
 			if($data['m_products_attributes_value[]'][0]!=''&&$count=sizeof($data['m_products_attributes_value[]'])){
 				$q='INSERT INTO `formetoo_main`.`m_products_attributes` (`m_products_attributes_product_id`,`m_products_attributes_list_id`,`m_products_attributes_value`) VALUES ';
@@ -337,6 +370,16 @@ class products{
 					elogs();
 				}
 
+			//добавляем привязанные категории к продукту
+			$q='INSERT INTO `formetoo_main`.`m_products_category` (`product_id`,`category_id`) VALUES ';
+			for($i=0;$i<count($data['selected_categories_id[]']);$i++){
+				$q.='(\''.$data['m_products_id'].'\', \''.$data['selected_categories_id[]'][$i].'\'), ';
+			}
+			$q = mb_substr($q, 0, -2);
+				
+			if(!($sql->query($q))){
+				elogs();
+			}
 
 			//добавляем фото
 			mkdir($_SERVER['DOCUMENT_ROOT'].'/images/products/'.$data['m_products_id']);
@@ -358,7 +401,6 @@ class products{
 			$foto=json_encode($foto,JSON_UNESCAPED_SLASHES|JSON_UNESCAPED_UNICODE);
 
 			$m_products_contragents_id = $data['m_products_contragents_id'];
-			$m_products_categories_id = implode('|',$data['m_products_categories_id[]']);
 			$m_products_name = $data['m_products_name'];
 			$m_products_unit = $data['m_products_unit'];
 			$m_products_price_general = (float)str_replace(array(' ',','),array('','.'),$data['m_products_price_general']);
@@ -394,7 +436,6 @@ class products{
 			$q = "INSERT INTO `formetoo_main`.`m_products`(
 			`m_products_id`,
 			`m_products_contragents_id`,
-			`m_products_categories_id`,
 			`m_products_name`,
 			`m_products_name_full`,
 			`m_products_unit`,
@@ -414,7 +455,6 @@ class products{
 			 (
 			 '$m_products_id',
 			 '$m_products_contragents_id',
-			  '$m_products_categories_id',
 			  '$m_products_name',
 			  '$m_products_name',
 			  '$m_products_unit',
@@ -445,6 +485,7 @@ class products{
 		exit;
 	}
 
+	//не изменено копирование категорий должна вылетать ошибка
 	public static function products_change(){
 		global $sql,$e,$user,$info;
 
@@ -455,7 +496,7 @@ class products{
 		$data['m_products_price_general']=array(1,null,18);
 		$data['m_products_price_currency']=array(1,null,null,1,1);
 		$data['m_products_miltiplicity']=array(null,null,18);
-		$data['m_products_categories_id[]']=array(1);
+		$data['selected_categories_id[]']=array(1);
 		$data['m_products_links[]']=array();
 
 		$data['idfoto[]']=array();
@@ -480,6 +521,22 @@ class products{
 		array_walk($data,'check');
 		
 		if(!$e){
+			//удаляем привязанные категории к продукту
+			$q='DELETE FROM `formetoo_main`.`m_products_category` WHERE `product_id`=\''.$data['m_products_id'].'\';';
+			if(!($sql->query($q))){
+				elogs();
+			}
+			
+			//добавляем привязанные категории к продукту
+			$q='INSERT INTO `formetoo_main`.`m_products_category` (`product_id`,`category_id`) VALUES ';
+			for($i=0;$i<count($data['selected_categories_id[]']);$i++){
+				$q.='(\''.$data['m_products_id'].'\', \''.$data['selected_categories_id[]'][$i].'\'), ';
+			}
+			$q = mb_substr($q, 0, -2);
+				
+			if(!($sql->query($q))){
+				elogs();
+			}
 
 			$data['m_products_show_site']=$data['m_products_show_site']?1:0;
 			$data['m_products_show_price']=$data['m_products_show_price']?1:0;
@@ -489,7 +546,6 @@ class products{
 
 			$m_products_id =$data['m_products_id'];
 			$m_products_desc = transform::typography($data['m_products_desc']);
-
 
 			//проверка есть ли обязательные атрибуты и заполнены ли они
 			//узнаем сколько обязательный атрибутов должно быть
@@ -612,7 +668,6 @@ class products{
 			$m_products_unit = $data['m_products_unit'];
 			$m_products_price_general = (float)str_replace(array(' ',','),array('','.'),$data['m_products_price_general']);
 			$m_products_price_currency = $data['m_products_price_currency'];
-			$m_products_categories_id = implode('|',$data['m_products_categories_id[]']);
 			$m_products_links = $data['m_products_links[]']?implode('|',$data['m_products_links[]']):'';
 			$m_products_show_site = $data['m_products_show_site'];
 			$m_products_show_price = $data['m_products_show_price'];
@@ -647,7 +702,6 @@ class products{
 				`m_products_unit` ='$m_products_unit',
 				`m_products_price_general`='$m_products_price_general',
 				`m_products_price_currency`='$m_products_price_currency',
-				`m_products_categories_id`='$m_products_categories_id',
 				`m_products_links`='$m_products_links',
 				`m_products_show_site`='$m_products_show_site',
 				`m_products_show_price`='$m_products_show_price',
@@ -660,7 +714,7 @@ class products{
 				`m_products_seo_keywords`='$m_products_seo_keywords',
 				`m_products_seo_description`='$m_products_seo_description',
 				`slug`='$slug'
-				WHERE `m_products_id`='$m_products_id';";
+				WHERE `m_products_id`='$m_products_id';";				
 
 			if($sql->query($q))
 				header('Location: '.url().'?success&action=change&m_products_id='.$data['m_products_id']);
@@ -676,7 +730,7 @@ class products{
 		exit;
 	}
 
-	public static function products_group_change(){
+	public static function products_group_change() {
 		global $sql,$e;
 		$data['group_m_products_id[]']=array();
 		$data['m_products_unit']=array(null,null,3,null,1);
@@ -834,7 +888,6 @@ class products{
 
 		//копируем продукт
 		$m_products_contragents_id = $product[0]['m_products_contragents_id'];
-		$m_products_categories_id = $product[0]['m_products_categories_id'];
 		$m_products_name = $product[0]['m_products_name'] . '_COPY';
 		$m_products_unit = $product[0]['m_products_unit'];
 		$m_products_price_general = $product[0]['m_products_price_general'];
@@ -852,7 +905,6 @@ class products{
 		$q = "INSERT INTO `formetoo_main`.`m_products`(
 			`m_products_id`,
 			`m_products_contragents_id`,
-			`m_products_categories_id`,
 			`m_products_name`,
 			`m_products_name_full`,
 			`m_products_unit`,
@@ -868,11 +920,9 @@ class products{
 			`m_products_seo_keywords`,
 			`m_products_seo_description`
 			) 
-			VALUES
-			 (
-			 '$m_products_id',
-			 '$m_products_contragents_id',
-			  '$m_products_categories_id',
+			VALUES (
+			  '$m_products_id',
+			 ' $m_products_contragents_id',
 			  '$m_products_name',
 			  '$m_products_name',
 			  '$m_products_unit',
@@ -890,6 +940,23 @@ class products{
 			 );";
 
 		if(!($sql->query($q))) {
+			elogs();
+		}
+		
+		//находим привязанные категории к продукту
+		$q='SELECT `category_id` FROM `formetoo_main`.`m_products_category` WHERE `product_id`=\''.$id.'\';';
+		if($resCategories = $sql->query($q)){
+			//добавляем привязанные категории к продукту
+			$q='INSERT INTO `formetoo_main`.`m_products_category` (`product_id`,`category_id`) VALUES ';
+			foreach ($resCategories as $resCategory) {
+				$q.='(\''.$m_products_id.'\', \''.$resCategory["category_id"].'\'), ';
+			}
+			$q = mb_substr($q, 0, -2);
+				
+			if(!($sql->query($q))){
+				elogs();
+			}
+		} else {
 			elogs();
 		}
 

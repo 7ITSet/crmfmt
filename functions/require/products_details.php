@@ -4,10 +4,13 @@ global $user, $sql, $content, $products, $contragents;
 
 if (get('action') == 'change' && $id = get('m_products_id')) {
 	//сам товар
-	$q = 'SELECT * FROM `formetoo_main`.`m_products` WHERE `m_products_id`=' . $id . ' LIMIT 1;';
+	$q = 'SELECT `m_products`.*, GROUP_CONCAT(`m_products_category`.`category_id` SEPARATOR \'|\') AS categories_id FROM `formetoo_main`.`m_products` 
+				LEFT JOIN `formetoo_main`.`m_products_category` 
+					ON `m_products_category`.`product_id`=`m_products`.`m_products_id` 
+				WHERE `m_products_id`=' . $id . '  
+				GROUP BY `m_products_category`.`product_id`;';
 	$product = $sql->query($q)[0];
 
-	
 	$productAttributesGroupsId = $product['products_attributes_groups_id'];
 	//атрибуты
 	$q = 'SELECT * FROM `formetoo_main`.`m_products_attributes`
@@ -34,7 +37,7 @@ if (get('action') == 'change' && $id = get('m_products_id')) {
 	$desc = ($res = $sql->query($q)) ? $res[0]['m_products_desc_text'] : '';
 
 	//прочие характеристики
-	$product['m_products_categories_id'] = explode('|', $product['m_products_categories_id']);
+	$product['categories_id'] = explode('|', $product['categories_id']);
 	$product['m_products_links'] = explode('|', $product['m_products_links']);
 	$foto = $product['m_products_foto'] ? json_decode($product['m_products_foto']) : array();
 
@@ -68,30 +71,25 @@ if (get('action') == 'change' && $id = get('m_products_id')) {
 /* обязательные параметры start */
 
     function attr_required(){
+			var attr_required_input =  $("#attr_required input");
+			var data = [];
 
-        var attr_required_input =  $("#attr_required input");
-        var data = [];
+			if (attr_required_input.length > 0){
+				attr_required_input.each(function(){
+					var data_id_input_required = $(this).attr("data-id");
+					var value_input_required = $(this).prop("disabled", true).val();
 
-        if(attr_required_input.length > 0){
-             attr_required_input.each(function(){
+					if(data_id_input_required !== "" && value_input_required !== ""){
+							data.push({id: data_id_input_required, value: value_input_required});
+					}
+				});
 
-            var data_id_input_required = $(this).attr("data-id");
-            var value_input_required = $(this).prop("disabled", true).val();
-
-            if(data_id_input_required !== "" && value_input_required !== ""){
-                data.push({id: data_id_input_required, value: value_input_required});
-            }
-
-
-        });
-
-        $("#attr_required_hidden").attr("value", JSON.stringify(data));
-        }
-
+				$("#attr_required_hidden").attr("value", JSON.stringify(data));
+			}
     }
 
-    $("button[type=\'submit\']").on("click", function(){
-        attr_required();
+    $("form#products-add").submit(function(){
+      attr_required();
     });
 
 
@@ -158,7 +156,7 @@ if (get('action') == 'change' && $id = get('m_products_id')) {
 				m_products_contragents_id : {
 					required : true
 				},
-				"m_products_categories_id[]" : {
+				"selected_categories_id[]" : {
 					required : true
 				}
 			},
@@ -312,379 +310,373 @@ if (get('action') == 'change' && $id = get('m_products_id')) {
 		</article></div>';
 		?>
 
-	<section id="widget-grid" class="">
+			<section id="widget-grid" class="">
+				<div class="row">
+					<article class="col-lg-6 sortable-grid ui-sortable">
+						<div class="jarviswidget" id="wid-id-2" data-widget-colorbutton="false" data-widget-editbutton="false" data-widget-fullscreenbutton="false" data-widget-custombutton="false" data-widget-sortable="false" style="" role="widget">
+							<header>
+								<span class="widget-icon"> <i class="fa fa-edit"></i> </span>
+								<h2>Редактировать товарную позицию</h2>
+								<span class="obligatory">* помечены поля, обязательные для заполнения.</span>
+							</header>
+							<div>
+								<div class="widget-body">
+									<form id="products-add" class="smart-form" method="post">
+									
+										<div class="tabs">
+											<ul>
+												<li><a href="#general-settings">Основные настройки</a></li>
+												<li><a href="#categories-settings">Категории</a></li>
+											</ul>
 
-		<div class="row">
+											<div id="general-settings">
+										<header>Основные данные</header>
+										<fieldset>
+											<div class="row">
+												<section class="col col-8">
+													<label class="label">Наименование (название товара) <span class="obligatory_elem">*</span></label>
+													<label class="input">
+														<input type="text" name="m_products_name" value="<?= $product['m_products_name'] ?>">
+													</label>
+												</section>
+												<section class="col col-4">
+													<label class="label">Алиас <span class="obligatory_elem">*</span></label>
+													<label class="input">
+														<input type="text" name="slug" value="<?= $product['slug'] ?>">
+													</label>
+												</section>
+											</div>
+										</fieldset>
+										<fieldset>
+											<div class="row">
+												<section class="col col-3">
+													<label class="label">Цена<span class="obligatory_elem">*</span></label>
+													<label class="input">
+														<i class="icon-append">р.</i>
+														<input type="text" name="m_products_price_general" style="text-align:right;" placeholder="цена розницы" value="<?= $product['m_products_price_general']; ?>">
+													</label>
+												</section>
+												<section class="col col-3">
+													<label class="label">Кратность (количество единиц в товаре, цена указывается за одну единицу)</label>
+													<label class="input">
+														<i class="icon-append fa fa-cubes"></i>
+														<input type="text" name="m_products_miltiplicity" style="text-align:right;" placeholder="кол-во в единице" value="<?= $product['m_products_multiplicity']; ?>">
+													</label>
+												</section>
+												<section class="col col-3">
+													<label class="label">Единица измерения</label>
+													<select name="m_products_unit" id="d123" class="autoselect">
+														<?
+															$q = 'SELECT * FROM `formetoo_cdb`.`m_info_units`;';
+															$t = $sql->query($q);
+															foreach ($t as $t_)
+																echo '<option value="' . $t_['m_info_units_id'] . '" id="' . $t_['m_info_units_id'] . '" data-desc="(' . $t_['m_info_units_name_full'] . ')" ' . ($t_['m_info_units_id'] == $product['m_products_unit'] ? ' selected' : '') . '>',
+																	$t_['m_info_units_name'] . ' (' . $t_['m_info_units_name_full'] . ')',
+																	'</option>';
+															?>
+													</select>
+												</section>
 
-			<article class="col-lg-6 sortable-grid ui-sortable">
-				<div class="jarviswidget" id="wid-id-2" data-widget-colorbutton="false" data-widget-editbutton="false" data-widget-fullscreenbutton="false" data-widget-custombutton="false" data-widget-sortable="false" style="" role="widget">
-					<header>
-						<span class="widget-icon"> <i class="fa fa-edit"></i> </span>
-						<h2>Редактировать товарную позицию</h2>
-						<span class="obligatory">* помечены поля, обязательные для заполнения.</span>
-					</header>
-					<div>
-						<div class="widget-body">
-							<form id="products-add" class="smart-form" method="post">
-								<header>Основные данные</header>
-								<fieldset>
-									<div class="row">
-										<section class="col col-8">
-											<label class="label">Наименование (название товара) <span class="obligatory_elem">*</span></label>
-											<label class="input">
-												<input type="text" name="m_products_name" value="<?= $product['m_products_name'] ?>">
-											</label>
-										</section>
-										<section class="col col-4">
-											<label class="label">Алиас <span class="obligatory_elem">*</span></label>
-											<label class="input">
-												<input type="text" name="slug" value="<?= $product['slug'] ?>">
-											</label>
-										</section>
-									</div>
-								</fieldset>
-								<fieldset>
-									<section>
-										<label class="label">Категория (выбор категории, в которой будет отображен товар) <span class="obligatory_elem">*</span></label>
-										<select name="m_products_categories_id[]" style="width:100%" class="autoselect" placeholder="выберите из списка...">
-											<?
-												$categories = array();
-												$products->categories_childs(0, $categories, 2);
-												foreach ($categories as $categories_) {
-													echo '<option value="' . $categories_['m_products_categories_id'] . '" ' . (in_array($categories_['m_products_categories_id'], $product['m_products_categories_id']) ? ' selected' : '') . '>
-															' . $categories_['m_products_categories_name'] . '
-														</option>';
-												}
-												?>
-										</select>
-									</section>
-									<div class="row">
-										<section class="col col-3">
-											<label class="label">Цена<span class="obligatory_elem">*</span></label>
-											<label class="input">
-												<i class="icon-append">р.</i>
-												<input type="text" name="m_products_price_general" style="text-align:right;" placeholder="цена розницы" value="<?= $product['m_products_price_general']; ?>">
-											</label>
-										</section>
-										<section class="col col-3">
-											<label class="label">Кратность (количество единиц в товаре, цена указывается за одну единицу)</label>
-											<label class="input">
-												<i class="icon-append fa fa-cubes"></i>
-												<input type="text" name="m_products_miltiplicity" style="text-align:right;" placeholder="кол-во в единице" value="<?= $product['m_products_multiplicity']; ?>">
-											</label>
-										</section>
-										<section class="col col-3">
-											<label class="label">Единица измерения</label>
-											<select name="m_products_unit" id="d123" class="autoselect">
+												<section class="col col-3">
+													<label class="label">Организация</label>
+													<select name="m_products_contragents_id" class="autoselect" placeholder="выберите из списка...">
+														<?
+															foreach ($contragents->getInfo() as $contragents_) {
+																$ct = explode('|', $contragents_[0]['m_contragents_type']);
+																if (in_array(1, $ct))
+																	echo '<option value="' . $contragents_[0]['m_contragents_id'] . '">',
+																		$contragents_[0]['m_contragents_c_name_short'] ? $contragents_[0]['m_contragents_c_name_short'] : $contragents_[0]['m_contragents_c_name_full'],
+																		'</option>';
+															}
+															?>
+													</select>
+												</section>
+											</div>
+											<div class="row">
+												<section class="col col-3">
+													<select name="m_products_price_currency" class="autoselect" placeholder="выберите из списка...">
+														<option value="1" <?= ($product['m_products_price_currency'] == 1 ? ' selected ' : '') ?>>Рубль</option>
+														<option value="2" <?= ($product['m_products_price_currency'] == 2 ? ' selected ' : '') ?>>Доллар</option>
+														<option value="3" <?= ($product['m_products_price_currency'] == 3 ? ' selected ' : '') ?>>Евро</option>
+													</select>
+												</section>
+												<section class="col col-3">
+													<label class="label">&nbsp;</label>
+													<label class="checkbox">
+														<input type="checkbox" name="m_products_exist" <?= ($product['m_products_exist'] ? ' checked' : '') ?> value="1" />
+														<i></i>
+														Всегда в наличии
+													</label>
+												</section>
+
+											</div>
+										</fieldset>
+
+										<header>SEO-параметры</header>
+										<fieldset>
+											<div class="row">
+												<section class="col col-6">
+													<label class="label">Title</label>
+													<label class="input">
+														<input type="text" name="seo_parameters[]" placeholder="Title" value="<?= $product['m_products_seo_title'] ?>">
+													</label>
+												</section>
+												<section class="col col-6">
+													<label class="label">Keywords</label>
+													<label class="input">
+														<input type="text" name="seo_parameters[]" placeholder="Keywords" value="<?= $product['m_products_seo_keywords'] ?>">
+													</label>
+												</section>
+											</div>
+											<div class="row">
+												<section class="col" style="width: 100%;">
+													<label class="label">Description</label>
+													<label class="textarea textarea-resizable">
+														<textarea name="seo_parameters[]" rows="5" placeholder="Description"><?= $product['m_products_seo_description'] ?></textarea>
+													</label>
+												</section>
+											</div>
+										</fieldset>
+
+										<header>Скидки</header>
+										<fieldset>
+											<div id="price">
 												<?
-													$q = 'SELECT * FROM `formetoo_cdb`.`m_info_units`;';
-													$t = $sql->query($q);
-													foreach ($t as $t_)
-														echo '<option value="' . $t_['m_info_units_id'] . '" id="' . $t_['m_info_units_id'] . '" data-desc="(' . $t_['m_info_units_name_full'] . ')" ' . ($t_['m_info_units_id'] == $product['m_products_unit'] ? ' selected' : '') . '>',
-															$t_['m_info_units_name'] . ' (' . $t_['m_info_units_name_full'] . ')',
-															'</option>';
+													if ($price)
+														foreach ($price as $_price) {
+															?>
+													<div class="multirow">
+														<div class="row">
+															<section class="col col-3">
+																<label class="label">При покупке ОТ КОЛ-ВА</label>
+																<label class="input">
+																	<i class="icon-append fa fa-cubes"></i>
+																	<input type="text" name="m_products_prices_limit_count[]" placeholder="мин. кол-во" style="text-align:right;" value="<?= $_price['m_products_prices_limit_count'] ?>">
+																</label>
+															</section>
+															<section class="col col-3">
+																<label class="label">При покупке ОТ ЦЕНЫ</label>
+																<label class="input">
+																	<i class="icon-append fa fa-money"></i>
+																	<input type="text" name="m_products_prices_limit_price[]" placeholder="мин. цена" style="text-align:right;" value="<?= $_price['m_products_prices_limit_price'] ?>">
+																</label>
+															</section>
+															<section class="col col-3">
+																<label class="label">Стоимость СОСТАВИТ</label>
+																<label class="input">
+																	<i class="icon-append">р.</i>
+																	<input type="text" name="m_products_prices_price[]" placeholder="стоимость" style="text-align:right;" value="<?= $_price['m_products_prices_price'] ?>">
+																</label>
+															</section>
+															<section class="col col-3">
+																<label class="label">&nbsp;</label>
+																<div class="btn-group btn-labeled multirow-btn">
+																	<a class="btn btn-info add" href="javascript:void(0);"><span class="btn-label"><i class="glyphicon glyphicon-plus"></i></span>Добавить</a>
+																	<a class="btn btn-info dropdown-toggle" data-toggle="dropdown" href="javascript:void(0);">
+																		<span class="caret"></span>
+																	</a>
+																	<ul class="dropdown-menu">
+																		<li>
+																			<a href="javascript:void(0);" class="add">Добавить цену</a>
+																		</li>
+																		<li>
+																			<a href="javascript:void(0);" class="delete">Удалить цену</a>
+																		</li>
+																	</ul>
+																</div>
+															</section>
+														</div>
+													</div>
+												<?
+													} else {
 													?>
-											</select>
-										</section>
-
-										<section class="col col-3">
-											<label class="label">Организация</label>
-											<select name="m_products_contragents_id" class="autoselect" placeholder="выберите из списка...">
+													<div class="multirow">
+														<div class="row">
+															<section class="col col-3">
+																<label class="label">При покупке ОТ КОЛ-ВА</label>
+																<label class="input">
+																	<i class="icon-append fa fa-cubes"></i>
+																	<input type="text" name="m_products_prices_limit_count[]" placeholder="мин. кол-во" style="text-align:right;">
+																</label>
+															</section>
+															<section class="col col-3">
+																<label class="label">При покупке ОТ ЦЕНЫ</label>
+																<label class="input">
+																	<i class="icon-append fa fa-money"></i>
+																	<input type="text" name="m_products_prices_limit_price[]" placeholder="мин. цена" style="text-align:right;">
+																</label>
+															</section>
+															<section class="col col-3">
+																<label class="label">Стоимость СОСТАВИТ</label>
+																<label class="input">
+																	<i class="icon-append">р.</i>
+																	<input type="text" name="m_products_prices_price[]" placeholder="стоимость" style="text-align:right;">
+																</label>
+															</section>
+															<section class="col col-3">
+																<label class="label">&nbsp;</label>
+																<div class="btn-group btn-labeled multirow-btn">
+																	<a class="btn btn-info add" href="javascript:void(0);"><span class="btn-label"><i class="glyphicon glyphicon-plus"></i></span>Добавить</a>
+																	<a class="btn btn-info dropdown-toggle" data-toggle="dropdown" href="javascript:void(0);">
+																		<span class="caret"></span>
+																	</a>
+																	<ul class="dropdown-menu">
+																		<li>
+																			<a href="javascript:void(0);" class="add">Добавить цену</a>
+																		</li>
+																		<li>
+																			<a href="javascript:void(0);" class="delete">Удалить цену</a>
+																		</li>
+																	</ul>
+																</div>
+															</section>
+														</div>
+													</div>
 												<?
-													foreach ($contragents->getInfo() as $contragents_) {
-														$ct = explode('|', $contragents_[0]['m_contragents_type']);
-														if (in_array(1, $ct))
-															echo '<option value="' . $contragents_[0]['m_contragents_id'] . '">',
-																$contragents_[0]['m_contragents_c_name_short'] ? $contragents_[0]['m_contragents_c_name_short'] : $contragents_[0]['m_contragents_c_name_full'],
-																'</option>';
 													}
 													?>
-											</select>
-										</section>
-									</div>
-									<div class="row">
-										<section class="col col-3">
-											<select name="m_products_price_currency" class="autoselect" placeholder="выберите из списка...">
-												<option value="1" <?= ($product['m_products_price_currency'] == 1 ? ' selected ' : '') ?>>Рубль</option>
-												<option value="2" <?= ($product['m_products_price_currency'] == 2 ? ' selected ' : '') ?>>Доллар</option>
-												<option value="3" <?= ($product['m_products_price_currency'] == 3 ? ' selected ' : '') ?>>Евро</option>
-											</select>
-										</section>
-										<section class="col col-3">
-											<label class="label">&nbsp;</label>
-											<label class="checkbox">
-												<input type="checkbox" name="m_products_exist" <?= ($product['m_products_exist'] ? ' checked' : '') ?> value="1" />
-												<i></i>
-												Всегда в наличии
-											</label>
-										</section>
-
-									</div>
-								</fieldset>
-
-								<header>SEO-параметры</header>
-								<fieldset>
-									<div class="row">
-										<section class="col col-6">
-											<label class="label">Title</label>
-											<label class="input">
-												<input type="text" name="seo_parameters[]" placeholder="Title" value="<?= $product['m_products_seo_title'] ?>">
-											</label>
-										</section>
-										<section class="col col-6">
-											<label class="label">Keywords</label>
-											<label class="input">
-												<input type="text" name="seo_parameters[]" placeholder="Keywords" value="<?= $product['m_products_seo_keywords'] ?>">
-											</label>
-										</section>
-									</div>
-									<div class="row">
-										<section class="col" style="width: 100%;">
-											<label class="label">Description</label>
-											<label class="textarea textarea-resizable">
-												<textarea name="seo_parameters[]" rows="5" placeholder="Description"><?= $product['m_products_seo_description'] ?></textarea>
-											</label>
-										</section>
-									</div>
-								</fieldset>
-
-								<header>Скидки</header>
-								<fieldset>
-									<div id="price">
-										<?
-											if ($price)
-												foreach ($price as $_price) {
-													?>
-											<div class="multirow">
-												<div class="row">
-													<section class="col col-3">
-														<label class="label">При покупке ОТ КОЛ-ВА</label>
-														<label class="input">
-															<i class="icon-append fa fa-cubes"></i>
-															<input type="text" name="m_products_prices_limit_count[]" placeholder="мин. кол-во" style="text-align:right;" value="<?= $_price['m_products_prices_limit_count'] ?>">
-														</label>
-													</section>
-													<section class="col col-3">
-														<label class="label">При покупке ОТ ЦЕНЫ</label>
-														<label class="input">
-															<i class="icon-append fa fa-money"></i>
-															<input type="text" name="m_products_prices_limit_price[]" placeholder="мин. цена" style="text-align:right;" value="<?= $_price['m_products_prices_limit_price'] ?>">
-														</label>
-													</section>
-													<section class="col col-3">
-														<label class="label">Стоимость СОСТАВИТ</label>
-														<label class="input">
-															<i class="icon-append">р.</i>
-															<input type="text" name="m_products_prices_price[]" placeholder="стоимость" style="text-align:right;" value="<?= $_price['m_products_prices_price'] ?>">
-														</label>
-													</section>
-													<section class="col col-3">
-														<label class="label">&nbsp;</label>
-														<div class="btn-group btn-labeled multirow-btn">
-															<a class="btn btn-info add" href="javascript:void(0);"><span class="btn-label"><i class="glyphicon glyphicon-plus"></i></span>Добавить</a>
-															<a class="btn btn-info dropdown-toggle" data-toggle="dropdown" href="javascript:void(0);">
-																<span class="caret"></span>
-															</a>
-															<ul class="dropdown-menu">
-																<li>
-																	<a href="javascript:void(0);" class="add">Добавить цену</a>
-																</li>
-																<li>
-																	<a href="javascript:void(0);" class="delete">Удалить цену</a>
-																</li>
-															</ul>
-														</div>
-													</section>
-												</div>
 											</div>
-										<?
-											} else {
-											?>
-											<div class="multirow">
-												<div class="row">
-													<section class="col col-3">
-														<label class="label">При покупке ОТ КОЛ-ВА</label>
-														<label class="input">
-															<i class="icon-append fa fa-cubes"></i>
-															<input type="text" name="m_products_prices_limit_count[]" placeholder="мин. кол-во" style="text-align:right;">
-														</label>
-													</section>
-													<section class="col col-3">
-														<label class="label">При покупке ОТ ЦЕНЫ</label>
-														<label class="input">
-															<i class="icon-append fa fa-money"></i>
-															<input type="text" name="m_products_prices_limit_price[]" placeholder="мин. цена" style="text-align:right;">
-														</label>
-													</section>
-													<section class="col col-3">
-														<label class="label">Стоимость СОСТАВИТ</label>
-														<label class="input">
-															<i class="icon-append">р.</i>
-															<input type="text" name="m_products_prices_price[]" placeholder="стоимость" style="text-align:right;">
-														</label>
-													</section>
-													<section class="col col-3">
-														<label class="label">&nbsp;</label>
-														<div class="btn-group btn-labeled multirow-btn">
-															<a class="btn btn-info add" href="javascript:void(0);"><span class="btn-label"><i class="glyphicon glyphicon-plus"></i></span>Добавить</a>
-															<a class="btn btn-info dropdown-toggle" data-toggle="dropdown" href="javascript:void(0);">
-																<span class="caret"></span>
-															</a>
-															<ul class="dropdown-menu">
-																<li>
-																	<a href="javascript:void(0);" class="add">Добавить цену</a>
-																</li>
-																<li>
-																	<a href="javascript:void(0);" class="delete">Удалить цену</a>
-																</li>
-															</ul>
-														</div>
-													</section>
-												</div>
-											</div>
-										<?
-											}
-											?>
-									</div>
-								</fieldset>
-								<header>Параметры</header>
-								<fieldset>
-									<section>
-										<label class="label">Описание товара</label>
-										<label class="textarea textarea-resizable">
-											<textarea name="m_products_desc" id="m_products_desc" rows="8" class="custom-scroll"><?= $desc; ?></textarea>
-										</label>
-									</section>
-									<section>
+										</fieldset>
+										<header>Параметры</header>
+										<fieldset>
+											<section>
+												<label class="label">Описание товара</label>
+												<label class="textarea textarea-resizable">
+													<textarea name="m_products_desc" id="m_products_desc" rows="8" class="custom-scroll"><?= $desc; ?></textarea>
+												</label>
+											</section>
+											<section>
 
-										<? foreach ($products->attr_groups as $_group) {
-												if ($_group[0]['m_products_attributes_groups_required']) {
-													?>
-												<section>
-													<label class="label">Обязательная группа атрибутов <span class="obligatory_elem">*</span></label>
-													<select name="m_products_attributes_groups_id_required" class="autoselect" placeholder="выберите из списка...">
-														<option value="0">выберите из списка...</option>
+												<? foreach ($products->attr_groups as $_group) {
+														if ($_group[0]['m_products_attributes_groups_required']) {
+															?>
+														<section>
+															<label class="label">Обязательная группа атрибутов <span class="obligatory_elem">*</span></label>
+															<select name="m_products_attributes_groups_id_required" class="autoselect" placeholder="выберите из списка...">
+																<option value="0">выберите из списка...</option>
+														<?
+																	break;
+																}
+															} ?>
+														<? foreach ($products->attr_groups as $_group) {
+																if ($_group[0]['m_products_attributes_groups_required']) {
+																	echo '<option selected data="' . $_group[0]['m_products_attributes_groups_list_id'] . '" value="' . $_group[0]['m_products_attributes_groups_id'] . '" >',
+																		$_group[0]['m_products_attributes_groups_name'],
+																		'</option>';
+																}
+															}
+															?>
+														<? foreach ($products->attr_groups as $_group) {
+																if ($_group[0]['m_products_attributes_groups_required']) {
+																	?>
+															</select>
+															<input id="attr_required_hidden" name="attr_required_val" type="hidden" value="">
+															<div id="attr_required">
+																<?
+																			foreach ($attr_required_array_value as $attr_required_array_value_item) {
+																				echo '<div style="margin-top: 10px"><label style="width: 20%">' . $attr_required_array_value_item['m_products_attributes_list_name'] . ' (' . $attr_required_array_value_item['m_products_attributes_list_unit'] . ')</label><input style="width: 70%" name="m_products_attributes_required_value[]" data-id="' . $attr_required_array_value_item['m_products_attributes_list_id'] . '" type="text" value="' . $attr_required_array_value_item['m_products_attributes_value'] . '"></div>';
+																			}
+																			?>
+															</div>
+														</section>
 												<?
 															break;
 														}
 													} ?>
-												<? foreach ($products->attr_groups as $_group) {
-														if ($_group[0]['m_products_attributes_groups_required']) {
-															echo '<option selected data="' . $_group[0]['m_products_attributes_groups_list_id'] . '" value="' . $_group[0]['m_products_attributes_groups_id'] . '" >',
-																$_group[0]['m_products_attributes_groups_name'],
-																'</option>';
-														}
-													}
-													?>
-												<? foreach ($products->attr_groups as $_group) {
-														if ($_group[0]['m_products_attributes_groups_required']) {
-														?>
-													</select>
-													<input id="attr_required_hidden" name="attr_required_val" type="hidden" value="">
-													<div id="attr_required">
-														<?
-														foreach ($attr_required_array_value as $attr_required_array_value_item) {
-															echo '<div style="margin-top: 10px"><label style="width: 20%">' . $attr_required_array_value_item['m_products_attributes_list_name'] . ' (' . $attr_required_array_value_item['m_products_attributes_list_unit'] . ')</label><input style="width: 70%" name="m_products_attributes_required_value[]" data-id="' . $attr_required_array_value_item['m_products_attributes_list_id'] . '" type="text" value="' . $attr_required_array_value_item['m_products_attributes_value'] . '"></div>';
-														}
-														?>
+
+												<label class="label">Группа атрибутов</label>
+												<div class="row">
+													<div class="col col-xs-12 col-sm-6">
+														<select name="m_products_attributes_groups_id" id="attr-group" class="autoselect" <?= $productAttributesGroupsId ? 'disabled' : ''; ?> placeholder="выберите из списка...">
+															<option value="0" checked>выберите из списка...</option>
+															<?
+																foreach ($products->attr_groups as $_group) {
+																	if (!$_group[0]['m_products_attributes_groups_required']) {
+																		echo '<option ' . ($productAttributesGroupsId == $_group[0]['m_products_attributes_groups_id'] ? 'selected' : '') . ' data="' . $_group[0]['m_products_attributes_groups_list_id'] . '" value="' . $_group[0]['m_products_attributes_groups_id'] . '">',
+																			$_group[0]['m_products_attributes_groups_name'],
+																			'</option>';
+																	}
+																}
+																?>
+														</select>
 													</div>
+													<? if ($productAttributesGroupsId) { ?>
+														<div class="col-xs-12 col-sm-6">
+															<a id="d123-edit" class="btn btn-primary">
+																<i class="fa fa-edit"></i>
+																Редактировать
+															</a>
+														</div>
+													<? } ?>
+												</div>
+											</section>
+
+											<div id="attr">
+												<!--Здесь появятся аттрибуты-->
+											</div>
+										</fieldset>
+										<header>Дополнительные опции</header>
+										<fieldset>
+											<div class="row">
+												<section class="col col-4">
+													<label class="checkbox">
+														<input type="checkbox" name="m_products_show_site" <?= ($product['m_products_show_site'] ? ' checked' : '') ?> value="1" />
+														<i></i>
+														Показывать на сайте
+													</label>
+													<label class="checkbox">
+														<input type="checkbox" name="m_products_show_price" <?= ($product['m_products_show_price'] ? ' checked' : '') ?> value="1" />
+														<i></i>
+														Выгружать в прайс
+													</label>
 												</section>
-												<?
-													break;
-												}
-											} ?>
-
-										<label class="label">Группа атрибутов</label>
-										<div class="row">
-											<div class="col col-xs-12 col-sm-6">
-												<select name="m_products_attributes_groups_id" id="attr-group" class="autoselect" <?=$productAttributesGroupsId ? 'disabled' : '';?> placeholder="выберите из списка...">
-													<option value="0" checked>выберите из списка...</option>
-													<?
-														foreach ($products->attr_groups as $_group) {
-															if (!$_group[0]['m_products_attributes_groups_required']) {
-																echo '<option ' . ($productAttributesGroupsId == $_group[0]['m_products_attributes_groups_id'] ? 'selected' : '') . ' data="' . $_group[0]['m_products_attributes_groups_list_id'] . '" value="' . $_group[0]['m_products_attributes_groups_id'] . '">',
-																	$_group[0]['m_products_attributes_groups_name'],
-																	'</option>';
-															}
-														}
-														?>
-												</select>
+												<section class="col col-8">
+													<label class="label">Связанные товары</label>
+													<select name="m_products_links[]" id="m_products_links" style="width:100%" multiple class="autoselect" placeholder="выберите из списка...">
+														<?
+															foreach ($products->products_display_li() as $k => $v)
+																if (strlen($k) == 10 && isset($v['items'])) {
+																	echo '<optgroup label="' . $v['m_products_categories_name'] . '">';
+																	foreach ($v['items'] as $products_)
+																		if ($products_['m_products_id'] != $product['m_products_id'])
+																			echo '<option value="' . $products_['m_products_id'] . '" ' . (in_array($products_['m_products_id'], $product['m_products_links']) !== false ? ' selected ' : '') . '>',
+																				'[' . $v['m_products_categories_name'] . '] ' . $products_['m_products_name'],
+																				'</option>';
+																	echo '</optgroup>';
+																}
+															?>
+													</select>
+												</section>
 											</div>
-											<?if ($productAttributesGroupsId) {?>
-											<div class="col-xs-12 col-sm-6">
-												<a id="d123-edit" class="btn btn-primary">
-													<i class="fa fa-edit"></i>
-													Редактировать
-												</a>
-											</div>
-											<? } ?>
-										</div>
-									</section>
-
-									<div id="attr"><!--Здесь появятся аттрибуты--></div>
-								</fieldset>
-								<header>Дополнительные опции</header>
-								<fieldset>
-									<div class="row">
-										<section class="col col-4">
-											<label class="checkbox">
-												<input type="checkbox" name="m_products_show_site" <?= ($product['m_products_show_site'] ? ' checked' : '') ?> value="1" />
-												<i></i>
-												Показывать на сайте
-											</label>
-											<label class="checkbox">
-												<input type="checkbox" name="m_products_show_price" <?= ($product['m_products_show_price'] ? ' checked' : '') ?> value="1" />
-												<i></i>
-												Выгружать в прайс
-											</label>
-										</section>
-										<section class="col col-8">
-											<label class="label">Связанные товары</label>
-											<select name="m_products_links[]" id="m_products_links" style="width:100%" multiple class="autoselect" placeholder="выберите из списка...">
+										</fieldset>
+										<header>Фото товара</header>
+										<fieldset>
+											<section>
+												<div id="fileupload"></div>
 												<?
-													foreach ($products->products_display_li() as $k => $v)
-														if (strlen($k) == 10 && isset($v['items'])) {
-															echo '<optgroup label="' . $v['m_products_categories_name'] . '">';
-															foreach ($v['items'] as $products_)
-																if ($products_['m_products_id'] != $product['m_products_id'])
-																	echo '<option value="' . $products_['m_products_id'] . '" ' . (in_array($products_['m_products_id'], $product['m_products_links']) !== false ? ' selected ' : '') . '>',
-																		'[' . $v['m_products_categories_name'] . '] ' . $products_['m_products_name'],
-																		'</option>';
-															echo '</optgroup>';
-														}
-													?>
-											</select>
-										</section>
-									</div>
-								</fieldset>
-								<header>Фото товара</header>
-								<fieldset>
-									<section>
-										<div id="fileupload"></div>
-										<?
-											echo '<div class="ajax-file-upload-container">';
+													echo '<div class="ajax-file-upload-container">';
 
-											foreach ($foto as $_foto)
+													foreach ($foto as $_foto)
 
-												echo '
+														echo '
 														<div class="ajax-file-upload-statusbar">
 															<div class="ajax-file-upload-preview-container">',
-													($product['m_products_id_isolux']
-														? '<a class="fancybox-button" rel="group" href="//crm.formetoo.ru/images/products/' . $product['m_products_id'] . '/' . $_foto->file . '_max.jpg">
+															($product['m_products_id_isolux']
+																? '<a class="fancybox-button" rel="group" href="//crm.formetoo.ru/images/products/' . $product['m_products_id'] . '/' . $_foto->file . '_max.jpg">
 																		<img class="ajax-file-upload-preview" src="//crm.formetoo.ru/images/products/' . $product['m_products_id'] . '/' . $_foto->file . '_min.jpg" style="width: auto; height: auto;">
 																	</a>'
-														//																	? '<a class="fancybox-button" rel="group" href="//st.formetoo.ru/'.substr($product['m_products_id_isolux'],0,2).'/SN'.$product['m_products_id_isolux'].'/'.$_foto->file.'_max.jpg">
-														//																		<img class="ajax-file-upload-preview" src="//st.formetoo.ru/'.substr($product['m_products_id_isolux'],0,2).'/SN'.$product['m_products_id_isolux'].'/'.$_foto->file.'_min.jpg" style="width: auto; height: auto;">
-														//																	</a>'
+																//																	? '<a class="fancybox-button" rel="group" href="//st.formetoo.ru/'.substr($product['m_products_id_isolux'],0,2).'/SN'.$product['m_products_id_isolux'].'/'.$_foto->file.'_max.jpg">
+																//																		<img class="ajax-file-upload-preview" src="//st.formetoo.ru/'.substr($product['m_products_id_isolux'],0,2).'/SN'.$product['m_products_id_isolux'].'/'.$_foto->file.'_min.jpg" style="width: auto; height: auto;">
+																//																	</a>'
 
-														//																	: '<a class="fancybox-button" rel="group" href="//st.formetoo.ru/v/'.$product['m_products_id'].'/'.$_foto.'_max.jpg">
-														//                                                                    : '<a class="fancybox-button" rel="group" href="//crm.formetoo.ru/images/products/'.$product['m_products_id'].'/'.$_foto->file.'_m.jpg">
-														//																		<img class="ajax-file-upload-preview" src="//st.formetoo.ru/'.substr($product['m_products_id_isolux'],0,2).'/SN'.$product['m_products_id_isolux'].'/'.$_foto->file.'_min.jpg" style="width: auto; height: auto;">
-														//																	</a>'
-														: '<a class="fancybox-button" rel="group" href="//crm.formetoo.ru/images/products/' . $product['m_products_id'] . '/' . $_foto->file . '_max.jpg">
+																//																	: '<a class="fancybox-button" rel="group" href="//st.formetoo.ru/v/'.$product['m_products_id'].'/'.$_foto.'_max.jpg">
+																//                                                                    : '<a class="fancybox-button" rel="group" href="//crm.formetoo.ru/images/products/'.$product['m_products_id'].'/'.$_foto->file.'_m.jpg">
+																//																		<img class="ajax-file-upload-preview" src="//st.formetoo.ru/'.substr($product['m_products_id_isolux'],0,2).'/SN'.$product['m_products_id_isolux'].'/'.$_foto->file.'_min.jpg" style="width: auto; height: auto;">
+																//																	</a>'
+																: '<a class="fancybox-button" rel="group" href="//crm.formetoo.ru/images/products/' . $product['m_products_id'] . '/' . $_foto->file . '_max.jpg">
 																		<img class="ajax-file-upload-preview" src="//crm.formetoo.ru/images/products/' . $product['m_products_id'] . '/' . $_foto->file . '_min.jpg" style="width: auto; height: auto;">
 																	</a>'),
-													'</div>
+															'</div>
 															<label class="checkbox ajax-file-upload-info" style="margin-top:8px;">
 																<input type="checkbox" name="m_products_foto_main[]" ' . ($_foto->main ? 'checked' : '') . ' value="' . $_foto->file . '"/><i></i>Основное фото
 															</label>
@@ -694,25 +686,39 @@ if (get('action') == 'change' && $id = get('m_products_id')) {
 															<input type="hidden" name="idfoto[]" value="' . $_foto->file . '">
 														</div>
 												';
-											echo '</div>';
-											?>
-									</section>
-								</fieldset>
-								<footer>
-									<button type="submit" class="btn btn-primary">
-										<i class="fa fa-save"></i>
-										Сохранить данные
-									</button>
-								</footer>
-								<input type="hidden" name="m_products_id" value="<?= $product['m_products_id'] ?>" />
-								<input type="hidden" name="action" value="products_change" />
-							</form>
+													echo '</div>';
+													?>
+											</section>
+										</fieldset>
+										</div>
+										<div id="categories-settings">
+											<div class="widget-body">
+											<div class="row">
+												<div class="col-xs-12">
+													<div class="dd" id="product-categories-list">
+														<?$products->product_categories_display(0, $product['categories_id'])?>
+													</div>
+												</div>
+											</div>
+											</div>
+										</div>
+										<footer>
+											<button type="submit" class="btn btn-primary">
+												<i class="fa fa-save"></i>
+												Сохранить данные
+											</button>
+										</footer>
+										<input type="hidden" name="m_products_id" value="<?= $product['m_products_id'] ?>" />
+										<input type="hidden" name="action" value="products_change" />
+									</form>
+								</div>
+							</div>
 						</div>
-					</div>
+					</article>
 				</div>
-			</article>
-		</div>
-	</section>
+			</section>
+	</div>
+
 <?
 } else {
 	//список связанных работ
@@ -724,18 +730,6 @@ if (get('action') == 'change' && $id = get('m_products_id')) {
 				$products_select2 .= '<option value="' . $products_['m_products_id'] . '">' . '[' . $v['m_products_categories_name'] . '] ' . $products_['m_products_name'] . '</option>';
 			$products_select2 .= '</optgroup>';
 		}
-
-	//список категорий
-	$products_select = '';
-	$categories = array();
-	$products->categories_childs(0, $categories, 2, 0, true);
-	foreach ($categories as $categories_) {
-		$products_select .= '<option value="' . $categories_['m_products_categories_id'] . '">' . $categories_['m_products_categories_name'] . '</option>';
-	}
-	$t = array();
-	foreach ($categories as $k => $v)
-		$t[$v['m_products_categories_id']] = $v;
-	$categories = $t;
 
 	//список своих организаций
 	$products_contragents = '[';
@@ -777,8 +771,8 @@ if (get('action') == 'change' && $id = get('m_products_id')) {
 
     }
 
-    $("button[type=\'submit\']").on("click", function(){
-        attr_required();
+    $("form#products-add").submit(function(){
+      attr_required();
     });
 
 
@@ -832,7 +826,7 @@ if (get('action') == 'change' && $id = get('m_products_id')) {
 			m_products_contragents_id : {
 				required : true
 			},
-			"m_products_categories_id[]" : {
+			"selected_categories_id[]" : {
 				required : true
 			}
 		},
@@ -1096,20 +1090,20 @@ if (get('action') == 'change' && $id = get('m_products_id')) {
 
 		<div class="row">
 			<article class="col-lg-6 sortable-grid ui-sortable">
-                <div class="row control_header_row">
-                    <div class="control_header">
-                    <button type="submit" class="btn btn-primary control_btn">
-                        <i class="fa fa-save"></i>
-                        Сохранить
-                    </button>
-                    <button type="submit" class="btn btn-primary control_btn">
-                        <i class="fa fa-eye"></i>
-                        Посмотреть
-                    </button>
-                </div>
-                </div>
+				<div class="row control_header_row">
+					<div class="control_header">
+						<button type="submit" class="btn btn-primary control_btn">
+							<i class="fa fa-save"></i>
+							Сохранить
+						</button>
+						<button type="submit" class="btn btn-primary control_btn">
+							<i class="fa fa-eye"></i>
+							Посмотреть
+						</button>
+					</div>
+				</div>
 				<div class="jarviswidget" id="wid-id-30" data-widget-colorbutton="false" data-widget-editbutton="false" data-widget-fullscreenbutton="false" data-widget-custombutton="false" data-widget-sortable="false" style="" role="widget">
-                    <header>
+					<header>
 						<span class="widget-icon"> <i class="fa fa-edit"></i> </span>
 						<h2>Добавить товарную позицию</h2>
 						<span class="obligatory">* помечены поля, обязательные для заполнения.</span>
@@ -1117,300 +1111,307 @@ if (get('action') == 'change' && $id = get('m_products_id')) {
 					<div>
 						<div class="widget-body">
 							<form id="products-add" class="smart-form" method="post">
-								<header>Основные данные</header>
-								<fieldset>
-									<div class="row">
-										<section class="col col-8">
-											<label class="label">Наименование (название товара) <span class="obligatory_elem">*</span></label>
-											<label class="input">
-												<input type="text" name="m_products_name" value="">
-											</label>
-										</section>
-										<section class="col col-4">
-											<label class="label">Алиас <span class="obligatory_elem">*</span></label>
-											<label class="input">
-												<input type="text" name="slug" value="">
-											</label>
-										</section>
-									</div>
-								</fieldset>
-								<fieldset>
-									<section>
-										<label class="label">Нахождение в категориях (выбор категории, в которой будет отображен товар) <span class="obligatory_elem">*</span></label>
-										<select name="m_products_categories_id[]" style="width:100%" class="autoselect" placeholder="выберите из списка...">
-											<?
-												$categories = array();
-												$products->categories_childs(0, $categories, 2);
-												foreach ($categories as $categories_) {
-													echo '<option value="' . $categories_['m_products_categories_id'] . '">
-														' . $categories_['m_products_categories_name'] . '
-													</option>';
-												}
-												?>
-										</select>
-									</section>
-									<div class="row">
-										<section class="col col-3">
-											<label class="label">Цена <span class="obligatory_elem">*</span></label>
-											<label class="input">
-												<i class="icon-append">р.</i>
-												<input type="text" name="m_products_price_general" style="text-align:right;" placeholder="цена розницы">
-											</label>
-										</section>
-										<section class="col col-3">
-											<label class="label">Кратность (количество единиц в товаре, цена указывается за одну единицу)</label>
-											<label class="input">
-												<i class="icon-append fa fa-cubes"></i>
-												<input type="text" name="m_products_miltiplicity" style="text-align:right;" placeholder="кол-во в единице">
-											</label>
-										</section>
-										<section class="col col-3">
-											<label class="label">Единица измерения</label>
-											<select name="m_products_unit" id="d123" class="autoselect">
-												<?
-													$q = 'SELECT * FROM `formetoo_cdb`.`m_info_units`;';
-													$t = $sql->query($q);
-													foreach ($t as $t_)
-														echo '<option value="' . $t_['m_info_units_id'] . '" id="' . $t_['m_info_units_id'] . '" data-desc="(' . $t_['m_info_units_name_full'] . ')">',
-															$t_['m_info_units_name'] . ' (' . $t_['m_info_units_name_full'] . ')',
-															'</option>';
-													?>
-											</select>
-										</section>
-										<section class="col col-3">
-											<label class="label">Организация</label>
-											<select name="m_products_contragents_id" class="autoselect" placeholder="выберите из списка...">
-												<?
-													foreach ($contragents->getInfo() as $contragents_) {
-														$ct = explode('|', $contragents_[0]['m_contragents_type']);
-														if (in_array(1, $ct))
-															echo '<option value="' . $contragents_[0]['m_contragents_id'] . '">',
-																$contragents_[0]['m_contragents_c_name_short'] ? $contragents_[0]['m_contragents_c_name_short'] : $contragents_[0]['m_contragents_c_name_full'],
-																'</option>';
-													}
-													?>
-											</select>
-										</section>
-									</div>
-									<div class="row">
-										<section class="col col-3">
-											<select name="m_products_price_currency" class="autoselect" placeholder="выберите из списка...">
-												<option value="1" selected>Рубль</option>
-												<option value="2">Доллар</option>
-												<option value="3">Евро</option>
-											</select>
-										</section>
-										<section class="col col-3">
-											<label class="checkbox">
-												<input type="checkbox" name="m_products_exist" checked value="1" />
-												<i></i>
-												Всегда в наличии
-											</label>
-										</section>
-									</div>
-								</fieldset>
+								<div class="tabs">
+									<ul>
+										<li><a href="#general-settings">Основные настройки</a></li>
+										<li><a href="#categories-settings">Категории</a></li>
+									</ul>
 
-								<header>SEO-параметры</header>
-								<fieldset>
-									<div class="row">
-										<section class="col col-6">
-											<label class="label">Title</label>
-											<label class="input">
-												<input type="text" name="seo_parameters[]" placeholder="Title">
-											</label>
-										</section>
-										<section class="col col-6">
-											<label class="label">Keywords</label>
-											<label class="input">
-												<input type="text" name="seo_parameters[]" placeholder="Keywords">
-											</label>
-										</section>
-									</div>
-									<div class="row">
-										<section class="col" style="width: 100%;">
-											<label class="label">Description</label>
-											<label class="textarea textarea-resizable">
-												<textarea name="seo_parameters[]" rows="5" placeholder="Description"></textarea>
-											</label>
-										</section>
-									</div>
-								</fieldset>
-
-								<header>Скидки</header>
-								<fieldset>
-									<div id="price">
-										<div class="multirow">
+									<div id="general-settings">
+										<header>Основные данные</header>
+										<fieldset>
 											<div class="row">
-												<section class="col col-3">
-													<label class="label">При покупке ОТ КОЛ-ВА</label>
+												<section class="col col-8">
+													<label class="label">Наименование (название товара) <span class="obligatory_elem">*</span></label>
 													<label class="input">
-														<i class="icon-append fa fa-cubes"></i>
-														<input type="text" name="m_products_prices_limit_count[]" placeholder="мин. кол-во" style="text-align:right;">
+														<input type="text" name="m_products_name" value="">
 													</label>
 												</section>
-												<section class="col col-3">
-													<label class="label">При покупке ОТ ЦЕНЫ</label>
+												<section class="col col-4">
+													<label class="label">Алиас <span class="obligatory_elem">*</span></label>
 													<label class="input">
-														<i class="icon-append fa fa-money"></i>
-														<input type="text" name="m_products_prices_limit_price[]" placeholder="мин. цена" style="text-align:right;">
+														<input type="text" name="slug" value="">
 													</label>
-												</section>
-												<section class="col col-3">
-													<label class="label">Стоимость СОСТАВИТ</label>
-													<label class="input">
-														<i class="icon-append">р.</i>
-														<input type="text" name="m_products_prices_price[]" placeholder="стоимость" style="text-align:right;">
-													</label>
-												</section>
-												<section class="col col-3">
-													<label class="label">&nbsp;</label>
-													<div class="btn-group btn-labeled multirow-btn">
-														<a class="btn btn-info add" href="javascript:void(0);"><span class="btn-label"><i class="glyphicon glyphicon-plus"></i></span>Добавить</a>
-														<a class="btn btn-info dropdown-toggle" data-toggle="dropdown" href="javascript:void(0);">
-															<span class="caret"></span>
-														</a>
-														<ul class="dropdown-menu">
-															<li>
-																<a href="javascript:void(0);" class="add">Добавить цену</a>
-															</li>
-															<li>
-																<a href="javascript:void(0);" class="delete">Удалить цену</a>
-															</li>
-														</ul>
-													</div>
 												</section>
 											</div>
-										</div>
-									</div>
-								</fieldset>
-								<header>Параметры</header>
-								<fieldset>
-									<section>
-										<label class="label">Описание товара</label>
-										<label class="textarea textarea-resizable">
-											<textarea name="m_products_desc" id="m_products_desc" rows="5" class="custom-scroll"></textarea>
-										</label>
-									</section>
+										</fieldset>
+										<fieldset>
+											<div class="row">
+												<section class="col col-3">
+													<label class="label">Цена <span class="obligatory_elem">*</span></label>
+													<label class="input">
+														<i class="icon-append">р.</i>
+														<input type="text" name="m_products_price_general" style="text-align:right;" placeholder="цена розницы">
+													</label>
+												</section>
+												<section class="col col-3">
+													<label class="label">Кратность (количество единиц в товаре, цена указывается за одну единицу)</label>
+													<label class="input">
+														<i class="icon-append fa fa-cubes"></i>
+														<input type="text" name="m_products_miltiplicity" style="text-align:right;" placeholder="кол-во в единице">
+													</label>
+												</section>
+												<section class="col col-3">
+													<label class="label">Единица измерения</label>
+													<select name="m_products_unit" id="d123" class="autoselect">
+														<?
+															$q = 'SELECT * FROM `formetoo_cdb`.`m_info_units`;';
+															$t = $sql->query($q);
+															foreach ($t as $t_)
+																echo '<option value="' . $t_['m_info_units_id'] . '" id="' . $t_['m_info_units_id'] . '" data-desc="(' . $t_['m_info_units_name_full'] . ')">',
+																	$t_['m_info_units_name'] . ' (' . $t_['m_info_units_name_full'] . ')',
+																	'</option>';
+															?>
+													</select>
+												</section>
+												<section class="col col-3">
+													<label class="label">Организация</label>
+													<select name="m_products_contragents_id" class="autoselect" placeholder="выберите из списка...">
+														<?
+															foreach ($contragents->getInfo() as $contragents_) {
+																$ct = explode('|', $contragents_[0]['m_contragents_type']);
+																if (in_array(1, $ct))
+																	echo '<option value="' . $contragents_[0]['m_contragents_id'] . '">',
+																		$contragents_[0]['m_contragents_c_name_short'] ? $contragents_[0]['m_contragents_c_name_short'] : $contragents_[0]['m_contragents_c_name_full'],
+																		'</option>';
+															}
+															?>
+													</select>
+												</section>
+											</div>
+											<div class="row">
+												<section class="col col-3">
+													<select name="m_products_price_currency" class="autoselect" placeholder="выберите из списка...">
+														<option value="1" selected>Рубль</option>
+														<option value="2">Доллар</option>
+														<option value="3">Евро</option>
+													</select>
+												</section>
+												<section class="col col-3">
+													<label class="checkbox">
+														<input type="checkbox" name="m_products_exist" checked value="1" />
+														<i></i>
+														Всегда в наличии
+													</label>
+												</section>
+											</div>
+										</fieldset>
 
-									<? foreach ($products->attr_groups as $_group) {
-											if ($_group[0]['m_products_attributes_groups_required']) {
-												?>
+										<header>SEO-параметры</header>
+										<fieldset>
+											<div class="row">
+												<section class="col col-6">
+													<label class="label">Title</label>
+													<label class="input">
+														<input type="text" name="seo_parameters[]" placeholder="Title">
+													</label>
+												</section>
+												<section class="col col-6">
+													<label class="label">Keywords</label>
+													<label class="input">
+														<input type="text" name="seo_parameters[]" placeholder="Keywords">
+													</label>
+												</section>
+											</div>
+											<div class="row">
+												<section class="col" style="width: 100%;">
+													<label class="label">Description</label>
+													<label class="textarea textarea-resizable">
+														<textarea name="seo_parameters[]" rows="5" placeholder="Description"></textarea>
+													</label>
+												</section>
+											</div>
+										</fieldset>
+
+										<header>Скидки</header>
+										<fieldset>
+											<div id="price">
+												<div class="multirow">
+													<div class="row">
+														<section class="col col-3">
+															<label class="label">При покупке ОТ КОЛ-ВА</label>
+															<label class="input">
+																<i class="icon-append fa fa-cubes"></i>
+																<input type="text" name="m_products_prices_limit_count[]" placeholder="мин. кол-во" style="text-align:right;">
+															</label>
+														</section>
+														<section class="col col-3">
+															<label class="label">При покупке ОТ ЦЕНЫ</label>
+															<label class="input">
+																<i class="icon-append fa fa-money"></i>
+																<input type="text" name="m_products_prices_limit_price[]" placeholder="мин. цена" style="text-align:right;">
+															</label>
+														</section>
+														<section class="col col-3">
+															<label class="label">Стоимость СОСТАВИТ</label>
+															<label class="input">
+																<i class="icon-append">р.</i>
+																<input type="text" name="m_products_prices_price[]" placeholder="стоимость" style="text-align:right;">
+															</label>
+														</section>
+														<section class="col col-3">
+															<label class="label">&nbsp;</label>
+															<div class="btn-group btn-labeled multirow-btn">
+																<a class="btn btn-info add" href="javascript:void(0);"><span class="btn-label"><i class="glyphicon glyphicon-plus"></i></span>Добавить</a>
+																<a class="btn btn-info dropdown-toggle" data-toggle="dropdown" href="javascript:void(0);">
+																	<span class="caret"></span>
+																</a>
+																<ul class="dropdown-menu">
+																	<li>
+																		<a href="javascript:void(0);" class="add">Добавить цену</a>
+																	</li>
+																	<li>
+																		<a href="javascript:void(0);" class="delete">Удалить цену</a>
+																	</li>
+																</ul>
+															</div>
+														</section>
+													</div>
+												</div>
+											</div>
+										</fieldset>
+										<header>Параметры</header>
+										<fieldset>
 											<section>
-												<label class="label">Обязательная группа атрибутов <span class="obligatory_elem">*</span></label>
-												<select name="m_products_attributes_groups_id_required" id="d123" class="autoselect" placeholder="выберите из списка...">
-													<option value="0" checked>выберите из списка...</option>
+												<label class="label">Описание товара</label>
+												<label class="textarea textarea-resizable">
+													<textarea name="m_products_desc" id="m_products_desc" rows="5" class="custom-scroll"></textarea>
+												</label>
+											</section>
+
+											<? foreach ($products->attr_groups as $_group) {
+													if ($_group[0]['m_products_attributes_groups_required']) {
+														?>
+													<section>
+														<label class="label">Обязательная группа атрибутов <span class="obligatory_elem">*</span></label>
+														<select name="m_products_attributes_groups_id_required" id="d123" class="autoselect" placeholder="выберите из списка...">
+															<option value="0" checked>выберите из списка...</option>
+													<?
+
+																break;
+															}
+														} ?>
+
+													<? foreach ($products->attr_groups as $_group) {
+															if ($_group[0]['m_products_attributes_groups_required']) {
+																echo '<option data="' . $_group[0]['m_products_attributes_groups_list_id'] . '" value="' . $_group[0]['m_products_attributes_groups_id'] . '" >',
+																	$_group[0]['m_products_attributes_groups_name'],
+																	'</option>';
+															}
+														}
+														?>
+													<? foreach ($products->attr_groups as $_group) {
+															if ($_group[0]['m_products_attributes_groups_required']) {
+																?>
+														</select>
+														<input id="attr_required_hidden" name="attr_required_val" type="hidden" value="">
+														<div id="attr_required">
+														</div>
+													</section>
 											<?
 
 														break;
 													}
 												} ?>
-
-											<? foreach ($products->attr_groups as $_group) {
-													if ($_group[0]['m_products_attributes_groups_required']) {
-														echo '<option data="' . $_group[0]['m_products_attributes_groups_list_id'] . '" value="' . $_group[0]['m_products_attributes_groups_id'] . '" >',
-															$_group[0]['m_products_attributes_groups_name'],
-															'</option>';
-													}
-												}
-												?>
-											<? foreach ($products->attr_groups as $_group) {
-													if ($_group[0]['m_products_attributes_groups_required']) {
+											<section>
+												<label class="label">Группа атрибутов</label>
+												<select name="m_products_attributes_groups_id" id="attr-group" class="autoselect" placeholder="выберите из списка...">
+													<option value="0" checked>выберите из списка...</option>
+													<?
+														foreach ($products->attr_groups as $_group) {
+															if (!$_group[0]['m_products_attributes_groups_required']) {
+																echo '<option data="' . $_group[0]['m_products_attributes_groups_list_id'] . '" value="' . $_group[0]['m_products_attributes_groups_id'] . '" >',
+																	$_group[0]['m_products_attributes_groups_name'],
+																	'</option>';
+															}
+														}
 														?>
 												</select>
-												<input id="attr_required_hidden" name="attr_required_val" type="hidden" value="">
-												<div id="attr_required">
-												</div>
 											</section>
-									<?
 
-												break;
-											}
-										} ?>
-									<section>
-										<label class="label">Группа атрибутов</label>
-										<select name="m_products_attributes_groups_id" id="attr-group" class="autoselect" placeholder="выберите из списка...">
-											<option value="0" checked>выберите из списка...</option>
-											<?
-												foreach ($products->attr_groups as $_group) {
-													if (!$_group[0]['m_products_attributes_groups_required']) {
-														echo '<option data="' . $_group[0]['m_products_attributes_groups_list_id'] . '" value="' . $_group[0]['m_products_attributes_groups_id'] . '" >',
-															$_group[0]['m_products_attributes_groups_name'],
-															'</option>';
-													}
-												}
-												?>
-										</select>
-									</section>
-
-									<div id="attr"><!--Здесь появятся аттрибуты--></div>
-								</fieldset>
-								<header>Дополнительные опции</header>
-								<fieldset>
-									<div class="row">
-										<section class="col col-4">
-											<label class="checkbox">
-												<input type="checkbox" name="m_products_show_site" checked="checked" value="1" />
-												<i></i>
-												Показывать на сайте
-											</label>
-											<label class="checkbox">
-												<input type="checkbox" name="m_products_show_price" checked="checked" value="1" />
-												<i></i>
-												Выгружать в прайс
-											</label>
-										</section>
-										<section class="col col-8">
-											<label class="label">Связанные товары</label>
-											<select name="m_products_links[]" id="m_products_links" style="width:100%" multiple class="autoselect" placeholder="выберите из списка...">
+											<div id="attr">
+												<!--Здесь появятся аттрибуты-->
+											</div>
+										</fieldset>
+										<header>Дополнительные опции</header>
+										<fieldset>
+											<div class="row">
+												<section class="col col-4">
+													<label class="checkbox">
+														<input type="checkbox" name="m_products_show_site" checked="checked" value="1" />
+														<i></i>
+														Показывать на сайте
+													</label>
+													<label class="checkbox">
+														<input type="checkbox" name="m_products_show_price" checked="checked" value="1" />
+														<i></i>
+														Выгружать в прайс
+													</label>
+												</section>
+												<section class="col col-8">
+													<label class="label">Связанные товары</label>
+													<select name="m_products_links[]" id="m_products_links" style="width:100%" multiple class="autoselect" placeholder="выберите из списка...">
+														<?
+															foreach ($products->products_display_li() as $k => $v)
+																if (strlen($k) == 10 && isset($v['items'])) {
+																	echo '<optgroup label="' . $v['m_products_categories_name'] . '">';
+																	foreach ($v['items'] as $products_)
+																		echo '<option value="' . $products_['m_products_id'] . '">',
+																			'[' . $v['m_products_categories_name'] . '] ' . $products_['m_products_name'],
+																			'</option>';
+																	echo '</optgroup>';
+																}
+															?>
+													</select>
+												</section>
+											</div>
+										</fieldset>
+										<header>Фото товара</header>
+										<fieldset>
+											<section>
+												<div id="fileupload"></div>
 												<?
-													foreach ($products->products_display_li() as $k => $v)
-														if (strlen($k) == 10 && isset($v['items'])) {
-															echo '<optgroup label="' . $v['m_products_categories_name'] . '">';
-															foreach ($v['items'] as $products_)
-																echo '<option value="' . $products_['m_products_id'] . '">',
-																	'[' . $v['m_products_categories_name'] . '] ' . $products_['m_products_name'],
-																	'</option>';
-															echo '</optgroup>';
-														}
+													$foto = array();
+													echo '<div class="ajax-file-upload-container">';
+													foreach ($foto as $_foto)
+														echo '
+															<div class="ajax-file-upload-statusbar">
+																<div class="ajax-file-upload-preview-container">
+																	<a class="fancybox-button" rel="group" href="/foto/portfolio/' . $order['m_orders_id'] . '/' . ($_foto->file) . '_b.jpg">
+																		<img class="ajax-file-upload-preview" src="/foto/portfolio/' . $order['m_orders_id'] . '/' . ($_foto->file) . '_m.jpg" style="width: auto; height: auto;">
+																	</a>
+																</div>
+																<label class="input ajax-file-upload-info" style="margin-top: 8px;">
+																	<input type="text" name="m_portfolio_foto_item_name[]" class="form-control" placeholder="название" value="' . ($_foto->name) . '">
+																</label>
+																<label class="textarea textarea-resizable ajax-file-upload-info">
+																	<textarea name="m_portfolio_foto_item_description[]" rows="3" class="custom-scroll" placeholder="описание">' . ($_foto->description) . '</textarea>
+																</label>
+																<div class="ajax-file-upload-filename">
+																	<a href="#" class="copy-filename" title="Нажмите, чтобы скопировать ссылку на фото, а затем на кнопку «Вставить фото» в редакторе" data-id="' . $_foto->file . '">Скопировать</a>
+																</div>
+																<a class="ajax-file-upload-remove btn btn-default btn-xs txt-color-red" title="Удалить фото">
+																	<i class="fa fa-trash-o"></i>
+																</a>
+																<input type="hidden" name="idfoto[]" value="' . $_foto->file . '">
+															</div>
+													';
+													echo '</div>';
 													?>
-											</select>
-										</section>
+											</section>
+										</fieldset>
 									</div>
-								</fieldset>
-								<header>Фото товара</header>
-								<fieldset>
-									<section>
-										<div id="fileupload"></div>
-										<?
-											$foto = array();
-											echo '<div class="ajax-file-upload-container">';
-											foreach ($foto as $_foto)
-												echo '
-													<div class="ajax-file-upload-statusbar">
-														<div class="ajax-file-upload-preview-container">
-															<a class="fancybox-button" rel="group" href="/foto/portfolio/' . $order['m_orders_id'] . '/' . ($_foto->file) . '_b.jpg">
-																<img class="ajax-file-upload-preview" src="/foto/portfolio/' . $order['m_orders_id'] . '/' . ($_foto->file) . '_m.jpg" style="width: auto; height: auto;">
-															</a>
-														</div>
-														<label class="input ajax-file-upload-info" style="margin-top: 8px;">
-															<input type="text" name="m_portfolio_foto_item_name[]" class="form-control" placeholder="название" value="' . ($_foto->name) . '">
-														</label>
-														<label class="textarea textarea-resizable ajax-file-upload-info">
-															<textarea name="m_portfolio_foto_item_description[]" rows="3" class="custom-scroll" placeholder="описание">' . ($_foto->description) . '</textarea>
-														</label>
-														<div class="ajax-file-upload-filename">
-															<a href="#" class="copy-filename" title="Нажмите, чтобы скопировать ссылку на фото, а затем на кнопку «Вставить фото» в редакторе" data-id="' . $_foto->file . '">Скопировать</a>
-														</div>
-														<a class="ajax-file-upload-remove btn btn-default btn-xs txt-color-red" title="Удалить фото">
-															<i class="fa fa-trash-o"></i>
-														</a>
-														<input type="hidden" name="idfoto[]" value="' . $_foto->file . '">
-													</div>
-											';
-											echo '</div>';
-											?>
-									</section>
-								</fieldset>
+									<div id="categories-settings">
+										<div class="widget-body">
+										<div class="row">
+											<div class="col-xs-12">
+												<div class="dd" id="product-categories-list">
+													<?$products->product_categories_display(0)?>
+												</div>
+											</div>
+										</div>
+										</div>
+									</div>
 								<footer>
 									<button type="submit" class="btn btn-primary">
 										<i class="fa fa-save"></i>
@@ -1442,9 +1443,10 @@ if (get('action') == 'change' && $id = get('m_products_id')) {
 <script src="/js/plugin/tinymce/tinymce.min.js"></script>
 
 <script src="/js/libs/speakingurl.js"></script>
+<script src="/js/plugin/jquery-nestable/jquery.nestable.min.js"></script>
 <script>
 	let source = $('input[name="m_products_name"]');
-  let target = $('input[name="slug"]');
+	let target = $('input[name="slug"]');
 	slugify(source, target);
 
 	function slugify(source, target) {
@@ -1474,32 +1476,31 @@ if (get('action') == 'change' && $id = get('m_products_id')) {
 			}
 		});
 	}
-	
-	$('#d123-edit').on("click", function () {
+
+	$('#d123-edit').on("click", function() {
 		$("#attr-group").prop("disabled", false);
 	});
 
 	function renderAttributesGroup(attirbutes_group_id, products_id) {
 		$.post(
-			"/ajax/product_detail_attributes.php",
-			{
+			"/ajax/product_detail_attributes.php", {
 				attirbutes_group_id,
 				products_id
 			},
-			function(data){
-				if(data != "ERROR"){
+			function(data) {
+				if (data != "ERROR") {
 					$("#attr").html(data);
 				}
 			}
 		);
 	}
 
-	$('#attr-group').on('change', function (e) {
-		e.val != 0 && renderAttributesGroup(e.val, <?=get('m_products_id') ? get('m_products_id') : ''?>);
+	$('#attr-group').on('change', function(e) {
+		e.val != 0 && renderAttributesGroup(e.val, <?= get('m_products_id') ? get('m_products_id') : '' ?>);
 	});
 	<?
 	if (!empty($productAttributesGroupsId)) {
-		echo 'renderAttributesGroup("'.$productAttributesGroupsId.'", "'.get('m_products_id').'");';
+		echo 'renderAttributesGroup("' . $productAttributesGroupsId . '", "' . get('m_products_id') . '");';
 	}
 	?>
 </script>

@@ -78,9 +78,6 @@ if ($id = get('m_products_attributes_list_id')) {
 				},
 				m_products_contragents_id : {
 					required : true
-				},
-				"m_products_categories_id[]" : {
-					required : true
 				}
 			},
 			errorPlacement : function(error, element) {
@@ -247,9 +244,6 @@ if ($id = get('m_products_attributes_list_id')) {
 				required : true
 			},
 			m_products_contragents_id : {
-				required : true
-			},
-			"m_products_categories_id[]" : {
 				required : true
 			}
 		},

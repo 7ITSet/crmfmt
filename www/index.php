@@ -297,6 +297,9 @@ ob_start();
 			datepicker();
 
 			pageSetUp();
+
+			$('.tabs').tabs();
+
 			$(document).on('click', '#logout', function() {
 				window.location = '/?logout';
 				return false;

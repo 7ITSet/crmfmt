@@ -4,7 +4,7 @@ global $user,$sql,$content,$contragents,$logistic,$info;
 
 if($id=get('m_products_id')){
 	$product=$products->products_id[$id][0];
-	$product['m_products_categories_id']=explode('|',$product['m_products_categories_id']);
+	$product['m_products_categories_id']=explode('|',$product['categories_id']);
 	$product['m_products_links']=explode('|',$product['m_products_links']);
 	
 	$content->setJS('
@@ -518,7 +518,7 @@ $i=0;
 foreach($products->products_id as $products_){
 	$products_=$products_[0];
 	$m_products_categories_id=array();
-	$products_['m_products_categories_id']=explode('|',$products_['m_products_categories_id']);
+	$products_['m_products_categories_id']=explode('|',$products_['categories_id']);
 	if($products_['m_products_categories_id'][0])
 		foreach($products_['m_products_categories_id'] as $t_)
 			$m_products_categories_id[]=$categories[$t_]['m_products_categories_name'];
