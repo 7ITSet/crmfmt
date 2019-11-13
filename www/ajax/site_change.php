@@ -52,6 +52,8 @@ if(!$e){
 					$v['id'].='';
 					$q='UPDATE `formetoo_main`.`menu` SET ';
 					//если порядковй номер текущего пункта обновился
+					$q.= is_bool($v['active']) ? '`active`='.(int)filter_var($v['active'], FILTER_VALIDATE_BOOLEAN) : '';
+					//если порядковй номер текущего пункта обновился
 					if($site->menu_id[$v['id']][0]['order']!=$k)
 						$q.='`order`='.$k;
 					//если родительский пункт обновился
@@ -59,8 +61,9 @@ if(!$e){
 						$q.=($site->menu_id[$v['id']][0]['order']!=$k?',':'').'`parent`='.$parent;
 					$q.=' WHERE `id`='.$v['id'].' LIMIT 1;';
 					//если есть изменения - выполняем запрос
-					if(strpos($q,'order')!==false)
+					if(strpos($q,'order')!==false || strpos($q,'active')!==false) {
 						$sql->query($q);
+					}
 					//если у категории есть дочерние категории - рекурсивно проверяем их
 					if(isset($v['children']))
 						categories($v['children'],$v['id']);

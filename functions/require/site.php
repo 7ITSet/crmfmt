@@ -407,26 +407,23 @@ $content->setJS('
 		}
 	});
 
+	$("#menu-list").nestable();
+
 	$("input.show").on("change",function(){
-		$.post(
-			"/ajax/site_change.php",
-			{
-				name:$(this).attr("data-name"),
-				pk:$(this).attr("data-pk"),
-				value:$(this).prop("checked")
-			}
-		);
+		let parent = $(this).closest(".dd-item");
+		$(parent).attr("data-active", $(this).prop("checked"));
 	});
 
-	$("#menu-list").nestable().on("change",function(){
+	$("form#site-page-change").submit(function(){
 		$.post(
 			"/ajax/site_change.php",
 			{
 				name:"list",
 				pk:"0",
-				value:JSON.stringify($(this).nestable("serialize"))
+				value:JSON.stringify($("#menu-list").nestable("serialize"))
 			}
 		);
+		return false;
 	});
 
 ');
@@ -608,7 +605,7 @@ if($site->content_id){
 					<h2>Существующие страницы</h2>
 				</header>
 				<div class="widget-body">
-					<form class="smart-form">
+					<form id="site-page-change" class="smart-form">
 						<div class="col-lg-12">
 							<div class="dd" id="menu-list">
 								<?$site->categories_display_li()?>
