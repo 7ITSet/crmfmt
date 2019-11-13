@@ -608,12 +608,20 @@ if($site->content_id){
 					<h2>Существующие страницы</h2>
 				</header>
 				<div class="widget-body">
-					<div class="col-lg-12">
-						<div class="dd" id="menu-list">
-							<?$site->categories_display_li()?>
+					<form class="smart-form">
+						<div class="col-lg-12">
+							<div class="dd" id="menu-list">
+								<?$site->categories_display_li()?>
+							</div>
 						</div>
+						<footer>
+							<button type="submit" class="btn btn-primary">
+								<i class="fa fa-save"></i>
+								Сохранить изменения
+							</button>
+						</footer>
 					</div>
-				</div>
+				</form>
 			</div>
 		</article>
 <?
