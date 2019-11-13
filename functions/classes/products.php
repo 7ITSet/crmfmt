@@ -659,7 +659,6 @@ class products{
 					$ext = end($array);
 					$foto[$v]['file'] = $nameFile;
 					$foto[$v]['ext'] = $ext;
-					
 					$foto[$v]['main']=isset($data['m_products_foto_main[]'][0])&&$data['m_products_foto_main[]'][0]==$v?1:0;
 					//копируем только добавленные фотки
 					if(!file_exists($_SERVER['DOCUMENT_ROOT'].'/images/products/'.$data['m_products_id'].'/'.$v.'_min.jpg')){

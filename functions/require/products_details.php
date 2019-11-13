@@ -679,12 +679,12 @@ if (get('action') == 'change' && $id = get('m_products_id')) {
 																	</a>'),
 															'</div>
 															<label class="checkbox ajax-file-upload-info" style="margin-top:8px;">
-																<input type="checkbox" name="m_products_foto_main[]" ' . ($_foto->main ? 'checked' : '') . ' value="' . $_foto->file . '"/><i></i>Основное фото
+																<input type="checkbox" name="m_products_foto_main[]" ' . ($_foto->main ? 'checked' : '') . ' value="'.$_foto->main.'"/><i></i>Основное фото
 															</label>
 															<a class="ajax-file-upload-remove btn btn-default btn-xs txt-color-red" title="Удалить фото">
 																<i class="fa fa-trash-o"></i>
 															</a>
-															<input type="hidden" name="idfoto[]" value="' . $_foto->file . '">
+															<input type="hidden" name="idfoto[]" value="' . $_foto->file . '.'.$_foto->ext.'">
 														</div>
 												';
 													echo '</div>';
@@ -1394,7 +1394,7 @@ if (get('action') == 'change' && $id = get('m_products_id')) {
 																<a class="ajax-file-upload-remove btn btn-default btn-xs txt-color-red" title="Удалить фото">
 																	<i class="fa fa-trash-o"></i>
 																</a>
-																<input type="hidden" name="idfoto[]" value="' . $_foto->file . '">
+																<input type="hidden" name="idfoto[]" value="' . $_foto->file . '.'.$_foto->ext.'">
 															</div>
 													';
 													}
