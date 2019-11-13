@@ -62,7 +62,7 @@ class foto{
 				}			
 				
 				if($wm){
-					$img=imagecreatefromjpeg($filemax);
+					$img= self::imagecreatefromImage($filemax);
 					list($w,$h)=getimagesize($filemax);
 					$w=$w<2000?$w:2000;
 					$h=$h<2000?$h:2000;
@@ -76,9 +76,10 @@ class foto{
 				
 				$file_json['file']['name']=$name;
 				$file_json['file']['id']=$un;
+				$file_json['file']['ext']=self::getExtensionFile($filemax);
 				$file_json['file']['resolution']['w']=$wcur;
 				$file_json['file']['resolution']['h']=$hcur;
-				$file_json['file']['path']='/temp/uploads/'.$user.'/'.$un.'_min.jpg';
+				$file_json['file']['path']='/temp/uploads/'.$user.'/'.$un.'_min.'.self::getExtensionFile($filemax);
 				return json_encode($file_json,JSON_UNESCAPED_SLASHES|JSON_UNESCAPED_UNICODE);
 			}
 			else return null;
@@ -229,7 +230,7 @@ class foto{
 		}
 		else
 			imagefill($img_o,0,0,16777215);
-		$img_i=imagecreatefromjpeg($file);
+		$img_i= self::imagecreatefromImage($file);
 		imagecopy($img_o,$img_i,0,0,0,0,$w_i,$h_i);
 		$img_o=imagerotate($img_o,$degree,0);
 		if($type==2){
@@ -293,7 +294,7 @@ class foto{
 	static function stamp($file_input,$file_output,$border=2,$autodetect=true){
 		$border_array=array(1=>1000000,2=>4000000,3=>6000000);
 		$border=$border_array[$border];
-		$img=imagecreatefromjpeg($file_input);
+		$img= self::imagecreatefromImage($file_input);
 		//переводим в градации серого
 		imagefilter($img,IMG_FILTER_GRAYSCALE);
 		//выделяем границы
@@ -380,5 +381,28 @@ class foto{
 		imagedestroy($res);
 	}
 
+	private static function imagecreatefromImage($filepath) {
+		$extension = self::getExtensionFile($filepath);
+
+		switch ($extension) {
+			case 'gif' :
+					$im = imageCreateFromGif($filepath);
+			break;
+			case 'jpg' :
+					$im = imageCreateFromJpeg($filepath);
+			break;
+			case 'png' :
+					$im = imageCreateFromPng($filepath);
+			break;
+		}
+		
+		return $im;
+	}
+	private static function getExtensionFile($filepath) {
+		$array = explode('.', $filepath);
+		$extension = end($array);
+		
+		return $extension;
+	}
 }
 ?>

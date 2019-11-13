@@ -208,15 +208,16 @@ if (get('action') == 'change' && $id = get('m_products_id')) {
 
 	$("#fileupload").uploadFile({
 		url:"/ajax/fileuploader/upload.php",
-		acceptFiles:"image/jpeg",
+		acceptFiles:"image/jpeg, image/jpg, image/gif, image/png",
 		maxFileCount:500,
 		maxFileSize:30*1024*1024,
 		onSuccess:function(files,data,xhr,pd){
 			data=JSON.parse(data);
+      console.log("TCL: data", data.file)
 			pd.preview.attr("src",data.file.path);
 			pd.preview.show();
-			pd.preview.parent().attr("href",data.file.path.substr(0,data.file.path.indexOf("_"))+"_max.jpg");
-			pd.preview.parents(".ajax-file-upload-statusbar:first").find("[name=\'idfoto[]\']").val(data.file.id);
+			pd.preview.parent().attr("href",data.file.path.substr(0,data.file.path.indexOf("_"))+"_max."+data.file.ext);
+			pd.preview.parents(".ajax-file-upload-statusbar:first").find("[name=\'idfoto[]\']").val(data.file.id+"."+data.file.ext);
 			pd.progressDiv.hide();
 			pd.progressDiv.next().show();
 		}
@@ -656,25 +657,25 @@ if (get('action') == 'change' && $id = get('m_products_id')) {
 												<?
 													echo '<div class="ajax-file-upload-container">';
 
-													foreach ($foto as $_foto)
+													foreach ($foto as $_foto) 
 
 														echo '
 														<div class="ajax-file-upload-statusbar">
 															<div class="ajax-file-upload-preview-container">',
 															($product['m_products_id_isolux']
-																? '<a class="fancybox-button" rel="group" href="//crm.formetoo.ru/images/products/' . $product['m_products_id'] . '/' . $_foto->file . '_max.jpg">
-																		<img class="ajax-file-upload-preview" src="//crm.formetoo.ru/images/products/' . $product['m_products_id'] . '/' . $_foto->file . '_min.jpg" style="width: auto; height: auto;">
+																? '<a class="fancybox-button" rel="group" href="//crm.formetoo.ru/images/products/' . $product['m_products_id'] . '/' . $_foto->file . '_max.'.$_foto->ext.'">
+																		<img class="ajax-file-upload-preview" src="//crm.formetoo.ru/images/products/' . $product['m_products_id'] . '/' . $_foto->file . '_min.'.$_foto->ext.'" style="width: auto; height: auto;">
 																	</a>'
-																//																	? '<a class="fancybox-button" rel="group" href="//st.formetoo.ru/'.substr($product['m_products_id_isolux'],0,2).'/SN'.$product['m_products_id_isolux'].'/'.$_foto->file.'_max.jpg">
-																//																		<img class="ajax-file-upload-preview" src="//st.formetoo.ru/'.substr($product['m_products_id_isolux'],0,2).'/SN'.$product['m_products_id_isolux'].'/'.$_foto->file.'_min.jpg" style="width: auto; height: auto;">
+																//																	? '<a class="fancybox-button" rel="group" href="//st.formetoo.ru/'.substr($product['m_products_id_isolux'],0,2).'/SN'.$product['m_products_id_isolux'].'/'.$_foto->file.'_max.'.$_foto->ext.'">
+																//																		<img class="ajax-file-upload-preview" src="//st.formetoo.ru/'.substr($product['m_products_id_isolux'],0,2).'/SN'.$product['m_products_id_isolux'].'/'.$_foto->file.'_min.'.$_foto->ext.'" style="width: auto; height: auto;">
 																//																	</a>'
 
-																//																	: '<a class="fancybox-button" rel="group" href="//st.formetoo.ru/v/'.$product['m_products_id'].'/'.$_foto.'_max.jpg">
-																//                                                                    : '<a class="fancybox-button" rel="group" href="//crm.formetoo.ru/images/products/'.$product['m_products_id'].'/'.$_foto->file.'_m.jpg">
-																//																		<img class="ajax-file-upload-preview" src="//st.formetoo.ru/'.substr($product['m_products_id_isolux'],0,2).'/SN'.$product['m_products_id_isolux'].'/'.$_foto->file.'_min.jpg" style="width: auto; height: auto;">
+																//																	: '<a class="fancybox-button" rel="group" href="//st.formetoo.ru/v/'.$product['m_products_id'].'/'.$_foto.'_max.'.$_foto->ext.'">
+																//                                                                    : '<a class="fancybox-button" rel="group" href="//crm.formetoo.ru/images/products/'.$product['m_products_id'].'/'.$_foto->file.'_m.'.$_foto->ext.'">
+																//																		<img class="ajax-file-upload-preview" src="//st.formetoo.ru/'.substr($product['m_products_id_isolux'],0,2).'/SN'.$product['m_products_id_isolux'].'/'.$_foto->file.'_min.'.$_foto->ext.'" style="width: auto; height: auto;">
 																//																	</a>'
-																: '<a class="fancybox-button" rel="group" href="//crm.formetoo.ru/images/products/' . $product['m_products_id'] . '/' . $_foto->file . '_max.jpg">
-																		<img class="ajax-file-upload-preview" src="//crm.formetoo.ru/images/products/' . $product['m_products_id'] . '/' . $_foto->file . '_min.jpg" style="width: auto; height: auto;">
+																: '<a class="fancybox-button" rel="group" href="//crm.formetoo.ru/images/products/' . $product['m_products_id'] . '/' . $_foto->file . '_max.'.$_foto->ext.'">
+																		<img class="ajax-file-upload-preview" src="//crm.formetoo.ru/images/products/' . $product['m_products_id'] . '/' . $_foto->file . '_min.'.$_foto->ext.'" style="width: auto; height: auto;">
 																	</a>'),
 															'</div>
 															<label class="checkbox ajax-file-upload-info" style="margin-top:8px;">
@@ -972,7 +973,7 @@ if (get('action') == 'change' && $id = get('m_products_id')) {
 			pd.preview.attr("src",data.file.path);
 			pd.preview.show();
 			pd.preview.parent().attr("href",data.file.path.substr(0,data.file.path.indexOf("_"))+"_b.jpg");
-			pd.preview.parents(".ajax-file-upload-statusbar:first").find("[name=\'idfoto[]\']").val(data.file.id);
+			pd.preview.parents(".ajax-file-upload-statusbar:first").find("[name=\'idfoto[]\']").val(data.file.id+"."+data.file.ext);
 			pd.progressDiv.hide();
 			pd.progressDiv.next().show();
 		}
@@ -1373,7 +1374,7 @@ if (get('action') == 'change' && $id = get('m_products_id')) {
 												<?
 													$foto = array();
 													echo '<div class="ajax-file-upload-container">';
-													foreach ($foto as $_foto)
+													foreach ($foto as $_foto) {
 														echo '
 															<div class="ajax-file-upload-statusbar">
 																<div class="ajax-file-upload-preview-container">
@@ -1396,6 +1397,7 @@ if (get('action') == 'change' && $id = get('m_products_id')) {
 																<input type="hidden" name="idfoto[]" value="' . $_foto->file . '">
 															</div>
 													';
+													}
 													echo '</div>';
 													?>
 											</section>

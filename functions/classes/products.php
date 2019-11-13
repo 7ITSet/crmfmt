@@ -384,20 +384,23 @@ class products{
 			//добавляем фото
 			mkdir($_SERVER['DOCUMENT_ROOT'].'/images/products/'.$data['m_products_id']);
 			$foto=array();
-			if($data['idfoto[]'])
+			if($data['idfoto[]']) {
 				foreach($data['idfoto[]'] as $k=>$v){
-					$foto[$v]['file']=$v;
+					$array = explode('.', $v);
+					$nameFile = $array[0];
+					$ext = end($array);
+					$foto[$v]['file'] = $nameFile;
+					$foto[$v]['ext'] = $ext;
+					
 					$foto[$v]['main']=isset($data['m_products_foto_main[]'][0])&&$data['m_products_foto_main[]'][0]==$v?1:0;
 					//копируем только добавленные фотки
-					if(!file_exists($_SERVER['DOCUMENT_ROOT'].'/images/products/'.$data['m_products_id'].'/'.$v.'_m.jpg')){
-						//1200
-						copy($_SERVER['DOCUMENT_ROOT'].'/temp/uploads/'.$user->getInfo().'/'.$v.'_max.jpg',$_SERVER['DOCUMENT_ROOT'].'/images/products/'.$data['m_products_id'].'/'.$v.'_max.jpg');
-						//200
-						copy($_SERVER['DOCUMENT_ROOT'].'/temp/uploads/'.$user->getInfo().'/'.$v.'_min.jpg',$_SERVER['DOCUMENT_ROOT'].'/images/products/'.$data['m_products_id'].'/'.$v.'_min.jpg');
-						//medium
-						copy($_SERVER['DOCUMENT_ROOT'].'/temp/uploads/'.$user->getInfo().'/'.$v.'_med.jpg',$_SERVER['DOCUMENT_ROOT'].'/images/products/'.$data['m_products_id'].'/'.$v.'_med.jpg');
+					if(!file_exists($_SERVER['DOCUMENT_ROOT'].'/images/products/'.$data['m_products_id'].'/'.$v.'_min.'.$ext)){
+						copy($_SERVER['DOCUMENT_ROOT'].'/temp/uploads/'.$user->getInfo().'/'.$nameFile.'_max.'.$ext,$_SERVER['DOCUMENT_ROOT'].'/images/products/'.$data['m_products_id'].'/'.$nameFile.'_max.'.$ext);
+						copy($_SERVER['DOCUMENT_ROOT'].'/temp/uploads/'.$user->getInfo().'/'.$nameFile.'_min.'.$ext,$_SERVER['DOCUMENT_ROOT'].'/images/products/'.$data['m_products_id'].'/'.$nameFile.'_min.'.$ext);
+						copy($_SERVER['DOCUMENT_ROOT'].'/temp/uploads/'.$user->getInfo().'/'.$nameFile.'_med.'.$ext,$_SERVER['DOCUMENT_ROOT'].'/images/products/'.$data['m_products_id'].'/'.$nameFile.'_med.'.$ext);
 					}
 				}
+			}
 			$foto=json_encode($foto,JSON_UNESCAPED_SLASHES|JSON_UNESCAPED_UNICODE);
 
 			$m_products_contragents_id = $data['m_products_contragents_id'];
@@ -651,13 +654,18 @@ class products{
 			$foto=array();
 			if($data['idfoto[]'])
 				foreach($data['idfoto[]'] as $k=>$v){
-					$foto[$v]['file']=$v;
+					$array = explode('.', $v);
+					$nameFile = $array[0];
+					$ext = end($array);
+					$foto[$v]['file'] = $nameFile;
+					$foto[$v]['ext'] = $ext;
+					
 					$foto[$v]['main']=isset($data['m_products_foto_main[]'][0])&&$data['m_products_foto_main[]'][0]==$v?1:0;
 					//копируем только добавленные фотки
 					if(!file_exists($_SERVER['DOCUMENT_ROOT'].'/images/products/'.$data['m_products_id'].'/'.$v.'_min.jpg')){
-						copy($_SERVER['DOCUMENT_ROOT'].'/temp/uploads/'.$user->getInfo().'/'.$v.'_max.jpg',$_SERVER['DOCUMENT_ROOT'].'/images/products/'.$data['m_products_id'].'/'.$v.'_max.jpg');
-						copy($_SERVER['DOCUMENT_ROOT'].'/temp/uploads/'.$user->getInfo().'/'.$v.'_min.jpg',$_SERVER['DOCUMENT_ROOT'].'/images/products/'.$data['m_products_id'].'/'.$v.'_min.jpg');
-						copy($_SERVER['DOCUMENT_ROOT'].'/temp/uploads/'.$user->getInfo().'/'.$v.'_med.jpg',$_SERVER['DOCUMENT_ROOT'].'/images/products/'.$data['m_products_id'].'/'.$v.'_med.jpg');
+						copy($_SERVER['DOCUMENT_ROOT'].'/temp/uploads/'.$user->getInfo().'/'.$nameFile.'_max.'.$ext,$_SERVER['DOCUMENT_ROOT'].'/images/products/'.$data['m_products_id'].'/'.$nameFile.'_max.'.$ext);
+						copy($_SERVER['DOCUMENT_ROOT'].'/temp/uploads/'.$user->getInfo().'/'.$nameFile.'_min.'.$ext,$_SERVER['DOCUMENT_ROOT'].'/images/products/'.$data['m_products_id'].'/'.$nameFile.'_min.'.$ext);
+						copy($_SERVER['DOCUMENT_ROOT'].'/temp/uploads/'.$user->getInfo().'/'.$nameFile.'_med.'.$ext,$_SERVER['DOCUMENT_ROOT'].'/images/products/'.$data['m_products_id'].'/'.$nameFile.'_med.'.$ext);
 					}
 				}
 

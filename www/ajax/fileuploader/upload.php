@@ -12,7 +12,7 @@ $foto=new foto;
 global $main_dir;
 
 //папка для хранения файлов
-$allowedExt=array('jpg','jpeg');
+$allowedExt = array('jpg','png','jpeg','gif');
 $maxFileSize=30*1024*1024;
 $maxFileCount=500;
 
