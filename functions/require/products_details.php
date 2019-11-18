@@ -314,6 +314,26 @@ if (get('action') == 'change' && $id = get('m_products_id')) {
 			<section id="widget-grid" class="">
 				<div class="row">
 					<article class="col-lg-6 sortable-grid ui-sortable">
+                        <div class="row control_header_row">
+                            <section class="prod_name">
+                                <label class="label">Наименование (название товара) <span class="obligatory_elem">*</span></label>
+                                <label class="input">
+                                    <input type="text" name="m_products_name" value="<?= $product['m_products_name'] ?>">
+                                </label>
+                            </section>
+                            <div class="control_header">
+                                <button type="submit" class="btn btn-primary control_btn">
+                                    <i class="fa fa-save"></i>
+                                    Сохранить
+                                </button>
+                                <a type="button" href="#" target="_blank">
+                                    <button type="submit" class="btn btn-primary control_btn">
+                                        <i class="fa fa-eye"></i>
+                                        Посмотреть
+                                    </button>
+                                </a>
+                            </div>
+                        </div>
 						<div class="jarviswidget" id="wid-id-2" data-widget-colorbutton="false" data-widget-editbutton="false" data-widget-fullscreenbutton="false" data-widget-custombutton="false" data-widget-sortable="false" style="" role="widget">
 							<header>
 								<span class="widget-icon"> <i class="fa fa-edit"></i> </span>
@@ -334,12 +354,6 @@ if (get('action') == 'change' && $id = get('m_products_id')) {
 										<header>Основные данные</header>
 										<fieldset>
 											<div class="row">
-												<section class="col col-8">
-													<label class="label">Наименование (название товара) <span class="obligatory_elem">*</span></label>
-													<label class="input">
-														<input type="text" name="m_products_name" value="<?= $product['m_products_name'] ?>">
-													</label>
-												</section>
 												<section class="col col-4">
 													<label class="label">Алиас <span class="obligatory_elem">*</span></label>
 													<label class="input">
