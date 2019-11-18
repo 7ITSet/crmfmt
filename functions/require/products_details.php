@@ -355,7 +355,7 @@ if (get('action') == 'change' && $id = get('m_products_id')) {
 										<fieldset>
 											<div class="row">
 												<section class="col col-4">
-													<label class="label">Алиас <span class="obligatory_elem">*</span></label>
+													<label class="label">URL <span class="obligatory_elem">*</span></label>
 													<label class="input">
 														<input type="text" name="slug" value="<?= $product['slug'] ?>">
 													</label>
@@ -1145,7 +1145,7 @@ if (get('action') == 'change' && $id = get('m_products_id')) {
 										<fieldset>
 											<div class="row">
 												<section class="col col-4">
-													<label class="label">Алиас <span class="obligatory_elem">*</span></label>
+													<label class="label">URL <span class="obligatory_elem">*</span></label>
 													<label class="input">
 														<input type="text" name="slug" value="">
 													</label>
