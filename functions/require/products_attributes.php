@@ -397,13 +397,13 @@ if ($id = get('m_products_attributes_list_id')) {
 										</section>
 									</div>
 									<section>
-										<label class="label">Комментарий</label>
+										<label class="label">Комментарий для покупателя (на сайте)</label>
 										<label class="textarea textarea-resizable">
 											<textarea name="m_products_attributes_list_comment" rows="2" class="custom-scroll" placeholder="Для внутреннего использования"></textarea>
 										</label>
 									</section>
 									<section>
-										<label class="label">Подсказка для сайта</label>
+										<label class="label">Комментарий для менеджера (в CRM)</label>
 										<label class="textarea textarea-resizable">
 											<textarea name="m_products_attributes_list_hint" rows="5" class="custom-scroll" placeholder="Детальное описание атрибута"></textarea>
 										</label>
