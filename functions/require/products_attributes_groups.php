@@ -99,13 +99,6 @@ if ($id = get('m_products_attributes_groups_id')) {
 												<input type="text" name="m_products_attributes_groups_name" value="<?= $group['m_products_attributes_groups_name'] ?>">
 											</label>
 										</section>
-										<section class="col col-4">
-											<label class="checkbox">
-												<input type="checkbox" name="m_products_attributes_groups_required" <?= ($group['m_products_attributes_groups_required'] ? ' checked' : '') ?> value="1">
-												<i></i>
-												Обязательная группа
-											</label>
-										</section>
 									</div>
 									<section>
 										<label class="label">Список атрибутов</label>
@@ -272,13 +265,6 @@ if ($id = get('m_products_attributes_groups_id')) {
 											<label class="label">Наименование группы</label>
 											<label class="input">
 												<input type="text" name="m_products_attributes_groups_name">
-											</label>
-										</section>
-										<section class="col col-4">
-											<label class="checkbox">
-												<input type="checkbox" name="m_products_attributes_groups_required" value="1">
-												<i></i>
-												Обязательная группа
 											</label>
 										</section>
 									</div>

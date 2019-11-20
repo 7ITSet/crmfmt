@@ -157,12 +157,6 @@ if(!$e){
 
 //АТРИБУТЫ ТОВАРОВ
 	//изменение значения чекбоксов
-		case 'm_products_attributes_list_main':
-			$data['value']=$data['value']=='true'?1:0;
-			$q='UPDATE `formetoo_main`.`m_products_attributes_list` SET 
-				`m_products_attributes_list_main`='.$data['value'].'
-				WHERE `m_products_attributes_list_id`='.$data['pk'].' LIMIT 1;';
-			break;
 		case 'm_products_attributes_list_required':
 			$data['value']=$data['value']=='true'?1:0;
 			$q='UPDATE `formetoo_main`.`m_products_attributes_list` SET 

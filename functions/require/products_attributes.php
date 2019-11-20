@@ -152,11 +152,6 @@ if ($id = get('m_products_attributes_list_id')) {
 										<section class="col col-4">
 											<label class="label">Параметры</label>
 											<label class="checkbox">
-												<input type="checkbox" name="m_products_attributes_list_main" <?= $attr['m_products_attributes_list_main'] ? 'checked="checked"' : '' ?> value="1" />
-												<i></i>
-												Основной
-											</label>
-											<label class="checkbox">
 												<input type="checkbox" name="m_products_attributes_list_required" <?= $attr['m_products_attributes_list_required'] ? 'checked="checked"' : '' ?> value="0" />
 												<i></i>
 												Обязателен для заполнения
@@ -370,11 +365,6 @@ if ($id = get('m_products_attributes_list_id')) {
 										<section class="col col-4">
 											<label class="label">Параметры</label>
 											<div class="label_checkbox">
-												<input type="checkbox" name="m_products_attributes_list_main" checked="checked" value="1" />
-												<i></i>
-												Основной
-											</div>
-											<div class="label_checkbox">
 												<input type="checkbox" name="m_products_attributes_list_required" value="0" />
 												<i></i>
 												Обязателен для заполнения
@@ -499,10 +489,6 @@ if ($id = get('m_products_attributes_list_id')) {
 														'</td>
 		<td>
 			<label class="checkbox">
-			  <input type="checkbox" class="checkbox style-0 show" data-name="m_products_attributes_list_main" ' . ($_attr['m_products_attributes_list_main'] ? 'checked' : '') . ' data-pk="' . $_attr['m_products_attributes_list_id'] . '">
-			  <span>Основной</span>
-			</label>
-			<label class="checkbox">
 			  <input type="checkbox" class="checkbox style-0 show" data-name="m_products_attributes_list_required" ' . ($_attr['m_products_attributes_list_required'] ? 'checked' : '') . ' data-pk="' . $_attr['m_products_attributes_list_id'] . '">
 			  <span>Обязательный</span>
 			</label>
@@ -571,3 +557,124 @@ if ($id = get('m_products_attributes_list_id')) {
 		</div>
 	</section>
 <? } ?>
+
+<div class="hrc-card">
+	<div class="hrc-card__header">
+   	<div class="hrc-card__title">
+			<h4 class="">Редактировать атрибут</h4>
+		</div>
+	</div>
+	<div class="hrc-card__body">
+	
+	<div>
+						<div class="widget-body">
+							<form id="products-add" class="smart-form" method="post">
+									<div class="row">
+										<section class="col col-6">
+
+										<div class="hrc-component hrc-con-input-label hrc-input w-full hrc-input-primary is-label-placeholder">
+											<label for="" class="hrc-input--label">Name</label>
+											<div class="hrc-con-input">
+												<input type="text" class="hrc-input-primary hrc-input--input">
+												<span class="input-span-placeholder hrc-input--placeholder normal normal hrc-placeholder-label">
+													First Name
+												</span>
+												<span class="input-span-placeholder hrc-input--placeholder normal">
+													Date Warning
+												</span>
+											</div>
+											<span>
+												<div class="con-text-validation span-text-validation-warning hrc-input--text-validation-span">
+													<span class="span-text-validation">
+														The your data could not be verified
+													</span>
+												</div>
+											</span>
+										</div>
+			
+											<label class="label">Наименование (название атрибута) <span class="obligatory_elem">*</span></label>
+											<label class="input">
+												<input type="text" name="m_products_attributes_list_name">
+											</label>
+										</section>
+										<section class="col col-6">
+											<label class="label">Наименование для URL (единый указатель для атрибута) <span class="obligatory_elem">*</span></label>
+											<label class="input">
+												<input type="text" pattern="^[0-9A-Za-z_-]+$" name="m_products_attributes_list_name_url" placeholder="только латиница, цифры, минус и подчеркивание">
+											</label>
+										</section>
+									</div>
+									<div class="row">
+										<section class="col col-6">
+											<label class="label">Тип данных</label>
+											<select name="m_products_attributes_list_type" class="autoselect">
+												<option value="1" checked>Текстовый</option>
+												<option value="2">Числовой</option>
+												<option value="3">Логический</option>
+											</select>
+										</section>
+										<section class="col col-6">
+											<label class="label">Ед. измерения</label>
+												<a href="#" id="m_products_attributes_list_unit" data-type="select2" data-pk="1" data-original-title="Укажите теги"></a>
+												<input type="hidden" name="m_products_attributes_list_unit" />
+										</section>
+									</div>
+									<div class="row">
+										<section class="col col-4">
+											<label class="label">Параметры</label>
+											<div class="label_checkbox">
+												<input type="checkbox" name="m_products_attributes_list_required" value="0" />
+												<i></i>
+												Обязателен для заполнения
+											</div>
+										</section>
+										<section class="col col-4">
+											<label class="label">&nbsp;</label>
+											<div class="label_checkbox">
+												<input type="checkbox" name="m_products_attributes_list_site_search" value="1" />
+												<i></i>
+												Участвует в поиске
+											</div>
+											<div class="label_checkbox">
+												<input type="checkbox" name="m_products_attributes_list_site_filter" value="1" />
+												<i></i>
+												Участвует в фильтрах
+											</div>
+										</section>
+										<section class="col col-4">
+											<label class="label">&nbsp;</label>
+											<div class="label_checkbox">
+												<input type="checkbox" name="m_products_attributes_list_site_open" value="1" />
+												<i></i>
+												Раскрыт по умолчанию
+											</div>
+											<div class="label_checkbox">
+												<input type="checkbox" name="m_products_attributes_list_active" value="1" />
+												<span class="input_name">Активен</span>
+											</div>
+										</section>
+									</div>
+									<section>
+										<label class="label">Комментарий</label>
+										<label class="textarea textarea-resizable">
+											<textarea name="m_products_attributes_list_comment" rows="2" class="custom-scroll" placeholder="Для внутреннего использования"></textarea>
+										</label>
+									</section>
+									<section>
+										<label class="label">Подсказка для сайта</label>
+										<label class="textarea textarea-resizable">
+											<textarea name="m_products_attributes_list_hint" rows="5" class="custom-scroll" placeholder="Детальное описание атрибута"></textarea>
+										</label>
+									</section>
+								<footer>
+									<button type="submit" class="btn btn-primary">
+										<i class="fa fa-save"></i>
+										Сохранить данные
+									</button>
+								</footer>
+								<input type="hidden" name="action" value="products_attributes_list_add" />
+							</form>
+						</div>
+					</div>
+	</div>
+</div>
