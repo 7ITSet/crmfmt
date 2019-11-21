@@ -17872,14 +17872,13 @@ aside {
   background: -o-linear-gradient(left, #3a3633 93%, #322F2C 100%);
   background: -ms-linear-gradient(left, #3a3633 93%, #322F2C 100%);
   background: linear-gradient(to right, #3a3633 93%, #322F2C 100%);
-  min-height: 100%;
 }
 /*
  * HEADER GROUP
  */
 #header {
   display: block;
-  height: 49px;
+  height: 53px;
   margin: 0;
   padding: 0 13px 0 0;
   background-color: #f3f3f3;
@@ -17890,7 +17889,6 @@ aside {
   background-image: linear-gradient(to bottom, #f3f3f3, #e2e2e2);
   background-repeat: repeat-x;
   position: relative;
-  z-index: 905;
 }
 #header > div {
   display: inline-block;
@@ -18096,29 +18094,35 @@ aside {
   font-size: 17px;
   text-decoration: none !important;
 }
-#header > :first-child,
-aside {
+
+#header > :first-child {
   width: 222px;
 }
 /*
  * LEFT PANEL
  */
 #left-panel {
-  position: absolute;
-  top: 0px;
-  left: 0px;
-  z-index: 904;
-  padding-top: 49px;
+    position: relative;
+    width: 20%;
+    float: left;
+    overflow-y: scroll;
+    height: 100vh;
 }
 /*
  * MAIN PANEL
  */
 #main {
-  margin-left: 220px;
-  padding: 0;
-  padding-bottom: 52px;
-  /* min-height: 100%; */
+    overflow-y: scroll;
+    position: relative;
+    width: 80%;
+    height: 100vh;
+    float: right;
 }
+#left-panel::-webkit-scrollbar, #main::-webkit-scrollbar {
+    width: 0;
+    background: transparent;
+}
+
 /*
  * RIBBON
  */
@@ -22539,13 +22543,12 @@ label:hover input[type="checkbox"][disabled].checkbox:checked + span:before {
 .page-footer {
   height: 52px;
   padding: 15px 13px 0;
-  padding-left: 233px;
   border-top: 1px solid #CECECE;
   background: #474544;
   width: 100%;
-  position: absolute;
+  position: relative;
   display: block;
-  bottom: 0px;
+  float: right;
 }
 .fixed-page-footer .page-footer {
   position: fixed;
