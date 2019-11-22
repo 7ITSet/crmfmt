@@ -160,6 +160,11 @@ if ($id = get('m_products_attributes_list_id')) {
 												<i></i>
 												Обязателен для заполнения
 											</label>
+											<label class="checkbox">
+												<input type="checkbox" name="is_multiply"  <?= $attr['is_multiply'] ? 'checked="checked"' : '' ?> value="1"  />
+												<i></i>
+												Множественный
+											</label>
 										</section>
 										<section class="col col-4">
 											<label class="label">&nbsp;</label>
@@ -373,6 +378,11 @@ if ($id = get('m_products_attributes_list_id')) {
 												<i></i>
 												Обязателен для заполнения
 											</div>
+											<div class="label_checkbox">
+												<input type="checkbox" name="is_multiply" value="1"/>
+												<i></i>
+												Множественный
+											</div>
 										</section>
 										<section class="col col-4">
 											<label class="label">&nbsp;</label>
@@ -486,6 +496,10 @@ if ($id = get('m_products_attributes_list_id')) {
 			  <span>Обязательный</span>
 			</label>
 			<label class="checkbox">
+			  <input type="checkbox" class="checkbox style-0 show" data-name="is_multiply" ' . ($_attr['is_multiply'] ? 'checked' : '') . ' data-pk="' . $_attr['m_products_attributes_list_id'] . '">
+			  <span>Множественный</span>
+			</label>
+			<label class="checkbox">
 			  <input type="checkbox" class="checkbox style-0 show" data-name="m_products_attributes_list_site_search" ' . ($_attr['m_products_attributes_list_site_search'] ? 'checked' : '') . ' data-pk="' . $_attr['m_products_attributes_list_id'] . '">
 			  <span>В поиске</span>
 			</label>
@@ -595,9 +609,18 @@ if ($id = get('m_products_attributes_list_id')) {
 										<section class="col col-4">
 											<label class="label">Параметры</label>
 											<div class="label_checkbox">
+												<input type="checkbox" name="m_products_attributes_list_active" value="1" />
+												<span class="input_name">Активен</span>
+											</div>
+											<div class="label_checkbox">
 												<input type="checkbox" name="m_products_attributes_list_required" value="0" />
 												<i></i>
 												Обязателен для заполнения
+											</div>
+											<div class="label_checkbox">
+												<input type="checkbox" name="is_multiply" value="1"/>
+												<i></i>
+												Множественный
 											</div>
 										</section>
 										<section class="col col-4">
@@ -607,22 +630,18 @@ if ($id = get('m_products_attributes_list_id')) {
 												<i></i>
 												Участвует в поиске
 											</div>
+										</section>
+										<section class="col col-4">
+											<label class="label">&nbsp;</label>
 											<div class="label_checkbox">
 												<input type="checkbox" name="m_products_attributes_list_site_filter" value="1" />
 												<i></i>
 												Участвует в фильтрах
 											</div>
-										</section>
-										<section class="col col-4">
-											<label class="label">&nbsp;</label>
 											<div class="label_checkbox">
 												<input type="checkbox" name="m_products_attributes_list_site_open" value="1" />
 												<i></i>
 												Раскрыт по умолчанию
-											</div>
-											<div class="label_checkbox">
-												<input type="checkbox" name="m_products_attributes_list_active" value="1" />
-												<span class="input_name">Активен</span>
 											</div>
 										</section>
 									</div>

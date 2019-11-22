@@ -163,6 +163,12 @@ if(!$e){
 				`m_products_attributes_list_required`='.$data['value'].'
 				WHERE `m_products_attributes_list_id`='.$data['pk'].' LIMIT 1;';
 			break;
+		case 'is_multiply':
+			$data['value']=$data['value']=='true'?1:0;
+			$q='UPDATE `formetoo_main`.`m_products_attributes_list` SET 
+				`is_multiply`='.$data['value'].'
+				WHERE `m_products_attributes_list_id`='.$data['pk'].' LIMIT 1;';
+			break;
 		case 'm_products_attributes_list_site_search':
 			$data['value']=$data['value']=='true'?1:0;
 			$q='UPDATE `formetoo_main`.`m_products_attributes_list` SET 
