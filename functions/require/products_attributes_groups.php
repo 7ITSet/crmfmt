@@ -104,18 +104,12 @@ if ($id = get('m_products_attributes_groups_id')) {
 										<label class="label">Список атрибутов</label>
 										<select name="m_products_attributes_groups_list_id[]" style="width:100%" multiple class="autoselect" placeholder="выберите из списка...">
 											<?
-												// foreach ($products->attr_id as $_attr) {
-												// 	$_attr = $_attr[0];
-												// 	echo '<option value="' . $_attr['m_products_attributes_list_id'] . '" ' . (in_array($_attr['m_products_attributes_list_id'], $group['m_products_attributes_groups_list_id']) ? 'selected ' : '') . '>
-												// 			' . $_attr['m_products_attributes_list_name'] . ' [' . $type[$_attr['m_products_attributes_list_type']] . ($_attr['m_products_attributes_list_unit'] ? ', ' . $_attr['m_products_attributes_list_unit'] : '') . ($_attr['m_products_attributes_list_comment'] ? ', (' . $_attr['m_products_attributes_list_comment'] . ')' : '') . ']
-												// 		</option>';
-												// }
 												$tempAttrSelected = array();
 												foreach ($products->attr_id as $_attr) {
 													$_attr = $_attr[0];
 													$index = array_search($_attr['m_products_attributes_list_id'], $group['m_products_attributes_groups_list_id']);
 													if (false === $index) {
-														echo '<option value="' . $_attr['m_products_attributes_list_id'] . '">' . $_attr['m_products_attributes_list_name'] . ' [' . $type[$_attr['m_products_attributes_list_type']] . ($_attr['m_products_attributes_list_unit'] ? ', ' . $_attr['m_products_attributes_list_unit'] : '') . ($_attr['m_products_attributes_list_comment'] ? ', (' . $_attr['m_products_attributes_list_comment'] . ')' : '') . ']
+														echo '<option value="' . $_attr['m_products_attributes_list_id'] . '">' . $_attr['m_products_attributes_list_name'] . ($_attr['m_products_attributes_list_unit'] ? ', ' . $_attr['m_products_attributes_list_unit'] : '') . ($_attr['m_products_attributes_list_comment'] ? ', (' . $_attr['m_products_attributes_list_comment'] . ')' : '') . '
 															</option>';
 													} else {
 														$tempAttrSelected[$index] =  $_attr;
@@ -123,7 +117,7 @@ if ($id = get('m_products_attributes_groups_id')) {
 												}
 												ksort($tempAttrSelected);
 												foreach ($tempAttrSelected as $_attr) {
-													echo '<option value="' . $_attr['m_products_attributes_list_id'] . '" selected>' . $_attr['m_products_attributes_list_name'] . ' [' . $type[$_attr['m_products_attributes_list_type']] . ($_attr['m_products_attributes_list_unit'] ? ', ' . $_attr['m_products_attributes_list_unit'] : '') . ($_attr['m_products_attributes_list_comment'] ? ', (' . $_attr['m_products_attributes_list_comment'] . ')' : '') . ']
+													echo '<option value="' . $_attr['m_products_attributes_list_id'] . '" selected>' . $_attr['m_products_attributes_list_name'] . ($_attr['m_products_attributes_list_unit'] ? ', ' . $_attr['m_products_attributes_list_unit'] : '') . ($_attr['m_products_attributes_list_comment'] ? ', (' . $_attr['m_products_attributes_list_comment'] . ')' : '') . '
 														</option>';
 												}
 												?>
@@ -275,7 +269,7 @@ if ($id = get('m_products_attributes_groups_id')) {
 												foreach ($products->attr_id as $_attr) {
 													$_attr = $_attr[0];
 													echo '<option value="' . $_attr['m_products_attributes_list_id'] . '">
-                                                               ' . $_attr['m_products_attributes_list_name'] . ' [' . $type[$_attr['m_products_attributes_list_type']] . ($_attr['m_products_attributes_list_unit'] ? ', ' . $_attr['m_products_attributes_list_unit'] : '') . ($_attr['m_products_attributes_list_comment'] ? ', (' . $_attr['m_products_attributes_list_comment'] . ')' : '') . ']
+                                                               ' . $_attr['m_products_attributes_list_name'] . ($_attr['m_products_attributes_list_unit'] ? ', ' . $_attr['m_products_attributes_list_unit'] : '') . ($_attr['m_products_attributes_list_comment'] ? ', (' . $_attr['m_products_attributes_list_comment'] . ')' : '') . '
                                                            </option>';
 												}
 												?>
@@ -337,7 +331,7 @@ if ($id = get('m_products_attributes_groups_id')) {
 													$_group['m_products_attributes_groups_list_id'] = explode('|', $_group['m_products_attributes_groups_list_id']);
 													foreach ($_group['m_products_attributes_groups_list_id'] as $_attr) {
 														if (!empty($products->attr_id[$_attr])) {
-															echo $products->attr_id[$_attr][0]['m_products_attributes_list_name'] . ' [' . $type[$products->attr_id[$_attr][0]['m_products_attributes_list_type']] . ($products->attr_id[$_attr][0]['m_products_attributes_list_unit'] ? ', ' . $products->attr_id[$_attr][0]['m_products_attributes_list_unit'] : '') . ($products->attr_id[$_attr][0]['m_products_attributes_list_comment'] ? ', (' . $products->attr_id[$_attr][0]['m_products_attributes_list_comment'] . ')' : '') . ']<br/>';
+															echo $products->attr_id[$_attr][0]['m_products_attributes_list_name'] . ($products->attr_id[$_attr][0]['m_products_attributes_list_unit'] ? ', ' . $products->attr_id[$_attr][0]['m_products_attributes_list_unit'] : '') . ($products->attr_id[$_attr][0]['m_products_attributes_list_comment'] ? ', (' . $products->attr_id[$_attr][0]['m_products_attributes_list_comment'] . ')' : '') . '<br/>';
 														}
 													}
 													echo	'</td>

@@ -2,6 +2,9 @@
 defined('_DSITE') or die('Access denied');
 global $user, $sql, $content, $contragents, $logistic, $info, $products;
 
+include_once($_SERVER['DOCUMENT_ROOT'].'/../functions/classes/product_attributes.php'); 
+$productAttributes = new ProductAttributes();
+
 $units = array();
 foreach ($products->attr_id as $_attr) {
 	$_attr = $_attr[0];
@@ -24,7 +27,8 @@ foreach ($products->attr_groups as $_attrKey => $_attrValue) {
 array_walk($units, function (&$el) {
 	$el = '"' . $el . '"';
 });
-
+//типы аттрибута
+$attributeTypes = $productAttributes->getMap();
 
 
 //получение списка обязательных атрибутов
@@ -137,9 +141,9 @@ if ($id = get('m_products_attributes_list_id')) {
 										<section class="col col-6">
 											<label class="label">Тип данных</label>
 											<select name="m_products_attributes_list_type" class="autoselect">
-												<option value="1" <?= ($attr['m_products_attributes_list_type'] == 1 ? 'selected' : ''); ?>>Текстовый</option>
-												<option value="2" <?= ($attr['m_products_attributes_list_type'] == 2 ? 'selected' : ''); ?>>Числовой</option>
-												<option value="3" <?= ($attr['m_products_attributes_list_type'] == 3 ? 'selected' : ''); ?>>Логический</option>
+												<?foreach($attributeTypes['PROPERTY_TYPES']['types'] as $attrTypes) {?>
+													<option value="<?=$attrTypes['value']?>" <?= ($attrTypes['value'] == $attr['m_products_attributes_list_type'] ? 'selected' : ''); ?>><?=$attrTypes['name']?></option>
+												<? } ?>
 											</select>
 										</section>
 										<section class="col col-6">
@@ -350,9 +354,9 @@ if ($id = get('m_products_attributes_list_id')) {
 										<section class="col col-6">
 											<label class="label">Тип данных</label>
 											<select name="m_products_attributes_list_type" class="autoselect">
-												<option value="1" checked>Текстовый</option>
-												<option value="2">Числовой</option>
-												<option value="3">Логический</option>
+											<?foreach($attributeTypes['PROPERTY_TYPES']['types'] as $attrTypes) {?>
+												<option value="<?=$attrTypes['value']?>" <?= ($attrTypes['value'] == $attributeTypes['PROPERTY_TYPES']['default_value'] ? 'selected' : ''); ?>><?=$attrTypes['name']?></option>
+											<? } ?>
 											</select>
 										</section>
 										<section class="col col-6">
@@ -467,24 +471,13 @@ if ($id = get('m_products_attributes_list_id')) {
         <td>',
 														$_attr['m_products_attributes_list_unit'],
 														'</td>
-		<td>';
-													switch ($_attr['m_products_attributes_list_type']) {
-														case 1:
-															echo 'Текстовый';
-															break;
-														case 2:
-															echo 'Числовой';
-															break;
-														case 3:
-															echo 'Логический';
-															break;
-													}
-													echo '</td>
+										<td>';
+											$val = array_keys(array_column($attributeTypes['PROPERTY_TYPES']['types'], 'value'), $_attr['m_products_attributes_list_type']);
+											echo $attributeTypes['PROPERTY_TYPES']['types'][$val[0]]['name'];
+										echo '</td>
 
-		<td>',
-														$_attr['m_products_attributes_list_comment'],
-														'</td>
-		<td>',
+										<td>', $_attr['m_products_attributes_list_comment'], '</td>
+										<td>',
 														transform::some($_attr['m_products_attributes_list_hint'], 10),
 														'</td>
 		<td>
@@ -570,28 +563,7 @@ if ($id = get('m_products_attributes_list_id')) {
 						<div class="widget-body">
 							<form id="products-add" class="smart-form" method="post">
 									<div class="row">
-										<section class="col col-6">
-
-										<div class="hrc-component hrc-con-input-label hrc-input w-full hrc-input-primary is-label-placeholder">
-											<label for="" class="hrc-input--label">Name</label>
-											<div class="hrc-con-input">
-												<input type="text" class="hrc-input-primary hrc-input--input">
-												<span class="input-span-placeholder hrc-input--placeholder normal normal hrc-placeholder-label">
-													First Name
-												</span>
-												<span class="input-span-placeholder hrc-input--placeholder normal">
-													Date Warning
-												</span>
-											</div>
-											<span>
-												<div class="con-text-validation span-text-validation-warning hrc-input--text-validation-span">
-													<span class="span-text-validation">
-														The your data could not be verified
-													</span>
-												</div>
-											</span>
-										</div>
-			
+										<section class="col col-6">			
 											<label class="label">Наименование (название атрибута) <span class="obligatory_elem">*</span></label>
 											<label class="input">
 												<input type="text" name="m_products_attributes_list_name">
@@ -608,9 +580,9 @@ if ($id = get('m_products_attributes_list_id')) {
 										<section class="col col-6">
 											<label class="label">Тип данных</label>
 											<select name="m_products_attributes_list_type" class="autoselect">
-												<option value="1" checked>Текстовый</option>
-												<option value="2">Числовой</option>
-												<option value="3">Логический</option>
+											<?foreach($attributeTypes['PROPERTY_TYPES']['types'] as $attrTypes) {?>
+												<option value="<?=$attrTypes['value']?>" <?= ($attrTypes['value'] == $attributeTypes['PROPERTY_TYPES']['default_value'] ? 'selected' : ''); ?>><?=$attrTypes['name']?></option>
+											<? } ?>
 											</select>
 										</section>
 										<section class="col col-6">

@@ -1064,7 +1064,7 @@ class products{
 		global $sql,$e;
 		$data['m_products_attributes_list_name']=array(1,null,200);
 		$data['m_products_attributes_list_name_url']=array(null,null,100);
-		$data['m_products_attributes_list_type']=array(1,null,null,1,1);
+		$data['m_products_attributes_list_type']=array();
 		$data['m_products_attributes_list_unit']=array(null,null,80);
 		$data['m_products_attributes_list_hint']=array(null,null,100000);
 		$data['m_products_attributes_list_comment']=array(null,null,500);
@@ -1119,7 +1119,7 @@ class products{
 		$data['m_products_attributes_list_id']=array(1,null,null,10,1);
 		$data['m_products_attributes_list_name']=array(1,null,200);
 		$data['m_products_attributes_list_name_url']=array(null,null,100);
-		$data['m_products_attributes_list_type']=array(1,null,null,1,1);
+		$data['m_products_attributes_list_type']=array();
 		$data['m_products_attributes_list_unit']=array(null,null,80);
 		$data['m_products_attributes_list_hint']=array(null,null,100000);
 		$data['m_products_attributes_list_comment']=array(null,null,500);
@@ -1130,7 +1130,7 @@ class products{
 		$data['m_products_attributes_list_active']=array(null,null,3);
 
 		array_walk($data,'check');
-
+		
 		if(!$e){
 			$data['m_products_attributes_list_required']=$data['m_products_attributes_list_required']?1:0;
 			$data['m_products_attributes_list_site_search']=$data['m_products_attributes_list_site_search']?1:0;
