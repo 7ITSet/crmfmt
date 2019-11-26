@@ -1,4 +1,9 @@
 <?php
+defined ('_DSITE') or die ('Access denied');
+include_once($_SERVER['DOCUMENT_ROOT'].'/../functions/ccdb.php'); 
+include_once($_SERVER['DOCUMENT_ROOT'].'/../functions/system.php'); 
+$sql=new sql;
+//define ('_DSITE',1);
 class ProductAttributes
 {
   const CHECKBOX = 'CB';
@@ -60,5 +65,16 @@ class ProductAttributes
 				'default_value' => false
 			)
     );
+  }
+
+  public static function getAttributesListById($id)
+  {
+    global $sql;
+    
+    $q = 'SELECT * FROM `formetoo_main`.`m_attributes_enum` WHERE `attribute_id`='.$id.';';
+
+    $result = $sql->query($q);
+    
+    return $result;
   }
 }

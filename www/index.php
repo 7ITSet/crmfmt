@@ -43,6 +43,7 @@ ob_start();
 
 	<!-- Link to Google CDN's jQuery + jQueryUI; fall back to local -->
 	<script src="/js/jquery-2.1.1.min.js"></script>
+	<script src="/js/vue/vue.js"></script>
 </head>
 
 <body class="">

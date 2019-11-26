@@ -1088,7 +1088,7 @@ class products{
 			$data['m_products_attributes_list_name_url']=$data['m_products_attributes_list_name_url']?$data['m_products_attributes_list_name_url']:transform::translit($data['m_products_attributes_list_name']);
 
 
-			$q='INSERT `formetoo_main`.`m_products_attributes_list` SET
+			$q='INSERT `formetoo_main`.`m_products_attributes_list` SET 
 				`m_products_attributes_list_id`='.$data['m_products_attributes_list_id'].',
 				`m_products_attributes_list_name`=\''.$data['m_products_attributes_list_name'].'\',
 				`m_products_attributes_list_name_url`=\''.$data['m_products_attributes_list_name_url'].'\',
@@ -1132,9 +1132,11 @@ class products{
 		$data['m_products_attributes_list_site_filter']=array(null,null,3);
 		$data['m_products_attributes_list_site_open']=array(null,null,3);
 		$data['m_products_attributes_list_active']=array(null,null,3);
+		$data['property_values_default']=array();
 
 		array_walk($data,'check');
-		
+		$data['property_values']=$_REQUEST['property_values'];
+
 		if(!$e){
 			$data['m_products_attributes_list_required']=$data['m_products_attributes_list_required']?1:0;
 			$data['is_multiply']=$data['is_multiply']?1:0;
@@ -1144,7 +1146,37 @@ class products{
 			$data['m_products_attributes_list_active']=$data['m_products_attributes_list_active']?1:0;
 			$data['m_products_attributes_list_name_url']=$data['m_products_attributes_list_name_url']?$data['m_products_attributes_list_name_url']:transform::translit($data['m_products_attributes_list_name']);
 
-
+			if ($data['property_values']) {
+				foreach($data['property_values'] as $key => $value) {
+					if($value && $value['value']) {
+						if (is_numeric($key)) {
+							$ids[] = $key;
+							
+							$q='UPDATE `formetoo_main`.`m_attributes_enum` 
+								SET `value`=\''.$value['value'].'\', `sort`=\''.($value['sort'] ? $value['sort'] : 500).'\', `default`='.($data['property_values_default'] == $key ? 1 : 0).' 
+							WHERE `id`='.$key.';';
+							$sql->query($q);
+						} else {
+							$add[] = '( 
+								\''.$data['m_products_attributes_list_id'].'\', 
+								\''.$value['value'].'\', 
+								\''.($data['property_values_default'] == $key ? 1 : 0).'\', 
+								\''.($value['sort'] ? $value['sort'] : 500).'\'
+							)';
+						}
+					}
+				}
+				if (!empty($ids)) {
+					$q = 'DELETE FROM `formetoo_main`.`m_attributes_enum` WHERE `id` NOT IN ('.implode(', ', $ids).') AND `attribute_id`=\''.$data['m_products_attributes_list_id'].'\';';
+					$sql->query($q);
+				}
+			
+				if (!empty($add)) {
+					$q = 'INSERT INTO `formetoo_main`.`m_attributes_enum` (`attribute_id`,`value`,`default`, `sort`) VALUES '.implode(',', $add).';';
+					$sql->query($q);
+				}
+			}
+			
 			$q='UPDATE `formetoo_main`.`m_products_attributes_list` SET
 				`m_products_attributes_list_id`='.$data['m_products_attributes_list_id'].',
 				`m_products_attributes_list_name`=\''.$data['m_products_attributes_list_name'].'\',
@@ -1160,7 +1192,7 @@ class products{
 				`m_products_attributes_list_hint`=\''.$data['m_products_attributes_list_hint'].'\',
 				`m_products_attributes_list_comment`=\''.$data['m_products_attributes_list_comment'].'\'
 				WHERE `m_products_attributes_list_id`='.$data['m_products_attributes_list_id'].' LIMIT 1;';
-
+			//var_dump($q);
 			if($sql->query($q))
 				header('Location: '.url().'?success');
 			else{

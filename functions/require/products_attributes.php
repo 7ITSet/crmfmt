@@ -140,7 +140,7 @@ if ($id = get('m_products_attributes_list_id')) {
 									<div class="row">
 										<section class="col col-6">
 											<label class="label">Тип данных</label>
-											<select name="m_products_attributes_list_type" class="autoselect">
+											<select name="m_products_attributes_list_type" id="attributes_list_type" class="autoselect">
 												<?foreach($attributeTypes['PROPERTY_TYPES']['types'] as $attrTypes) {?>
 													<option value="<?=$attrTypes['value']?>" <?= ($attrTypes['value'] == $attr['m_products_attributes_list_type'] ? 'selected' : ''); ?>><?=$attrTypes['name']?></option>
 												<? } ?>
@@ -152,6 +152,7 @@ if ($id = get('m_products_attributes_list_id')) {
 											<input type="hidden" name="m_products_attributes_list_unit" value="<?= $attr['m_products_attributes_list_unit']; ?>" />
 										</section>
 									</div>
+									<section id="value-list"></section>
 									<div class="row">
 										<section class="col col-4">
 											<label class="label">Параметры</label>
@@ -669,3 +670,30 @@ if ($id = get('m_products_attributes_list_id')) {
 					</div>
 	</div>
 </div>
+
+<script>
+	$("#attributes_list_type").on("change",function(){
+		loadAttributeEnumData($(this).val());
+	});
+	
+	function loadAttributeEnumData($type) {
+  	if ($type == 'L') {
+			$.post(
+				"/ajax/attributes_enum.php",
+				{
+					id: '<?= (get('m_products_attributes_list_id')) ? get('m_products_attributes_list_id') : ''?>' 
+				},
+				function (data){
+					$('#value-list').html(data);
+				}
+			)
+		} else {
+			$('#value-list').html('');
+		}
+	}
+	$(document).ready(function() {
+		let val = $("#attributes_list_type").val()
+    console.log("TCL: val", val)
+		loadAttributeEnumData(val);
+	})
+</script>
