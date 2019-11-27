@@ -510,8 +510,6 @@ class products{
 		$data['m_products_prices_price[]']=array(null,null,18,null,1);
 
 		//$data['m_products_attributes_list_id[]']=array(null,10,null,null,1);
-		$data['m_products_attributes_list_id[]']=array();
-		$data['m_products_attributes_value[]']=array();
 
 		$data['m_products_contragents_id']=array(1,null,null,10,1);
 		$data['m_products_show_site']=array(null,null,3);
@@ -522,7 +520,10 @@ class products{
 		$data['slug']=array(1,null,255);
 
 		array_walk($data,'check');
-		
+
+		$data['m_products_attributes_list_id[]'] = $_REQUEST['m_products_attributes_list_id'];
+		$data['m_products_attributes_value[]'] = $_REQUEST['m_products_attributes_value'];
+
 		if(!$e){
 			//удаляем привязанные категории к продукту
 			$q='DELETE FROM `formetoo_main`.`m_products_category` WHERE `product_id`=\''.$data['m_products_id'].'\';';
@@ -578,19 +579,22 @@ class products{
 			//добавляем атрибуты
 			
 			$sql->query('DELETE FROM `formetoo_main`.`m_products_attributes` WHERE `m_products_attributes_product_id`='.$data['m_products_id'].';');
-			if(isset($data['m_products_attributes_list_id[]'])!=''&&$count=sizeof($data['m_products_attributes_list_id[]'])){
-				$q='INSERT INTO `formetoo_main`.`m_products_attributes` (`m_products_attributes_product_id`,`m_products_attributes_list_id`,`m_products_attributes_value`) VALUES ';
-				foreach($data['m_products_attributes_list_id[]'] as $key => $value) {
-					if($value) {
-						$q.='(
-							\''.$data['m_products_id'].'\',
-							\''.$value.'\',
-							\''.$data['m_products_attributes_value[]'][$key].'\'
-						),';
+			if(isset($data['m_products_attributes_value[]'])){
+				foreach($data['m_products_attributes_value[]'] as $key => $value) {
+					foreach($value as $keyAttr => $valueAttr) {
+					if ($valueAttr) {
+						$valuesArray[] = '(
+							\''.$data['m_products_id'].'\', 
+							\''.$data['m_products_attributes_list_id[]'][$key][$keyAttr].'\', 
+							\''.$valueAttr.'\'
+						)';
+						}
 					}
 				}
 				
-				if(!($sql->query(substr($q,0,-1).';')))
+				$q='INSERT INTO `formetoo_main`.`m_products_attributes` (`m_products_attributes_product_id`,`m_products_attributes_list_id`,`m_products_attributes_value`) VALUES '. implode(',', $valuesArray);
+				
+				if(!($sql->query($q)))
 					elogs();
 			}
 

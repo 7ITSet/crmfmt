@@ -315,11 +315,8 @@ if (get('action') == 'change' && $id = get('m_products_id')) {
 				<div class="row">
 					<article class="col-lg-6 sortable-grid ui-sortable">
                         <div class="row control_header_row">
-                            <section class="prod_name">
-                                <label class="label">Наименование (название товара) <span class="obligatory_elem">*</span></label>
-                                <label class="input">
-                                    <input type="text" name="m_products_name" value="<?= $product['m_products_name'] ?>">
-                                </label>
+														<section class="prod_name">
+														<h2><?= $product['m_products_name'] ?></h2>
                             </section>
                             <div class="control_header">
                                 <button type="submit" class="btn btn-primary control_btn">
@@ -354,6 +351,12 @@ if (get('action') == 'change' && $id = get('m_products_id')) {
 										<header>Основные данные</header>
 										<fieldset>
 											<div class="row">
+												<section class="col col-8">
+													<label class="label">Наименование (название товара) <span class="obligatory_elem">*</span></label>
+													<label class="input">
+															<input type="text" name="m_products_name" value="<?= $product['m_products_name'] ?>">
+													</label>
+												</section>
 												<section class="col col-4">
 													<label class="label">URL <span class="obligatory_elem">*</span></label>
 													<label class="input">

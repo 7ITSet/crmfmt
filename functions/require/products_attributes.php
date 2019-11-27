@@ -692,8 +692,7 @@ if ($id = get('m_products_attributes_list_id')) {
 		}
 	}
 	$(document).ready(function() {
-		let val = $("#attributes_list_type").val()
-    console.log("TCL: val", val)
+		let val = $("#attributes_list_type").val();
 		loadAttributeEnumData(val);
 	})
 </script>

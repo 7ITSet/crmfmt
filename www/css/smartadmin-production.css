@@ -15864,6 +15864,11 @@ section.col.col-3.attr_name {
 section.col.col-6.attr_value {
     width: 40%;
 }
+.col.attr_value label {
+  white-space: nowrap;
+  display: flex;
+  align-items: center;
+}
 @media screen and (max-width: 600px) {
   .smart-form .col {
     float: none;
