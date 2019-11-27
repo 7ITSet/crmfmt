@@ -109,7 +109,15 @@ if ($data['products_id']) {
             case 'H': echo '<label class="textarea textarea-resizable">	<textarea name="m_products_attributes_value['.$keyAttr.'][]" rows="8" class="custom-editor custom-scroll">'.$_attr['m_products_attributes_value'].'</textarea></label>'; 
               break;
 
-            case 'N': echo '<label class="input"><input type="number" name="m_products_attributes_value['.$keyAttr.'][]" data-type="'. $_attr['m_products_attributes_list_id'] .'" data-list-type="'. $_attr['m_products_attributes_list_type'] .'" suggest="'. $_attr['m_products_attributes_list_id'] .'" placeholder="число" value="'. $_attr['m_products_attributes_value'] .'"></label>'; 
+            case 'N': 
+              foreach ($_attr['valuesEnum'] as $valuesEnum) {
+                echo '<label class="input">';
+                  echo '<input type="number" name="m_products_attributes_value['.$keyAttr.'][]" data-type="'. $_attr['m_products_attributes_list_id'] .'" data-list-type="'. $_attr['m_products_attributes_list_type'] .'" suggest="'. $_attr['m_products_attributes_list_id'] .'" placeholder="значение" value="'. $valuesEnum .'">';
+                echo '</label>'; 
+              }
+              if ($_attr['is_multiply']) {
+                echo '<button class="btn btn-primary js-add-row onclick="return false;">+</button>';
+              }
               break;
 
             case 'I': echo '<label class="input"><input type="number" name="m_products_attributes_value['.$keyAttr.'][]" data-type="'. $_attr['m_products_attributes_list_id'] .'" data-list-type="'. $_attr['m_products_attributes_list_type'] .'" suggest="'. $_attr['m_products_attributes_list_id'] .'" placeholder="число" value="'. $_attr['m_products_attributes_value'] .'"> <span> - </span> <input type="number" name="m_products_attributes_value['.$keyAttr.'][]" data-type="'. $_attr['m_products_attributes_list_id'] .'" data-list-type="'. $_attr['m_products_attributes_list_type'] .'" suggest="'. $_attr['m_products_attributes_list_id'] .'" placeholder="число" value="'. $_attr['m_products_attributes_value'] .'"></label>';
@@ -191,7 +199,7 @@ unset($sql);
       let $input = $("select.autoselect");
       $input.select2();
     }
-    
+
     setSelect2();
 
     $('.js-add-row').click(function() {
