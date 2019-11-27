@@ -115,7 +115,15 @@ if ($data['products_id']) {
             case 'I': echo '<label class="input"><input type="number" name="m_products_attributes_value['.$keyAttr.'][]" data-type="'. $_attr['m_products_attributes_list_id'] .'" data-list-type="'. $_attr['m_products_attributes_list_type'] .'" suggest="'. $_attr['m_products_attributes_list_id'] .'" placeholder="число" value="'. $_attr['m_products_attributes_value'] .'"> <span> - </span> <input type="number" name="m_products_attributes_value['.$keyAttr.'][]" data-type="'. $_attr['m_products_attributes_list_id'] .'" data-list-type="'. $_attr['m_products_attributes_list_type'] .'" suggest="'. $_attr['m_products_attributes_list_id'] .'" placeholder="число" value="'. $_attr['m_products_attributes_value'] .'"></label>';
               break;
 
-            default: echo '<label class="input"><input type="text" name="m_products_attributes_value['.$keyAttr.'][]" data-type="'. $_attr['m_products_attributes_list_id'] .'" data-list-type="'. $_attr['m_products_attributes_list_type'] .'" suggest="'. $_attr['m_products_attributes_list_id'] .'" placeholder="значение" value="'. $_attr['m_products_attributes_value'] .'"></label>'; 
+            default:
+              foreach ($_attr['valuesEnum'] as $valuesEnum) {
+                echo '<label class="input">';
+                  echo '<input type="text" name="m_products_attributes_value['.$keyAttr.'][]" data-type="'. $_attr['m_products_attributes_list_id'] .'" data-list-type="'. $_attr['m_products_attributes_list_type'] .'" suggest="'. $_attr['m_products_attributes_list_id'] .'" placeholder="значение" value="'. $valuesEnum .'">';
+                echo '</label>'; 
+              }
+              if ($_attr['is_multiply']) {
+                echo '<button class="btn btn-primary js-add-row onclick="return false;">+</button>';
+              }
               break;
           }
           ?>
@@ -179,7 +187,19 @@ unset($sql);
       fontsize_formats: "6pt 7pt 8pt 9pt 10pt 11pt 12pt 13pt 14pt 15pt 16pt 17pt 18pt 19pt 20pt 21pt 22pt 23pt 24pt 25pt 26pt 27pt 28pt 29pt 30pt 31pt 32pt 33pt 34pt 35pt 36pt",
     });
 
-    var $input = $("select.autoselect");
-		$input.select2();
+    function setSelect2() {
+      let $input = $("select.autoselect");
+      $input.select2();
+    }
+    
+    setSelect2();
+
+    $('.js-add-row').click(function() {
+      let prev = $(this).prev('label.input').clone();
+      $(prev).find('input').val('');
+      $(this).before($(prev));
+      setSelect2();
+      return false;
+    })
   })
 </script>

@@ -585,7 +585,7 @@ class products{
 					if ($valueAttr) {
 						$valuesArray[] = '(
 							\''.$data['m_products_id'].'\', 
-							\''.$data['m_products_attributes_list_id[]'][$key][$keyAttr].'\', 
+							\''.$data['m_products_attributes_list_id[]'][$key][0].'\', 
 							\''.$valueAttr.'\'
 						)';
 						}
