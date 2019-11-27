@@ -523,6 +523,9 @@ class products{
 
 		$data['m_products_attributes_list_id[]'] = $_REQUEST['m_products_attributes_list_id'];
 		$data['m_products_attributes_value[]'] = $_REQUEST['m_products_attributes_value'];
+		//аттрибут интервал
+		$data['attribute_value_interval_min[]'] =  $_REQUEST['attribute_value_interval_min'];
+		$data['attribute_value_interval_max[]'] =  $_REQUEST['attribute_value_interval_max'];
 
 		if(!$e){
 			//удаляем привязанные категории к продукту
@@ -589,6 +592,16 @@ class products{
 							\''.$valueAttr.'\'
 						)';
 						}
+					}
+				}
+
+				foreach($data['attribute_value_interval_min[]'] as $key => $value) {
+					foreach($value as $keyAttr => $valueAttr) {
+						$valuesArray[] = '(
+							\''.$data['m_products_id'].'\', 
+							\''.$data['m_products_attributes_list_id[]'][$key][0].'\', 
+							\''.$valueAttr.'|'.$data['attribute_value_interval_max[]'][$key][0].'\'
+						)';
 					}
 				}
 				

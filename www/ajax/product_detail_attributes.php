@@ -118,7 +118,7 @@ if ($data['products_id']) {
             case 'N': 
               foreach ($_attr['valuesEnum'] as $valuesEnum) {
                 echo '<label class="input">';
-                  echo '<input type="number" name="m_products_attributes_value['.$keyAttr.'][]" data-type="'. $_attr['m_products_attributes_list_id'] .'" data-list-type="'. $_attr['m_products_attributes_list_type'] .'" suggest="'. $_attr['m_products_attributes_list_id'] .'" placeholder="значение" value="'. $valuesEnum .'">';
+                  echo '<input type="number" name="m_products_attributes_value['.$keyAttr.'][]" placeholder="значение" value="'. $valuesEnum .'">';
                 echo '</label>'; 
               }
               if ($_attr['is_multiply']) {
@@ -126,13 +126,15 @@ if ($data['products_id']) {
               }
               break;
 
-            case 'I': echo '<label class="input"><input type="number" name="m_products_attributes_value['.$keyAttr.'][]" data-type="'. $_attr['m_products_attributes_list_id'] .'" data-list-type="'. $_attr['m_products_attributes_list_type'] .'" suggest="'. $_attr['m_products_attributes_list_id'] .'" placeholder="число" value="'. $_attr['m_products_attributes_value'] .'"> <span> - </span> <input type="number" name="m_products_attributes_value['.$keyAttr.'][]" data-type="'. $_attr['m_products_attributes_list_id'] .'" data-list-type="'. $_attr['m_products_attributes_list_type'] .'" suggest="'. $_attr['m_products_attributes_list_id'] .'" placeholder="число" value="'. $_attr['m_products_attributes_value'] .'"></label>';
+            case 'I': 
+              $valuesInterval = explode('|', $_attr['m_products_attributes_value']);
+              echo '<label class="input"><input type="number" name="attribute_value_interval_min['.$keyAttr.'][]" placeholder="число" value="'. $valuesInterval[0] .'"> <span> - </span> <input type="number" name="attribute_value_interval_max['.$keyAttr.'][]" placeholder="число" value="'. $valuesInterval[1] .'"></label>';
               break;
 
             default:
               foreach ($_attr['valuesEnum'] as $valuesEnum) {
                 echo '<label class="input">';
-                  echo '<input type="text" name="m_products_attributes_value['.$keyAttr.'][]" data-type="'. $_attr['m_products_attributes_list_id'] .'" data-list-type="'. $_attr['m_products_attributes_list_type'] .'" suggest="'. $_attr['m_products_attributes_list_id'] .'" placeholder="значение" value="'. $valuesEnum .'">';
+                  echo '<input type="text" name="m_products_attributes_value['.$keyAttr.'][]" placeholder="значение" value="'. $valuesEnum .'">';
                 echo '</label>'; 
               }
               if ($_attr['is_multiply']) {
