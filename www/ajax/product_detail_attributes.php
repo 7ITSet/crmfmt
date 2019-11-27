@@ -106,7 +106,13 @@ if ($data['products_id']) {
             case 'F': 
               break;
 
-            case 'H': echo '<label class="textarea textarea-resizable">	<textarea name="m_products_attributes_value['.$keyAttr.'][]" rows="8" class="custom-editor custom-scroll">'.$_attr['m_products_attributes_value'].'</textarea></label>'; 
+            case 'H': 
+              foreach ($_attr['valuesEnum'] as $valuesEnum) {
+                echo '<label class="textarea textarea-resizable">	<textarea name="m_products_attributes_value['.$keyAttr.'][]" rows="6" class="custom-editor custom-scroll">'.$valuesEnum.'</textarea></label>'; 
+              }
+              if ($_attr['is_multiply']) {
+                echo '<button class="btn btn-primary js-add-textarea onclick="return false;">+</button>';
+              }
               break;
 
             case 'N': 
@@ -175,7 +181,7 @@ unset($sql);
 <script src="/js/plugin/tinymce/tinymce.min.js"></script>
 <script>
   $(document).ready(function(){
-    tinymce.init({
+    const TINYMCE_SETTINGS = {
       selector: ".custom-editor",
       theme: "modern",
       plugins: [
@@ -193,7 +199,7 @@ unset($sql);
       convert_urls : false, */
       verify_html : false,
       fontsize_formats: "6pt 7pt 8pt 9pt 10pt 11pt 12pt 13pt 14pt 15pt 16pt 17pt 18pt 19pt 20pt 21pt 22pt 23pt 24pt 25pt 26pt 27pt 28pt 29pt 30pt 31pt 32pt 33pt 34pt 35pt 36pt",
-    });
+    }
 
     function setSelect2() {
       let $input = $("select.autoselect");
@@ -201,6 +207,7 @@ unset($sql);
     }
 
     setSelect2();
+    tinymce.init(TINYMCE_SETTINGS);
 
     $('.js-add-row').click(function() {
       let prev = $(this).prev('label.input').clone();
@@ -208,6 +215,17 @@ unset($sql);
       $(this).before($(prev));
       setSelect2();
       return false;
-    })
+    });
+
+    $('.js-add-textarea').click(function() {
+      tinymce.remove();
+      let prev = $(this).prev('.textarea').clone();
+      let textarea = $(prev).find('textarea');
+      $(textarea).val('');
+      $(textarea).removeAttr('id');
+      $(this).before($(prev));
+      tinymce.init(TINYMCE_SETTINGS);
+      return false;
+    });
   })
 </script>
