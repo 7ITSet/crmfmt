@@ -91,7 +91,6 @@ if ($data['products_id']) {
           </label>
         </section>
         <section class="col col-xs-7 attr_value">
-          <label class="label"></label>
           <?
           switch ($_attr['m_products_attributes_list_type']) {
             case 'L':
@@ -104,11 +103,32 @@ if ($data['products_id']) {
               break;
 
             case 'F': 
+              echo '<div>';
+                echo '<div id="fileupload-'.$keyAttr.'"></div>';
+                echo '<div class="ajax-file-upload-container">';
+                if (!empty($_attr['valuesEnum'][0])) {
+                  $valuesEnumDec = json_decode($_attr['valuesEnum']);
+                  foreach ($valuesEnumDec as $filesAttr) {
+                    echo '<div class="ajax-file-upload-statusbar">
+                      <div class="ajax-file-upload-preview-container">
+                        <a class="fancybox-button" rel="group" href="/uploads/files/products/' . $data['products_id'] . '/' . $filesAttr->file . '">
+                          <img class="ajax-file-upload-preview" src="/uploads/files/products/' . $data['products_id'] . '/' . $filesAttr->file . '">
+                        </a>
+                      </div>
+                      <a class="ajax-file-upload-remove btn btn-default btn-xs txt-color-red" title="Удалить фото">
+                        <i class="fa fa-trash-o"></i>
+                      </a>
+                      <input type="hidden" name="attribute_value_file['.$keyAttr.'][]" value="' . $_file->file . '">';
+                    echo '</div>';
+                  }
+                }
+                echo '</div>';
+              echo '</div>';
               break;
 
             case 'H': 
               foreach ($_attr['valuesEnum'] as $valuesEnum) {
-                echo '<label class="textarea textarea-resizable">	<textarea name="m_products_attributes_value['.$keyAttr.'][]" rows="6" class="custom-editor custom-scroll">'.$valuesEnum.'</textarea></label>'; 
+                echo '<label class="textarea textarea-resizable">	<textarea name="m_products_attributes_value['.$keyAttr.'][]" rows="6" class="custom-editor">'.$valuesEnum.'</textarea></label>'; 
               }
               if ($_attr['is_multiply']) {
                 echo '<button class="btn btn-primary js-add-textarea onclick="return false;">+</button>';
@@ -150,37 +170,115 @@ if ($data['products_id']) {
   }
 } else {
   $q = 'SELECT * FROM `formetoo_main`.`m_products_attributes_list` WHERE `m_products_attributes_list_id` IN(' . implode(',', $group) . ');';
-  $attr = $sql->query($q);
+  $attr = ($res = $sql->query($q)) ? $res : array();
 
-  foreach ($attr as $keyAttr => $valueAttr) {
-  ?>
-    <div class="multirow">
-    <div class="row">
-      <section class="col col-6 attr_name">
-        <label class="label">
-          <?
-          echo $valueAttr['m_products_attributes_list_name'] . ($valueAttr['m_products_attributes_list_unit'] ? ', ' . $valueAttr['m_products_attributes_list_unit'] : '') . ($valueAttr['m_products_attributes_list_comment'] ? ' (' . $valueAttr['m_products_attributes_list_comment'] . ')' : '');
-          echo '<input type="hidden" name="m_products_attributes_list_id['.$keyAttr.'][]" value="'.$valueAttr['m_products_attributes_list_id'].'">';
-          ?>
-        </label>
-      </section>
-      <section class="col col-6 attr_value">
-        <label class="label"></label>
-        <label class="input">
-          <i></i>
-          <input type="text" name="m_products_attributes_value[]" suggest="" placeholder="значение (два пробела для подсказки)">
-        </label>
-      </section>
-    </div>
-  </div>
-  <?
+  $tempAttrSelected = array();
+  foreach ($attr as $keyAttr => $_attr) {
+    if ($_attr['m_products_attributes_list_type'] == 'L') {
+      $_attr['attributesEnum'] = $productAttributes->getAttributesListById($_attr['m_products_attributes_list_id']);
+    }
+
+    $index = array_search($_attr['m_products_attributes_list_id'], $group);
+    if (false !== $index) {
+      if (empty($tempAttrSelected[$index])) $tempAttrSelected[$index] = $_attr;
+      $tempAttrSelected[$index]['valuesEnum'][] = $_attr['m_products_attributes_value'];
+    }
   }
+  foreach ($tempAttrSelected as $keyAttr => $_attr) { 
+    ?>
+      <div class="multirow">
+        <div class="row">
+          <section class="col col-xs-5 attr_name">
+            <label class="label">
+              <?
+              echo $_attr['m_products_attributes_list_name'] . ($_attr['m_products_attributes_list_unit'] ? ', ' . $_attr['m_products_attributes_list_unit'] : '') . ($_attr['m_products_attributes_list_comment'] ? ' (' . $_attr['m_products_attributes_list_comment'] . ')' : '');
+              echo '<input type="hidden" name="m_products_attributes_list_id['.$keyAttr.'][]" value="'.$_attr['m_products_attributes_list_id'].'">';
+              ?>
+            </label>
+          </section>
+          <section class="col col-xs-7 attr_value">
+            <?
+            switch ($_attr['m_products_attributes_list_type']) {
+              case 'L':
+                echo '<select '. ($_attr['is_multiply'] ? 'multiple' : '') .' name="m_products_attributes_value['.$keyAttr.'][]" class="autoselect" placeholder="выберите из списка..."> 
+                  <option value="0">выберите из списка...</option>';
+                  foreach ($_attr['attributesEnum'] as $attributEnum) {
+                    echo '<option ' . (array_search($attributEnum['id'], $_attr['valuesEnum']) !== false ? 'selected' : '') .' data="' . $attributEnum['id'] . '" value="' . $attributEnum['id'] . '" >'.$attributEnum['value'].'</option>';
+                  }
+                echo '</select>';
+                break;
+  
+              case 'F': 
+                echo '<div>';
+                  echo '<div id="fileupload-'.$keyAttr.'"></div>';
+                  echo '<div class="ajax-file-upload-container">';
+                  if (!empty($_attr['valuesEnum'][0])) {
+                    $valuesEnumDec = json_decode($_attr['valuesEnum']);
+                    foreach ($valuesEnumDec as $filesAttr) {
+                      echo '<div class="ajax-file-upload-statusbar">
+                        <div class="ajax-file-upload-preview-container">
+                          <a class="fancybox-button" rel="group" href="/uploads/files/products/' . $data['products_id'] . '/' . $filesAttr->file . '">
+                            <img class="ajax-file-upload-preview" src="/uploads/files/products/' . $data['products_id'] . '/' . $filesAttr->file . '">
+                          </a>
+                        </div>
+                        <a class="ajax-file-upload-remove btn btn-default btn-xs txt-color-red" title="Удалить фото">
+                          <i class="fa fa-trash-o"></i>
+                        </a>
+                        <input type="hidden" name="attribute_value_file['.$keyAttr.'][]" value="' . $_file->file . '">';
+                      echo '</div>';
+                    }
+                  }
+                  echo '</div>';
+                echo '</div>';
+                break;
+  
+              case 'H': 
+                echo '<label class="textarea textarea-resizable">	<textarea name="m_products_attributes_value['.$keyAttr.'][]" rows="6" class="custom-editor"></textarea></label>'; 
+                if ($_attr['is_multiply']) {
+                  echo '<button class="btn btn-primary js-add-textarea onclick="return false;">+</button>';
+                }
+                break;
+  
+              case 'N': 
+                foreach ($_attr['valuesEnum'] as $valuesEnum) {
+                  echo '<label class="input">';
+                    echo '<input type="number" name="m_products_attributes_value['.$keyAttr.'][]" placeholder="значение" value="'. $valuesEnum .'">';
+                  echo '</label>'; 
+                }
+                if ($_attr['is_multiply']) {
+                  echo '<button class="btn btn-primary js-add-row onclick="return false;">+</button>';
+                }
+                break;
+  
+              case 'I': 
+                $valuesInterval = explode('|', $_attr['m_products_attributes_value']);
+                echo '<label class="input"><input type="number" name="attribute_value_interval_min['.$keyAttr.'][]" placeholder="число" value="'. $valuesInterval[0] .'"> <span> - </span> <input type="number" name="attribute_value_interval_max['.$keyAttr.'][]" placeholder="число" value="'. $valuesInterval[1] .'"></label>';
+                break;
+  
+              default:
+                foreach ($_attr['valuesEnum'] as $valuesEnum) {
+                  echo '<label class="input">';
+                    echo '<input type="text" name="m_products_attributes_value['.$keyAttr.'][]" placeholder="значение" value="'. $valuesEnum .'">';
+                  echo '</label>'; 
+                }
+                if ($_attr['is_multiply']) {
+                  echo '<button class="btn btn-primary js-add-row onclick="return false;">+</button>';
+                }
+                break;
+            }
+            ?>
+          </section>
+        </div>
+      </div>
+    <?
+    }
 }
 
 unset($sql);
 ?>
 
-<script src="/js/plugin/tinymce/tinymce.min.js"></script>
+<link href="/js/plugin/fileuploader/uploadfile.css" rel="stylesheet" />
+<script src="/js/plugin/fileuploader/jquery.uploadfile.js"></script>
 <script>
   $(document).ready(function(){
     const TINYMCE_SETTINGS = {
@@ -229,5 +327,32 @@ unset($sql);
       tinymce.init(TINYMCE_SETTINGS);
       return false;
     });
+    
+    let fileuploadAttrs = $('[id ^="fileupload-"]');
+    fileuploadAttrs.each(function() {
+      let id = $(this).attr('id').replace('fileupload-','');
+      
+      $(this).uploadFile({
+        url:"/ajax/fileuploader/fileupload.php",
+        acceptFiles:"*",
+        maxFileCount:50,
+        maxFileSize:30*1024*1024,
+        dragDropStr: "<span><b>Перетащите файлы сюда</b></span>",
+        onSuccess:function(files,data,xhr,pd){
+          data=JSON.parse(data);
+          pd.preview.attr("src",data.file.path);
+          pd.preview.show();
+          pd.preview.parent().attr("href",data.file.path.substr(0,data.file.path.indexOf("_"))+"."+data.file.ext);
+          let valAttr = pd.preview.parents(".ajax-file-upload-statusbar").find("[name=\'attribute_value_file["+id+"][]\']");
+          valAttr.length
+            ? $(valAttr).val(data.file.id+"."+data.file.ext)
+            : pd.preview.parents(".ajax-file-upload-statusbar").append(`<input type="hidden" name="attribute_value_file[${id}][]" value="${data.file.id}.${data.file.ext}">`);
+          pd.progressDiv.hide();
+          pd.progressDiv.next().show();
+        }
+      });
+    });
+
+    
   })
 </script>

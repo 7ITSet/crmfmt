@@ -661,7 +661,7 @@
 			this.filename = $("<div class='ajax-file-upload-filename'></div>").appendTo(this.statusbar);
 			this.remove = $("<a class='ajax-file-upload-remove btn btn-default btn-xs txt-color-red' title='Удалить фото'><i class='fa fa-trash-o'></i></a>").appendTo(this.statusbar);
 			
-            this.idVal=$("<input type='hidden' name='idfoto[]' value='"+id.substr(2)+"'/>").appendTo(this.statusbar);
+            //this.idVal=$("<input type='hidden' name='idfoto[]' value='"+id.substr(2)+"'/>").appendTo(this.statusbar);
 			
 			this.abort = $("<div>" + s.abortStr + "</div>").appendTo(this.statusbar).hide();
 			this.cancel = $("<div>" + s.cancelStr + "</div>").appendTo(this.statusbar).hide();

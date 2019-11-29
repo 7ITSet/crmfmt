@@ -527,6 +527,8 @@ class products{
 		$data['attribute_value_interval_min[]'] =  $_REQUEST['attribute_value_interval_min'];
 		$data['attribute_value_interval_max[]'] =  $_REQUEST['attribute_value_interval_max'];
 
+		$data['attribute_value_file[]'] =  $_REQUEST['attribute_value_file'];
+
 		if(!$e){
 			//удаляем привязанные категории к продукту
 			$q='DELETE FROM `formetoo_main`.`m_products_category` WHERE `product_id`=\''.$data['m_products_id'].'\';';
@@ -604,6 +606,30 @@ class products{
 						)';
 					}
 				}
+
+				//добавляем фото
+				foreach($data['attribute_value_file[]'] as $keyFileAttr => $valueFileAttr) {
+					if(!file_exists($_SERVER['DOCUMENT_ROOT'].'/uploads/files/products/'.$data['m_products_id']))
+							mkdir($_SERVER['DOCUMENT_ROOT'].'/uploads/files/products/'.$data['m_products_id'], 0777, true);
+					$files=array();
+					if($valueFileAttr) {
+						foreach($valueFileAttr as $k=>$v){
+							$files[$k]['file'] = $v;
+							$files[$k]['name'] = $v;
+							//копируем только добавленные файлы
+							if(!file_exists($_SERVER['DOCUMENT_ROOT'].'/uploads/files/products/'.$data['m_products_id'].'/'.$files[$k]['file'])){
+								copy($_SERVER['DOCUMENT_ROOT'].'/temp/uploads/'.$user->getInfo().'/'.$files[$k]['file'], $_SERVER['DOCUMENT_ROOT'].'/uploads/files/products/'.$data['m_products_id'].'/'.$files[$k]['file']);
+							}
+						}
+					}
+
+					$files=json_encode($files,JSON_UNESCAPED_SLASHES|JSON_UNESCAPED_UNICODE);
+					$valuesArray[] = '(
+						\''.$data['m_products_id'].'\', 
+						\''.$data['m_products_attributes_list_id[]'][$keyFileAttr][0].'\', 
+						\''.$files.'\'
+					)';
+				}
 				
 				$q='INSERT INTO `formetoo_main`.`m_products_attributes` (`m_products_attributes_product_id`,`m_products_attributes_list_id`,`m_products_attributes_value`) VALUES '. implode(',', $valuesArray);
 				
@@ -678,7 +704,7 @@ class products{
 					$foto[$v]['ext'] = $ext;
 					$foto[$v]['main']=isset($data['m_products_foto_main[]'][0])&&$data['m_products_foto_main[]'][0]==$v?1:0;
 					//копируем только добавленные фотки
-					if(!file_exists($_SERVER['DOCUMENT_ROOT'].'/images/products/'.$data['m_products_id'].'/'.$v.'_min.jpg')){
+					if(!file_exists($_SERVER['DOCUMENT_ROOT'].'/images/products/'.$data['m_products_id'].'/'.$nameFile.'_min.'.$ext)){
 						copy($_SERVER['DOCUMENT_ROOT'].'/temp/uploads/'.$user->getInfo().'/'.$nameFile.'_max.'.$ext,$_SERVER['DOCUMENT_ROOT'].'/images/products/'.$data['m_products_id'].'/'.$nameFile.'_max.'.$ext);
 						copy($_SERVER['DOCUMENT_ROOT'].'/temp/uploads/'.$user->getInfo().'/'.$nameFile.'_min.'.$ext,$_SERVER['DOCUMENT_ROOT'].'/images/products/'.$data['m_products_id'].'/'.$nameFile.'_min.'.$ext);
 						copy($_SERVER['DOCUMENT_ROOT'].'/temp/uploads/'.$user->getInfo().'/'.$nameFile.'_med.'.$ext,$_SERVER['DOCUMENT_ROOT'].'/images/products/'.$data['m_products_id'].'/'.$nameFile.'_med.'.$ext);
@@ -720,7 +746,7 @@ class products{
 				$m_products_seo_description = $m_products_name;
 			}
 
-			$q="UPDATE `formetoo_main`.`m_products` SET
+			$q="UPDATE `formetoo_main`.`m_products` SET 
 				`m_products_contragents_id`= '$m_products_contragents_id',
 				`m_products_name` = '$m_products_name',
 				`m_products_unit` ='$m_products_unit',

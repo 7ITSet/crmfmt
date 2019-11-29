@@ -683,14 +683,6 @@ if (get('action') == 'change' && $id = get('m_products_id')) {
 																? '<a class="fancybox-button" rel="group" href="//crm.formetoo.ru/images/products/' . $product['m_products_id'] . '/' . $_foto->file . '_max.'.$_foto->ext.'">
 																		<img class="ajax-file-upload-preview" src="//crm.formetoo.ru/images/products/' . $product['m_products_id'] . '/' . $_foto->file . '_min.'.$_foto->ext.'" style="width: auto; height: auto;">
 																	</a>'
-																//																	? '<a class="fancybox-button" rel="group" href="//st.formetoo.ru/'.substr($product['m_products_id_isolux'],0,2).'/SN'.$product['m_products_id_isolux'].'/'.$_foto->file.'_max.'.$_foto->ext.'">
-																//																		<img class="ajax-file-upload-preview" src="//st.formetoo.ru/'.substr($product['m_products_id_isolux'],0,2).'/SN'.$product['m_products_id_isolux'].'/'.$_foto->file.'_min.'.$_foto->ext.'" style="width: auto; height: auto;">
-																//																	</a>'
-
-																//																	: '<a class="fancybox-button" rel="group" href="//st.formetoo.ru/v/'.$product['m_products_id'].'/'.$_foto.'_max.'.$_foto->ext.'">
-																//                                                                    : '<a class="fancybox-button" rel="group" href="//crm.formetoo.ru/images/products/'.$product['m_products_id'].'/'.$_foto->file.'_m.'.$_foto->ext.'">
-																//																		<img class="ajax-file-upload-preview" src="//st.formetoo.ru/'.substr($product['m_products_id_isolux'],0,2).'/SN'.$product['m_products_id_isolux'].'/'.$_foto->file.'_min.'.$_foto->ext.'" style="width: auto; height: auto;">
-																//																	</a>'
 																: '<a class="fancybox-button" rel="group" href="//crm.formetoo.ru/images/products/' . $product['m_products_id'] . '/' . $_foto->file . '_max.'.$_foto->ext.'">
 																		<img class="ajax-file-upload-preview" src="//crm.formetoo.ru/images/products/' . $product['m_products_id'] . '/' . $_foto->file . '_min.'.$_foto->ext.'" style="width: auto; height: auto;">
 																	</a>'),
