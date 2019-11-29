@@ -107,7 +107,7 @@ if ($data['products_id']) {
                 echo '<div id="fileupload-'.$keyAttr.'"></div>';
                 echo '<div class="ajax-file-upload-container">';
                 if (!empty($_attr['valuesEnum'][0])) {
-                  $valuesEnumDec = json_decode($_attr['valuesEnum']);
+                  $valuesEnumDec = json_decode($_attr['valuesEnum'][0]);
                   foreach ($valuesEnumDec as $filesAttr) {
                     echo '<div class="ajax-file-upload-statusbar">
                       <div class="ajax-file-upload-preview-container">
@@ -213,7 +213,7 @@ if ($data['products_id']) {
                   echo '<div id="fileupload-'.$keyAttr.'"></div>';
                   echo '<div class="ajax-file-upload-container">';
                   if (!empty($_attr['valuesEnum'][0])) {
-                    $valuesEnumDec = json_decode($_attr['valuesEnum']);
+                    $valuesEnumDec = json_decode($_attr['valuesEnum'][0]);
                     foreach ($valuesEnumDec as $filesAttr) {
                       echo '<div class="ajax-file-upload-statusbar">
                         <div class="ajax-file-upload-preview-container">

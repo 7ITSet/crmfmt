@@ -264,16 +264,25 @@ class products{
 		$data['m_products_prices_limit_price[]']=array(null,null,18,null,1);
 		$data['m_products_prices_price[]']=array(null,null,18,null,1);
 
-		$data['m_products_attributes_list_id[]']=array(null,null,null,10,1);
-		$data['m_products_attributes_value[]']=array();
-
 		$data['m_products_contragents_id']=array(1,null,null,10,1);
 		$data['m_products_show_site']=array(null,null,3);
 		$data['m_products_show_price']=array(null,null,3);
 		$data['m_products_exist']=array(null,null,3);
 		$data['m_products_desc']=array(null,null,65000);
 
+		$data['slug']=array(1,null,255);
+
 		array_walk($data,'check');
+
+		$data['products_attributes_groups_id'] =  $_REQUEST['m_products_attributes_groups_id'];
+		$data['m_products_attributes_list_id[]'] = $_REQUEST['m_products_attributes_list_id'];
+		$data['m_products_attributes_value[]'] = $_REQUEST['m_products_attributes_value'];
+		//аттрибут интервал
+		$data['attribute_value_interval_min[]'] =  $_REQUEST['attribute_value_interval_min'];
+		$data['attribute_value_interval_max[]'] =  $_REQUEST['attribute_value_interval_max'];
+
+		$data['attribute_value_file[]'] =  $_REQUEST['attribute_value_file'];
+		$data['attribute_value_file[]'] =  $_REQUEST['attribute_value_file'];
 
 		if(!$e){
 			$data['m_products_id']=get_id('m_products');
@@ -286,6 +295,16 @@ class products{
 			$m_products_id =$data['m_products_id'];
 			$m_products_desc = $data['m_products_desc'];
 
+			//добавляем привязанные категории к продукту
+			$q='INSERT INTO `formetoo_main`.`m_products_category` (`product_id`,`category_id`) VALUES ';
+			for($i=0;$i<count($data['selected_categories_id[]']);$i++){
+				$q.='(\''.$data['m_products_id'].'\', \''.$data['selected_categories_id[]'][$i].'\'), ';
+			}
+			$q = mb_substr($q, 0, -2);
+				
+			if(!($sql->query($q))){
+				elogs();
+			}
 
 			//проверка есть ли обязательные атрибуты и заполнены ли они
 			//узнаем сколько обязательный атрибутов должно быть
@@ -303,11 +322,8 @@ class products{
 
 			if($attr_required_count > 0){
 				if(!empty($_POST['attr_required_val'])){
-
 					$data['attr_required_val'] = json_decode($_POST['attr_required_val']);
-
 					if($attr_required_count == count($data['attr_required_val'])){
-
 						for($i=0;$i<count($data['attr_required_val']);$i++){
 							$q='INSERT INTO `formetoo_main`.`m_products_attributes` (`m_products_attributes_product_id`,`m_products_attributes_list_id`,`m_products_attributes_value`) VALUES ';
 							$q.='(
@@ -315,11 +331,9 @@ class products{
 							\''.$data['attr_required_val'][$i]->id.'\',
 							\''.$data['attr_required_val'][$i]->value.'\'
 						);';
-
 							if(!($sql->query($q)))
 								elogs();
 						}
-
 					} else {
 						header('Location: '.url().'?error');
 						exit;
@@ -328,6 +342,59 @@ class products{
 					header('Location: '.url().'?error');
 					exit;
 				}
+			}
+			//добавляем атрибуты
+			if(isset($data['m_products_attributes_value[]'])){
+				foreach($data['m_products_attributes_value[]'] as $key => $value) {
+					foreach($value as $keyAttr => $valueAttr) {
+					if ($valueAttr) {
+						$valuesArray[] = '(
+							\''.$data['m_products_id'].'\', 
+							\''.$data['m_products_attributes_list_id[]'][$key][0].'\', 
+							\''.$valueAttr.'\'
+						)';
+						}
+					}
+				}
+
+				foreach($data['attribute_value_interval_min[]'] as $key => $value) {
+					foreach($value as $keyAttr => $valueAttr) {
+						$valuesArray[] = '(
+							\''.$data['m_products_id'].'\', 
+							\''.$data['m_products_attributes_list_id[]'][$key][0].'\', 
+							\''.$valueAttr.'|'.$data['attribute_value_interval_max[]'][$key][0].'\'
+						)';
+					}
+				}
+
+				//добавляем фото
+				foreach($data['attribute_value_file[]'] as $keyFileAttr => $valueFileAttr) {
+					if(!file_exists($_SERVER['DOCUMENT_ROOT'].'/uploads/files/products/'.$data['m_products_id']))
+							mkdir($_SERVER['DOCUMENT_ROOT'].'/uploads/files/products/'.$data['m_products_id'], 0777, true);
+					$files=array();
+					if($valueFileAttr) {
+						foreach($valueFileAttr as $k=>$v){
+							$files[$k]['file'] = $v;
+							$files[$k]['name'] = $v;
+							//копируем только добавленные файлы
+							if(!file_exists($_SERVER['DOCUMENT_ROOT'].'/uploads/files/products/'.$data['m_products_id'].'/'.$files[$k]['file'])){
+								copy($_SERVER['DOCUMENT_ROOT'].'/temp/uploads/'.$user->getInfo().'/'.$files[$k]['file'], $_SERVER['DOCUMENT_ROOT'].'/uploads/files/products/'.$data['m_products_id'].'/'.$files[$k]['file']);
+							}
+						}
+					}
+
+					$files=json_encode($files,JSON_UNESCAPED_SLASHES|JSON_UNESCAPED_UNICODE);
+					$valuesArray[] = '(
+						\''.$data['m_products_id'].'\', 
+						\''.$data['m_products_attributes_list_id[]'][$keyFileAttr][0].'\', 
+						\''.$files.'\'
+					)';
+				}
+				
+				$q='INSERT INTO `formetoo_main`.`m_products_attributes` (`m_products_attributes_product_id`,`m_products_attributes_list_id`,`m_products_attributes_value`) VALUES '. implode(',', $valuesArray);
+				
+				if(!($sql->query($q)))
+					elogs();
 			}
 
 
@@ -347,22 +414,6 @@ class products{
 					elogs();
 			}
 
-			//добавялем атрибуты
-			if($data['m_products_attributes_value[]'][0]!=''&&$count=sizeof($data['m_products_attributes_value[]'])){
-				$q='INSERT INTO `formetoo_main`.`m_products_attributes` (`m_products_attributes_product_id`,`m_products_attributes_list_id`,`m_products_attributes_value`) VALUES ';
-				for($i=0;$i<$count;$i++)
-					if($data['m_products_attributes_value[]'][$i])
-						$q.='(
-							\''.$data['m_products_id'].'\',
-							\''.$data['m_products_attributes_list_id[]'][$i].'\',
-							\''.$data['m_products_attributes_value[]'][$i].'\'
-						),';
-
-				if(!($sql->query(substr($q,0,-1).';')))
-					elogs();
-			}
-
-
 			//добавляем описание товара
 			if($data['m_products_desc']){
 				$q="INSERT INTO `formetoo_main`.`m_products_desc` (`m_products_desc_id`,`m_products_desc_text`) VALUES ('$m_products_id','$m_products_desc');";
@@ -370,37 +421,25 @@ class products{
 					elogs();
 				}
 
-			//добавляем привязанные категории к продукту
-			$q='INSERT INTO `formetoo_main`.`m_products_category` (`product_id`,`category_id`) VALUES ';
-			for($i=0;$i<count($data['selected_categories_id[]']);$i++){
-				$q.='(\''.$data['m_products_id'].'\', \''.$data['selected_categories_id[]'][$i].'\'), ';
-			}
-			$q = mb_substr($q, 0, -2);
-				
-			if(!($sql->query($q))){
-				elogs();
-			}
-
 			//добавляем фото
-			mkdir($_SERVER['DOCUMENT_ROOT'].'/images/products/'.$data['m_products_id']);
+			if(!file_exists($_SERVER['DOCUMENT_ROOT'].'/images/products/'.$data['m_products_id']))
+				mkdir($_SERVER['DOCUMENT_ROOT'].'/images/products/'.$data['m_products_id']);
 			$foto=array();
-			if($data['idfoto[]']) {
+			if($data['idfoto[]'])
 				foreach($data['idfoto[]'] as $k=>$v){
 					$array = explode('.', $v);
 					$nameFile = $array[0];
 					$ext = end($array);
 					$foto[$v]['file'] = $nameFile;
 					$foto[$v]['ext'] = $ext;
-					
 					$foto[$v]['main']=isset($data['m_products_foto_main[]'][0])&&$data['m_products_foto_main[]'][0]==$v?1:0;
 					//копируем только добавленные фотки
-					if(!file_exists($_SERVER['DOCUMENT_ROOT'].'/images/products/'.$data['m_products_id'].'/'.$v.'_min.'.$ext)){
+					if(!file_exists($_SERVER['DOCUMENT_ROOT'].'/images/products/'.$data['m_products_id'].'/'.$nameFile.'_min.'.$ext)){
 						copy($_SERVER['DOCUMENT_ROOT'].'/temp/uploads/'.$user->getInfo().'/'.$nameFile.'_max.'.$ext,$_SERVER['DOCUMENT_ROOT'].'/images/products/'.$data['m_products_id'].'/'.$nameFile.'_max.'.$ext);
 						copy($_SERVER['DOCUMENT_ROOT'].'/temp/uploads/'.$user->getInfo().'/'.$nameFile.'_min.'.$ext,$_SERVER['DOCUMENT_ROOT'].'/images/products/'.$data['m_products_id'].'/'.$nameFile.'_min.'.$ext);
 						copy($_SERVER['DOCUMENT_ROOT'].'/temp/uploads/'.$user->getInfo().'/'.$nameFile.'_med.'.$ext,$_SERVER['DOCUMENT_ROOT'].'/images/products/'.$data['m_products_id'].'/'.$nameFile.'_med.'.$ext);
 					}
 				}
-			}
 			$foto=json_encode($foto,JSON_UNESCAPED_SLASHES|JSON_UNESCAPED_UNICODE);
 
 			$m_products_contragents_id = $data['m_products_contragents_id'];
@@ -414,6 +453,8 @@ class products{
 			$m_products_links = $data['m_products_links[]']?implode('|',$data['m_products_links[]']):'';
 			$m_products_exist = $data['m_products_exist'];
 			$m_products_foto = $foto;
+			$slug = $data['slug'];
+			$products_attributes_groups_id = $data['products_attributes_groups_id'];
 
 			//seo
 			if(!empty($_POST['seo_parameters'][0])){
@@ -452,7 +493,9 @@ class products{
 			`m_products_foto`,
 			`m_products_seo_title`,
 			`m_products_seo_keywords`,
-			`m_products_seo_description`
+			`m_products_seo_description`,
+			`slug`,
+			`products_attributes_groups_id`
 			) 
 			VALUES
 			 (
@@ -471,7 +514,9 @@ class products{
 			  '$m_products_foto',
 			  '$m_products_seo_title',
 			  '$m_products_seo_keywords',
-			  '$m_products_seo_description'		  
+				'$m_products_seo_description',
+				'$slug',
+				'$products_attributes_groups_id'
 			 );";
 
 			if($sql->query($q))
@@ -509,8 +554,6 @@ class products{
 		$data['m_products_prices_limit_price[]']=array(null,null,18,null,1);
 		$data['m_products_prices_price[]']=array(null,null,18,null,1);
 
-		//$data['m_products_attributes_list_id[]']=array(null,10,null,null,1);
-
 		$data['m_products_contragents_id']=array(1,null,null,10,1);
 		$data['m_products_show_site']=array(null,null,3);
 		$data['m_products_show_price']=array(null,null,3);
@@ -521,6 +564,7 @@ class products{
 
 		array_walk($data,'check');
 
+		$data['products_attributes_groups_id'] =  $_REQUEST['m_products_attributes_groups_id'];
 		$data['m_products_attributes_list_id[]'] = $_REQUEST['m_products_attributes_list_id'];
 		$data['m_products_attributes_value[]'] = $_REQUEST['m_products_attributes_value'];
 		//аттрибут интервал
@@ -530,6 +574,15 @@ class products{
 		$data['attribute_value_file[]'] =  $_REQUEST['attribute_value_file'];
 
 		if(!$e){
+			$data['m_products_show_site']=$data['m_products_show_site']?1:0;
+			$data['m_products_show_price']=$data['m_products_show_price']?1:0;
+			$data['m_products_exist']=$data['m_products_exist']?1:0;
+			$data['m_products_miltiplicity']=$data['m_products_miltiplicity']?$data['m_products_miltiplicity']:1;
+			$data['m_products_date']=$data['m_products_update']=dt();
+
+			$m_products_id =$data['m_products_id'];
+			$m_products_desc = transform::typography($data['m_products_desc']);
+
 			//удаляем привязанные категории к продукту
 			$q='DELETE FROM `formetoo_main`.`m_products_category` WHERE `product_id`=\''.$data['m_products_id'].'\';';
 			if(!($sql->query($q))){
@@ -546,15 +599,6 @@ class products{
 			if(!($sql->query($q))){
 				elogs();
 			}
-
-			$data['m_products_show_site']=$data['m_products_show_site']?1:0;
-			$data['m_products_show_price']=$data['m_products_show_price']?1:0;
-			$data['m_products_exist']=$data['m_products_exist']?1:0;
-			$data['m_products_miltiplicity']=$data['m_products_miltiplicity']?$data['m_products_miltiplicity']:1;
-			$data['m_products_date']=$data['m_products_update']=dt();
-
-			$m_products_id =$data['m_products_id'];
-			$m_products_desc = transform::typography($data['m_products_desc']);
 
 			//проверка есть ли обязательные атрибуты и заполнены ли они
 			//узнаем сколько обязательный атрибутов должно быть
@@ -582,7 +626,6 @@ class products{
 		}
 
 			//добавляем атрибуты
-			
 			$sql->query('DELETE FROM `formetoo_main`.`m_products_attributes` WHERE `m_products_attributes_product_id`='.$data['m_products_id'].';');
 			if(isset($data['m_products_attributes_value[]'])){
 				foreach($data['m_products_attributes_value[]'] as $key => $value) {
@@ -727,6 +770,7 @@ class products{
 			$m_products_date = 	$data['m_products_date'];
 			$m_products_update = $data['m_products_update'];
 			$slug = $data['slug'];
+			$products_attributes_groups_id = $data['products_attributes_groups_id'];
 
 			if(!empty($_POST['seo_parameters'][0])){
 				$m_products_seo_title = $_POST['seo_parameters'][0];
@@ -763,7 +807,8 @@ class products{
 				`m_products_seo_title`='$m_products_seo_title',
 				`m_products_seo_keywords`='$m_products_seo_keywords',
 				`m_products_seo_description`='$m_products_seo_description',
-				`slug`='$slug'
+				`slug`='$slug',
+				`products_attributes_groups_id`='$products_attributes_groups_id'
 				WHERE `m_products_id`='$m_products_id';";				
 
 			if($sql->query($q))

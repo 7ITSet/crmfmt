@@ -316,12 +316,12 @@ global $e;
 			if ($_t_el&&isset($el[1])&&!isset($el[2]))
 				if (mb_strlen($_t_el,'utf-8')<$el[1])
 					$e[]='Минимальное количество символов '.$el[1].' в поле ['.$key.'], данные: «'.$_t_el.'» ('.mb_strlen($_t_el,'utf-8').' символов)';
-			if ($_t_el&&isset($el[2])&&!isset($el[1]))
-				if (mb_strlen($_t_el,'utf-8')>$el[2])
-					$e[]='Максимальное количество символов '.$el[2].' в поле ['.$key.'], данные: «'.$_t_el.'» ('.mb_strlen($_t_el,'utf-8').' символов)';
-			if ($_t_el&&isset($el[3]))
-				if (mb_strlen($_t_el,'utf-8')!=$el[3])
-					$e[]='Количество символов должно быть '.$el[3].' в поле ['.$key.'], данные: «'.$_t_el.'» ('.mb_strlen($_t_el,'utf-8').' символов)';
+			// if ($_t_el&&isset($el[2])&&!isset($el[1]))
+			// 	if (mb_strlen($_t_el,'utf-8')>$el[2])
+			// 		$e[]='Максимальное количество символов '.$el[2].' в поле ['.$key.'], данные: «'.$_t_el.'» ('.mb_strlen($_t_el,'utf-8').' символов)';
+			// if ($_t_el&&isset($el[3]))
+			// 	if (mb_strlen($_t_el,'utf-8')!=$el[3])
+			// 		$e[]='Количество символов должно быть '.$el[3].' в поле ['.$key.'], данные: «'.$_t_el.'» ('.mb_strlen($_t_el,'utf-8').' символов)';
 			if ($_t_el&&isset($el[4]))
 				switch($el[4]){
 					case 1:
@@ -364,8 +364,10 @@ global $e;
 
 function elogs(){
 	global $e,$sql,$user;
-	if(!$e)
+	if(!$e) {
 		$e[]='Ошибка в запросе БД';
+	}
+		
 	$q='INSERT INTO `formetoo_main`.`m_logs_error` (
 			`m_logs_error_logs_m_users_id`,
 			`m_logs_error_log_message`,
