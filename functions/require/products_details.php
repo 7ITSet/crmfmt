@@ -1216,13 +1216,22 @@ if (get('action') == 'change' && $id = get('m_products_id')) {
 									</div>
 									<div id="sale-settings">
 										<div class="widget-body">
-										<div class="row">
-											<div class="col-xs-12">
-												<div class="dd" id="product-categories-list">
-													<?$products->product_categories_display(0)?>
-												</div>
+											<div class="row">
+													<label class="col col-xs-3">Вес брутто (кг)</label>
+													<input type="number" class="col col-xs-9" name="unit_weight" value="0">
 											</div>
-										</div>
+											<div class="row">
+												<label class="col col-xs-3">Высота габаритная (см)</label>
+												<input type="number" class="col col-xs-9" name="unit_height" value="0">
+											</div>
+											<div class="row">
+												<label class="col col-xs-3">Длина габаритная (см)</label>
+												<input type="number" class="col col-xs-9" name="unit_length" value="0">
+											</div>
+											<div class="row">
+												<label class="col col-xs-3">Ширина габаритная (см)</label>
+												<input type="number" class="col col-xs-9" name="unit_width" value="0">
+											</div>
 										</div>
 									</div>
 									<div id="categories-settings">
