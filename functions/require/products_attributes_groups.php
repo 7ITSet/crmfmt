@@ -18,7 +18,7 @@ array_walk($units, function (&$el) {
 
 $type = array(1 => 'Текстовый', 2 => 'Числовой', 3 => 'Логический');
 
-if ($id = get('m_products_attributes_groups_id')) {
+if ($id = get('products_attributes_groups_id')) {
 	$group = $products->attr_groups[$id][0];
 	$group['m_products_attributes_groups_list_id'] = explode('|', $group['m_products_attributes_groups_list_id']);
 
@@ -131,7 +131,7 @@ if ($id = get('m_products_attributes_groups_id')) {
 									</button>
 								</footer>
 								<input type="hidden" name="action" value="m_products_attributes_groups_change" />
-								<input type="hidden" name="m_products_attributes_groups_id" value="<?= $group['m_products_attributes_groups_id']; ?>" />
+								<input type="hidden" name="products_attributes_groups_id" value="<?= $group['products_attributes_groups_id']; ?>" />
 							</form>
 						</div>
 					</div>
@@ -338,11 +338,11 @@ if ($id = get('m_products_attributes_groups_id')) {
 		<td>';
 
 													if ($_group['m_products_attributes_groups_required']) {
-														echo '<a href="javascript:void(0);" id="requiredAttrGroup" redirect-url="' . url() . '?action=change&m_products_attributes_groups_id=' . $_group['m_products_attributes_groups_id'] . '" title="Редактировать" class="btn btn-primary btn-xs btn-default" data-placement="left"><i class="fa fa-pencil"></i></a>';
+														echo '<a href="javascript:void(0);" id="requiredAttrGroup" redirect-url="' . url() . '?action=change&products_attributes_groups_id=' . $_group['products_attributes_groups_id'] . '" title="Редактировать" class="btn btn-primary btn-xs btn-default" data-placement="left"><i class="fa fa-pencil"></i></a>';
 													} else {
-														echo '<a href="' . url() . '?action=change&m_products_attributes_groups_id=' . $_group['m_products_attributes_groups_id'] . '" title="Редактировать" class="btn btn-primary btn-xs btn-default change" data-type="text"><i class="fa fa-pencil"></i></a>';
+														echo '<a href="' . url() . '?action=change&products_attributes_groups_id=' . $_group['products_attributes_groups_id'] . '" title="Редактировать" class="btn btn-primary btn-xs btn-default change" data-type="text"><i class="fa fa-pencil"></i></a>';
 													}
-													echo '<a href="javascript:void(0);" title="Удалить" class="btn btn-xs btn-danger delete" data-type="text" data-pk="' . $_group['m_products_attributes_groups_id'] . '" data-name="m_products_attributes_groups_id" data-title="Введите пароль для удаления записи" data-placement="left">
+													echo '<a href="javascript:void(0);" title="Удалить" class="btn btn-xs btn-danger delete" data-type="text" data-pk="' . $_group['products_attributes_groups_id'] . '" data-name="products_attributes_groups_id" data-title="Введите пароль для удаления записи" data-placement="left">
 				<i class="fa fa-trash-o"></i>
 			</a>
 		</td>
@@ -351,7 +351,7 @@ if ($id = get('m_products_attributes_groups_id')) {
 												?>
 									</tbody>
 								</table>
-								<!--                       <a href="'.url().'?action=change&m_products_attributes_groups_id='.$_group['m_products_attributes_groups_id'].'" title="Редактировать" class="btn btn-primary btn-xs btn-default change" data-type="text">-->
+								<!--                       <a href="'.url().'?action=change&products_attributes_groups_id='.$_group['products_attributes_groups_id'].'" title="Редактировать" class="btn btn-primary btn-xs btn-default change" data-type="text">-->
 							</div>
 
 						</div>

@@ -23,7 +23,7 @@ if ($e) {
 } 
 
 
-$q='SELECT `m_products_attributes_groups_list_id` FROM `formetoo_main`.`m_products_attributes_groups` WHERE `m_products_attributes_groups_id` = '.$data['attirbutes_group_id'].' LIMIT 1;';
+$q='SELECT `m_products_attributes_groups_list_id` FROM `formetoo_main`.`m_products_attributes_groups` WHERE `products_attributes_groups_id` = '.$data['attirbutes_group_id'].' LIMIT 1;';
 
 $res = $sql->query($q);
 
@@ -115,10 +115,13 @@ if ($data['products_id']) {
                           <img class="ajax-file-upload-preview" src="/uploads/files/products/' . $data['products_id'] . '/' . $filesAttr->file . '">
                         </a>
                       </div>
+                      <label class="ajax-file-upload-info" style="margin-top:8px;">
+                        <input type="text" name="attribute_value_file[name]['.$keyAttr.'][]" value="' . $filesAttr->name . '"/>
+                      </label>
                       <a class="ajax-file-upload-remove btn btn-default btn-xs txt-color-red" title="Удалить фото">
                         <i class="fa fa-trash-o"></i>
                       </a>
-                      <input type="hidden" name="attribute_value_file['.$keyAttr.'][]" value="' . $_file->file . '">';
+                      <input type="hidden" name="attribute_value_file[file]['.$keyAttr.'][]" value="' . $filesAttr->file . '">';
                     echo '</div>';
                   }
                 }
@@ -212,6 +215,7 @@ if ($data['products_id']) {
                 echo '<div>';
                   echo '<div id="fileupload-'.$keyAttr.'"></div>';
                   echo '<div class="ajax-file-upload-container">';
+                  
                   if (!empty($_attr['valuesEnum'][0])) {
                     $valuesEnumDec = json_decode($_attr['valuesEnum'][0]);
                     foreach ($valuesEnumDec as $filesAttr) {
@@ -224,7 +228,7 @@ if ($data['products_id']) {
                         <a class="ajax-file-upload-remove btn btn-default btn-xs txt-color-red" title="Удалить фото">
                           <i class="fa fa-trash-o"></i>
                         </a>
-                        <input type="hidden" name="attribute_value_file['.$keyAttr.'][]" value="' . $_file->file . '">';
+                        <input type="hidden" name="attribute_value_file['.$keyAttr.'][]" value="' . $filesAttr->file . '">';
                       echo '</div>';
                     }
                   }
@@ -302,7 +306,7 @@ unset($sql);
     }
 
     function setSelect2() {
-      let $input = $("select.autoselect");
+      let $input = $("#attr select.autoselect");
       $input.select2();
     }
 
@@ -338,6 +342,33 @@ unset($sql);
         maxFileCount:50,
         maxFileSize:30*1024*1024,
         dragDropStr: "<span><b>Перетащите файлы сюда</b></span>",
+        customProgressBar: function(obj, s)
+        {
+            this.statusbar = $("<div class='ajax-file-upload-statusbar'></div>");
+            this.previewContainer = $("<div class='ajax-file-upload-preview-container'></div>").appendTo(this.statusbar);
+            this.previewContainerDiv = $("<a class='fancybox-button' rel='group'></a>").appendTo(this.previewContainer);
+            this.preview = $("<img class='ajax-file-upload-preview' />").width(s.previewWidth).height(s.previewHeight).appendTo(this.previewContainerDiv).hide();
+            this.progressDiv = $("<div class='ajax-file-upload-progress'>").appendTo(this.statusbar).hide();
+                
+            this.progressbar = $("<div class='ajax-file-upload-bar'></div>").appendTo(this.progressDiv);
+            
+            this.main = $(`<label class="ajax-file-upload-info" style="margin-top:8px;"><input type="text" name="attribute_value_file[${id}][name][]" value=""/></label>`).appendTo(this.statusbar);
+            
+            this.filename = $("<div class='ajax-file-upload-filename'></div>").appendTo(this.statusbar);
+            this.remove = $("<a class='ajax-file-upload-remove btn btn-default btn-xs txt-color-red' title='Удалить фото'><i class='fa fa-trash-o'></i></a>").appendTo(this.statusbar);
+            
+            this.abort = $("<div>" + s.abortStr + "</div>").appendTo(this.statusbar).hide();
+            this.cancel = $("<div>" + s.cancelStr + "</div>").appendTo(this.statusbar).hide();
+            this.done = $("<div>" + s.doneStr + "</div>").appendTo(this.statusbar).hide();
+            this.download = $("<div>" + s.downloadStr + "</div>").appendTo(this.statusbar).hide();
+            this.del = $("<div>" + s.deletelStr + "</div>").appendTo(this.statusbar).hide();
+
+            this.abort.addClass("ajax-file-upload-red");
+            this.done.addClass("ajax-file-upload-green");
+            this.download.addClass("ajax-file-upload-green");            
+            this.cancel.addClass("ajax-file-upload-red");
+            this.del.addClass("ajax-file-upload-red");
+        },
         onSuccess:function(files,data,xhr,pd){
           data=JSON.parse(data);
           pd.preview.attr("src",data.file.path);
@@ -346,7 +377,7 @@ unset($sql);
           let valAttr = pd.preview.parents(".ajax-file-upload-statusbar").find("[name=\'attribute_value_file["+id+"][]\']");
           valAttr.length
             ? $(valAttr).val(data.file.id+"."+data.file.ext)
-            : pd.preview.parents(".ajax-file-upload-statusbar").append(`<input type="hidden" name="attribute_value_file[${id}][]" value="${data.file.id}.${data.file.ext}">`);
+            : pd.preview.parents(".ajax-file-upload-statusbar").append(`<input type="hidden" name="attribute_value_file[${id}][file][]" value="${data.file.id}.${data.file.ext}">`);
           pd.progressDiv.hide();
           pd.progressDiv.next().show();
         }

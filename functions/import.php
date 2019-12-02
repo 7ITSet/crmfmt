@@ -101,10 +101,7 @@ function uploadExcelFile($fileName)
 
       'm_products_rate',
       'm_products_feedbacks',
-      "m_products_docs",
-      "m_products_video",
       'm_products_weight',
-      'm_products_volume',
 
       'm_products_seo_title',
       'm_products_seo_keywords',
@@ -155,11 +152,7 @@ function uploadExcelFile($fileName)
 
       "float UNSIGNED NOT NULL DEFAULT '0'", //m_products_rate
       "int(10) UNSIGNED NOT NULL DEFAULT '0'", //m_products_feedbacks
-      "text NOT NULL", //m_products_docs
-      "varchar(200) NOT NULL DEFAULT ''", //m_products_video
       "float UNSIGNED NOT NULL DEFAULT '0'", //m_products_weight
-
-      "float UNSIGNED NOT NULL DEFAULT '0'", //m_products_volume
 
       "varchar(255) NOT NULL", //m_products_seo_title
       "text NOT NULL", //m_products_seo_keywords
@@ -293,10 +286,7 @@ function downloadExcelFile($fileName)
 
       'm_products_rate',
       'm_products_feedbacks',
-      "m_products_docs",
-      "m_products_video",
       'm_products_weight',
-      'm_products_volume',
 
       'm_products_seo_title',
       'm_products_seo_keywords',
@@ -336,10 +326,7 @@ function downloadExcelFile($fileName)
 
       'm_products_rate',
       'm_products_feedbacks',
-      "Документы",
-      "Видео",
       'm_products_weight',
-      'm_products_volume',
 
       'SEO title',
       'SEO keywords',

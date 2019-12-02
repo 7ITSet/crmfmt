@@ -203,9 +203,9 @@ if(!$e){
 			}
 			break;
 		//удаление группы
-		case 'm_products_attributes_groups_id':
+		case 'products_attributes_groups_id':
 			if($data['value']==fmt)
-				$q='DELETE FROM `formetoo_main`.`m_products_attributes_groups` WHERE `m_products_attributes_groups_id`='.$data['pk'].' LIMIT 1;';
+				$q='DELETE FROM `formetoo_main`.`m_products_attributes_groups` WHERE `products_attributes_groups_id`='.$data['pk'].' LIMIT 1;';
 			else{
 				header('HTTP 400 Bad Request',true,400);
 				echo "неверный пароль".$q;

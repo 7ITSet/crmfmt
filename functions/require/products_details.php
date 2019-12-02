@@ -66,66 +66,7 @@ if (get('action') == 'change' && $id = get('m_products_id')) {
 		}
 	}
 
-	$content->setJS('
-
-/* обязательные параметры start */
-
-    function attr_required(){
-			var attr_required_input =  $("#attr_required input");
-			var data = [];
-
-			if (attr_required_input.length > 0){
-				attr_required_input.each(function(){
-					var data_id_input_required = $(this).attr("data-id");
-					var value_input_required = $(this).prop("disabled", true).val();
-
-					if(data_id_input_required !== "" && value_input_required !== ""){
-							data.push({id: data_id_input_required, value: value_input_required});
-					}
-				});
-
-				$("#attr_required_hidden").attr("value", JSON.stringify(data));
-			}
-    }
-
-    $("form#products-add").submit(function(){
-      attr_required();
-    });
-
-
-    var m_products_attributes_groups_id_required = $("[name=\'m_products_attributes_groups_id_required\']");
-
-	    if(m_products_attributes_groups_id_required !== undefined){
-	       m_products_attributes_groups_id_required.on("change",function(){
-
-	        $("#attr_required").empty();
-	        var value_m_products_attributes_groups_id_required = $(this).val();
-	        var product_id =$("[name = \'m_products_id\']").val();
-
-                $.ajax({
-                  method: "post",
-                  url: "/ajax/attr_required.php",
-                  data: {
-                    group_id: value_m_products_attributes_groups_id_required,
-                    product_id: product_id
-                  },
-                  success: function( result ) {
-                        if(result !== 0){
-                    result = JSON.parse(result);
-                    for(var i=0; i<result.length; i++){
-                        $("#attr_required").append(\'<div style="margin-top: 10px"><label style="width: 20%">\'+ result[i]["m_products_attributes_list_name"] +\'</label><input style="width: 70%" name="m_products_attributes_required_value[]" data-id="\'+ result[i]["m_products_attributes_list_id"] +\'" type="text" value="\'+ result[i]["m_products_attributes_value"] +\'"></div>\');
-                    }
-                  }
-                  },
-                  error: function(q,w,e){
-                    console.log("ошибка");
-                  }
-                });
-
-	       });
-	    }
-	 /* обязательные параметры end */
-
+	$content->setJS(' 
 		runAllForms();
 
 		$("#products-add").validate({
@@ -177,26 +118,15 @@ if (get('action') == 'change' && $id = get('m_products_id')) {
 			string.find("select[name=\'m_products_attributes_list_id[]\']").select2();
 			string.find("[name=\'m_products_attributes_value[]\']").sug(string.find("[name=\'m_products_attributes_value[]\']").attr("suggest"));
 		}
-		/* f_a:function(string){
-			$.get(
-				"/ajax/attr.php",
-				{
-					"m_products_attributes_groups_id":
-				},
-				function(data){
-					alert(data);
-				}
-			);
-		} */
 	});
 
-	$("[name=\'m_products_attributes_groups_id\']").on("change",function(){
+	$("[name=\'products_attributes_groups_id\']").on("change",function(){
 		/* УДАЛЯЕМ ПУСТЫЕ ПАРАМЕТРЫ */
 		$("#attr .multirow").each(function(index,el){
 			if(!$(el).find("[name=\'m_products_attributes_value[]\']").val())
 				$(el).find("[name=\'m_products_attributes_value[]\']").parents(".multirow:first").find(".delete").trigger("click");
 		});
-		var attrs=$("[name=\'m_products_attributes_groups_id\'] option:selected").attr("data").split("|");
+		var attrs=$("[name=\'products_attributes_groups_id\'] option:selected").attr("data").split("|");
 		attrs.forEach(function(item,i,arr){
 			$("#attr .multirow:last").find("[name=\'m_products_attributes_list_id[]\']").select2("val",item);
 			if(i<arr.length-1)
@@ -344,6 +274,7 @@ if (get('action') == 'change' && $id = get('m_products_id')) {
 										<div class="tabs">
 											<ul>
 												<li><a href="#general-settings">Основные настройки</a></li>
+												<li><a href="#sale-settings">Товар</a></li>
 												<li><a href="#categories-settings">Категории</a></li>
 											</ul>
 
@@ -564,56 +495,16 @@ if (get('action') == 'change' && $id = get('m_products_id')) {
 												</label>
 											</section>
 											<section>
-
-												<? foreach ($products->attr_groups as $_group) {
-														if ($_group[0]['m_products_attributes_groups_required']) {
-															?>
-														<section>
-															<label class="label">Обязательная группа атрибутов <span class="obligatory_elem">*</span></label>
-															<select name="m_products_attributes_groups_id_required" class="autoselect" placeholder="выберите из списка...">
-																<option value="0">выберите из списка...</option>
-														<?
-																	break;
-																}
-															} ?>
-														<? foreach ($products->attr_groups as $_group) {
-																if ($_group[0]['m_products_attributes_groups_required']) {
-																	echo '<option selected data="' . $_group[0]['m_products_attributes_groups_list_id'] . '" value="' . $_group[0]['m_products_attributes_groups_id'] . '" >',
-																		$_group[0]['m_products_attributes_groups_name'],
-																		'</option>';
-																}
-															}
-															?>
-														<? foreach ($products->attr_groups as $_group) {
-																if ($_group[0]['m_products_attributes_groups_required']) {
-																	?>
-															</select>
-															<input id="attr_required_hidden" name="attr_required_val" type="hidden" value="">
-															<div id="attr_required">
-																<?
-																			foreach ($attr_required_array_value as $attr_required_array_value_item) {
-																				echo '<div style="margin-top: 10px"><label style="width: 20%">' . $attr_required_array_value_item['m_products_attributes_list_name'] . ' (' . $attr_required_array_value_item['m_products_attributes_list_unit'] . ')</label><input style="width: 70%" name="m_products_attributes_required_value[]" data-id="' . $attr_required_array_value_item['m_products_attributes_list_id'] . '" type="text" value="' . $attr_required_array_value_item['m_products_attributes_value'] . '"></div>';
-																			}
-																			?>
-															</div>
-														</section>
-												<?
-															break;
-														}
-													} ?>
-
 												<label class="label">Группа атрибутов</label>
 												<div class="row">
 													<div class="col col-xs-12 col-sm-6">
-														<select name="m_products_attributes_groups_id" id="attr-group" class="autoselect" <?= $productAttributesGroupsId ? 'disabled' : ''; ?> placeholder="выберите из списка...">
+														<select name="products_attributes_groups_id" id="attr-group" class="autoselect" <?= $productAttributesGroupsId ? 'disabled' : ''; ?> placeholder="выберите из списка...">
 															<option value="0" checked>выберите из списка...</option>
 															<?
-																foreach ($products->attr_groups as $_group) {
-																	if (!$_group[0]['m_products_attributes_groups_required']) {
-																		echo '<option ' . ($productAttributesGroupsId == $_group[0]['m_products_attributes_groups_id'] ? 'selected' : '') . ' data="' . $_group[0]['m_products_attributes_groups_list_id'] . '" value="' . $_group[0]['m_products_attributes_groups_id'] . '">',
+																foreach ($products->attr_groups as $keyGroup => $_group) {
+																	echo '<option ' . ($productAttributesGroupsId == $keyGroup ? 'selected' : '') . ' data="' . $_group[0]['m_products_attributes_groups_list_id'] . '" value="' . $_group[0]['products_attributes_groups_id'] . '">',
 																			$_group[0]['m_products_attributes_groups_name'],
 																			'</option>';
-																	}
 																}
 																?>
 														</select>
@@ -701,6 +592,26 @@ if (get('action') == 'change' && $id = get('m_products_id')) {
 											</section>
 										</fieldset>
 										</div>
+										<div id="sale-settings">
+											<div class="widget-body">
+												<div class="row">
+														<label class="col col-xs-3">Вес брутто (кг)</label>
+														<input type="number" class="col col-xs-9" name="unit_weight" value="<?=$product['unit_weight']?>">
+												</div>
+												<div class="row">
+													<label class="col col-xs-3">Высота габаритная (см)</label>
+													<input type="number" class="col col-xs-9" name="unit_height" value="<?=$product['unit_height']?>">
+												</div>
+												<div class="row">
+													<label class="col col-xs-3">Длина габаритная (см)</label>
+													<input type="number" class="col col-xs-9" name="unit_length" value="<?=$product['unit_length']?>">
+												</div>
+												<div class="row">
+													<label class="col col-xs-3">Ширина габаритная (см)</label>
+													<input type="number" class="col col-xs-9" name="unit_width" value="<?=$product['unit_width']?>">
+												</div>
+											</div>
+										</div>
 										<div id="categories-settings">
 											<div class="widget-body">
 											<div class="row">
@@ -755,69 +666,6 @@ if (get('action') == 'change' && $id = get('m_products_id')) {
 
 
 	$content->setJS('
-
-/* обязательные параметры start */
-
-    function attr_required(){
-
-        var attr_required_input =  $("#attr_required input");
-        var data = [];
-
-        if(attr_required_input.length > 0){
-             attr_required_input.each(function(){
-
-            var data_id_input_required = $(this).attr("data-id");
-            var value_input_required = $(this).prop("disabled", true).val();
-
-            if(data_id_input_required !== "" && value_input_required !== ""){
-                data.push({id: data_id_input_required, value: value_input_required});
-            }
-
-
-        });
-
-        $("#attr_required_hidden").attr("value", JSON.stringify(data));
-        }
-
-    }
-
-    $("form#products-add").submit(function(){
-      attr_required();
-    });
-
-
-    var m_products_attributes_groups_id_required = $("[name=\'m_products_attributes_groups_id_required\']");
-
-	    if(m_products_attributes_groups_id_required !== undefined){
-	       m_products_attributes_groups_id_required.on("change",function(){
-
-	        $("#attr_required").empty();
-	        var value_m_products_attributes_groups_id_required = $(this).val();
-
-                $.ajax({
-                  method: "post",
-                  url: "/ajax/attr_required.php",
-                  data: {
-                    group_id: value_m_products_attributes_groups_id_required,
-                    product_id: 0
-                  },
-                  success: function( result ) {
-                        if(result !== 0){
-                    result = JSON.parse(result);
-                    for(var i=0; i<result.length; i++){
-                        $("#attr_required").append(\'<div style="margin-top: 10px"><label style="width: 20%">\'+ result[i]["m_products_attributes_list_name"] +\'</label><input style="width: 70%" name="m_products_attributes_required_value[]" data-id="\'+ result[i]["m_products_attributes_list_id"] +\'" type="text" placeholder=""></div>\');
-                    }
-                  }
-                  },
-                  error: function(q,w,e){
-                    console.log("ошибка");
-                  }
-                });
-
-	       });
-	    }
-	 /* обязательные параметры end */
-
 	runAllForms();
 
 	$("#products-add").validate({
@@ -947,7 +795,7 @@ if (get('action') == 'change' && $id = get('m_products_id')) {
 			$.get(
 				"/ajax/attr.php",
 				{
-					"m_products_attributes_groups_id":
+					"products_attributes_groups_id":
 				},
 				function(data){
 					alert(data);
@@ -956,13 +804,13 @@ if (get('action') == 'change' && $id = get('m_products_id')) {
 		} */
 	});
 
-	$("[name=\'m_products_attributes_groups_id\']").on("change",function(){
+	$("[name=\'products_attributes_groups_id\']").on("change",function(){
 		/* УДАЛЯЕМ ПУСТЫЕ ПАРАМЕТРЫ */
 		$("#attr .multirow").each(function(index,el){
 			if(!$(el).find("[name=\'m_products_attributes_value[]\']").val())
 				$(el).find("[name=\'m_products_attributes_value[]\']").parents(".multirow:first").find(".delete").trigger("click");
 		});
-		var attrs=$("[name=\'m_products_attributes_groups_id\'] option:selected").attr("data").split("|");
+		var attrs=$("[name=\'products_attributes_groups_id\'] option:selected").attr("data").split("|");
 		attrs.forEach(function(item,i,arr){
 			$("#attr .multirow:last").find("[name=\'m_products_attributes_list_id[]\']").select2("val",item);
 			if(i<arr.length-1)
@@ -1112,6 +960,7 @@ if (get('action') == 'change' && $id = get('m_products_id')) {
 								<div class="tabs">
 									<ul>
 										<li><a href="#general-settings">Основные настройки</a></li>
+										<li><a href="#sale-settings">Товар</a></li>
 										<li><a href="#categories-settings">Категории</a></li>
 									</ul>
 
@@ -1276,49 +1125,14 @@ if (get('action') == 'change' && $id = get('m_products_id')) {
 													<textarea name="m_products_desc" id="m_products_desc" rows="5" class="custom-scroll"></textarea>
 												</label>
 											</section>
-
-											<? foreach ($products->attr_groups as $_group) {
-													if ($_group[0]['m_products_attributes_groups_required']) {
-														?>
-													<section>
-														<label class="label">Обязательная группа атрибутов <span class="obligatory_elem">*</span></label>
-														<select name="m_products_attributes_groups_id_required" id="d123" class="autoselect" placeholder="выберите из списка...">
-															<option value="0" checked>выберите из списка...</option>
-													<?
-
-																break;
-															}
-														} ?>
-
-													<? foreach ($products->attr_groups as $_group) {
-															if ($_group[0]['m_products_attributes_groups_required']) {
-																echo '<option data="' . $_group[0]['m_products_attributes_groups_list_id'] . '" value="' . $_group[0]['m_products_attributes_groups_id'] . '" >',
-																	$_group[0]['m_products_attributes_groups_name'],
-																	'</option>';
-															}
-														}
-														?>
-													<? foreach ($products->attr_groups as $_group) {
-															if ($_group[0]['m_products_attributes_groups_required']) {
-																?>
-														</select>
-														<input id="attr_required_hidden" name="attr_required_val" type="hidden" value="">
-														<div id="attr_required">
-														</div>
-													</section>
-											<?
-
-														break;
-													}
-												} ?>
 											<section>
 												<label class="label">Группа атрибутов</label>
-												<select name="m_products_attributes_groups_id" id="attr-group" class="autoselect" placeholder="выберите из списка...">
+												<select name="products_attributes_groups_id" id="attr-group" class="autoselect" placeholder="выберите из списка...">
 													<option value="0" checked>выберите из списка...</option>
 													<?
 														foreach ($products->attr_groups as $_group) {
 															if (!$_group[0]['m_products_attributes_groups_required']) {
-																echo '<option data="' . $_group[0]['m_products_attributes_groups_list_id'] . '" value="' . $_group[0]['m_products_attributes_groups_id'] . '" >',
+																echo '<option data="' . $_group[0]['m_products_attributes_groups_list_id'] . '" value="' . $_group[0]['products_attributes_groups_id'] . '" >',
 																	$_group[0]['m_products_attributes_groups_name'],
 																	'</option>';
 															}
@@ -1400,6 +1214,17 @@ if (get('action') == 'change' && $id = get('m_products_id')) {
 											</section>
 										</fieldset>
 									</div>
+									<div id="sale-settings">
+										<div class="widget-body">
+										<div class="row">
+											<div class="col-xs-12">
+												<div class="dd" id="product-categories-list">
+													<?$products->product_categories_display(0)?>
+												</div>
+											</div>
+										</div>
+										</div>
+									</div>
 									<div id="categories-settings">
 										<div class="widget-body">
 										<div class="row">
@@ -1479,6 +1304,11 @@ if (get('action') == 'change' && $id = get('m_products_id')) {
 	$('#d123-edit').on("click", function() {
 		$("#attr-group").prop("disabled", false);
 	});
+	$('form#products-add').on("submit", function() {
+		$("#attr-group").prop("disabled", false);
+		return true;
+	});
+	
 
 	function renderAttributesGroup(attirbutes_group_id, products_id) {
 		$.post(

@@ -16,7 +16,7 @@ if(!empty($_POST['group_id'])){
         $product_id = 0;
     }
 
-    $q = "SELECT `m_products_attributes_groups_list_id` FROM `formetoo_main`.`m_products_attributes_groups` WHERE `m_products_attributes_groups_id` = '$group_id';";
+    $q = "SELECT `m_products_attributes_groups_list_id` FROM `formetoo_main`.`m_products_attributes_groups` WHERE `products_attributes_groups_id` = '$group_id';";
 
     $attrs_id = $sql->query($q);
 
@@ -147,7 +147,7 @@ if(!empty($_POST['group_id'])){
 //
 //        $id = htmlspecialchars($_POST['data']);
 //
-//        $q = "SELECT `m_products_attributes_groups_list_id` FROM `formetoo_main`.`m_products_attributes_groups` WHERE `m_products_attributes_groups_id` = '$id';";
+//        $q = "SELECT `m_products_attributes_groups_list_id` FROM `formetoo_main`.`m_products_attributes_groups` WHERE `products_attributes_groups_id` = '$id';";
 //
 //        $attrs_id = $sql->query($q);
 //
