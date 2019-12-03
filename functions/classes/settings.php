@@ -5,21 +5,36 @@ class settings{
 	function __construct(){
 		global $sql;
 		
-    $q='SELECT `value` FROM `formetoo_main`.`m_settings_cart` WHERE `key`="min_total_sum" LIMIT 1;';
-    $res=$sql->query($q);
-    $this->min_total_sum_cart = (isset($res) && is_numeric($res[0]['value']) && $res[0]['value'] > 0) ? $res[0]['value'] : 0;
+    $q='SELECT `key`,`value` FROM `formetoo_main`.`m_settings` WHERE `module_id`="main"';
+		$res=$sql->query($q);
+		
+		foreach($res as $item) {
+			$this->{$item['key']} = $item['value'];
+		}
 	}
 	
 	public static function page_change(){
 		global $sql,$e;
-		$data['min_total_sum']=array(null,null,255);
+		$module_id = 'main';
+		$data['min_total_sum_cart'] = array();
+		$data['price_guest_visible'] = array();
 
     array_walk($data,'check');
 
 		if(!$e){
-      $data['min_total_sum'] = (is_numeric($data['min_total_sum']) && $data['min_total_sum'] > 0) ? $data['min_total_sum'] : 0;
+			$data['min_total_sum_cart'] = (is_numeric($data['min_total_sum_cart']) && $data['min_total_sum_cart'] > 0) ? $data['min_total_sum_cart'] : 0;
+			$data['price_guest_visible'] = $data['price_guest_visible'] ? 1 : 0;
+
+			foreach ($data as $keyData => $valueData) {
+				$valuesArray[] = '(
+					\''.$module_id.'\', 
+					\''.$keyData.'\', 
+					\''.$valueData.'\'
+				)';
+			}
+				
+			$q='INSERT INTO `formetoo_main`.`m_settings` (`module_id`,`key`,`value`) VALUES '. implode(',', $valuesArray);
 			
-			$q='UPDATE `formetoo_main`.`m_settings_cart` SET `value`=\''.$data['min_total_sum'].'\';';
 			if($sql->query($q))
         header('Location: '.url().'?success');
       else{

@@ -43,7 +43,15 @@ global $sql, $settings;
                   <section class="col col-6">
                     <label class="label">Минимальная сумма корзины <span class="obligatory_elem">*</span></label>
                     <label class="input">
-                      <input type="number" name="min_total_sum" value="<?= $settings->min_total_sum_cart ?>">
+                      <input type="number" name="min_total_sum_cart" value="<?= $settings->min_total_sum_cart ?>">
+                    </label>
+                  </section>
+                </div>
+                <div class="row">
+                  <section class="col col-6">
+                    <label class="checkbox">
+                      <input type="checkbox" name="price_guest_visible" <?=$settings->price_guest_visible ? 'checked' : ''?> value="1">
+											<i></i>Показывать цены незарегистрированным пользователям? 
                     </label>
                   </section>
                 </div>
