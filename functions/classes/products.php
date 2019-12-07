@@ -1141,7 +1141,7 @@ class products{
 		$data['m_products_attributes_list_site_search']=array(null,null,3);
 		$data['m_products_attributes_list_site_filter']=array(null,null,3);
 		$data['m_products_attributes_list_site_open']=array(null,null,3);
-		$data['m_products_attributes_list_active']=array(null,null,3);
+		$data['is_active']=array(null,null,3);
 
 		array_walk($data,'check');
 
@@ -1152,7 +1152,7 @@ class products{
 			$data['m_products_attributes_list_site_search']=$data['m_products_attributes_list_site_search']?1:0;
 			$data['m_products_attributes_list_site_filter']=$data['m_products_attributes_list_site_filter']?1:0;
 			$data['m_products_attributes_list_site_open']=$data['m_products_attributes_list_site_open']?1:0;
-			$data['m_products_attributes_list_active']=$data['m_products_attributes_list_active']?1:0;
+			$data['is_active']=$data['is_active']?1:0;
 			$data['m_products_attributes_list_name_url']=$data['m_products_attributes_list_name_url']?$data['m_products_attributes_list_name_url']:transform::translit($data['m_products_attributes_list_name']);
 
 
@@ -1167,7 +1167,7 @@ class products{
 				`m_products_attributes_list_site_search`='.$data['m_products_attributes_list_site_search'].',
 				`m_products_attributes_list_site_filter`='.$data['m_products_attributes_list_site_filter'].',
 				`m_products_attributes_list_site_open`='.$data['m_products_attributes_list_site_open'].',
-				`m_products_attributes_list_active`='.$data['m_products_attributes_list_active'].',
+				`is_active`='.$data['is_active'].',
 				`m_products_attributes_list_hint`=\''.$data['m_products_attributes_list_hint'].'\',
 				`m_products_attributes_list_comment`=\''.$data['m_products_attributes_list_comment'].'\';';
 
@@ -1199,7 +1199,7 @@ class products{
 		$data['m_products_attributes_list_site_search']=array(null,null,3);
 		$data['m_products_attributes_list_site_filter']=array(null,null,3);
 		$data['m_products_attributes_list_site_open']=array(null,null,3);
-		$data['m_products_attributes_list_active']=array(null,null,3);
+		$data['is_active']=array(null,null,3);
 		$data['property_values_default']=array();
 
 		array_walk($data,'check');
@@ -1211,7 +1211,7 @@ class products{
 			$data['m_products_attributes_list_site_search']=$data['m_products_attributes_list_site_search']?1:0;
 			$data['m_products_attributes_list_site_filter']=$data['m_products_attributes_list_site_filter']?1:0;
 			$data['m_products_attributes_list_site_open']=$data['m_products_attributes_list_site_open']?1:0;
-			$data['m_products_attributes_list_active']=$data['m_products_attributes_list_active']?1:0;
+			$data['is_active']=$data['is_active']?1:0;
 			$data['m_products_attributes_list_name_url']=$data['m_products_attributes_list_name_url']?$data['m_products_attributes_list_name_url']:transform::translit($data['m_products_attributes_list_name']);
 
 			if ($data['property_values']) {
@@ -1256,7 +1256,7 @@ class products{
 				`m_products_attributes_list_site_search`='.$data['m_products_attributes_list_site_search'].',
 				`m_products_attributes_list_site_filter`='.$data['m_products_attributes_list_site_filter'].',
 				`m_products_attributes_list_site_open`='.$data['m_products_attributes_list_site_open'].',
-				`m_products_attributes_list_active`='.$data['m_products_attributes_list_active'].',
+				`is_active`='.$data['is_active'].',
 				`m_products_attributes_list_hint`=\''.$data['m_products_attributes_list_hint'].'\',
 				`m_products_attributes_list_comment`=\''.$data['m_products_attributes_list_comment'].'\'
 				WHERE `m_products_attributes_list_id`='.$data['m_products_attributes_list_id'].' LIMIT 1;';

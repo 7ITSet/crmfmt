@@ -188,7 +188,7 @@ if ($id = get('m_products_attributes_list_id')) {
 												Раскрыт по умолчанию
 											</label>
 											<label class="checkbox">
-												<input type="checkbox" name="m_products_attributes_list_active" <?= $attr['m_products_attributes_list_active'] ? 'checked="checked"' : '' ?> value="1" />
+												<input type="checkbox" name="is_active" <?= $attr['is_active'] ? 'checked="checked"' : '' ?> value="1" />
 												<i></i>
 												Активен
 											</label>
@@ -406,7 +406,7 @@ if ($id = get('m_products_attributes_list_id')) {
 												Раскрыт по умолчанию
 											</div>
 											<div class="label_checkbox">
-												<input type="checkbox" name="m_products_attributes_list_active" value="1" />
+												<input type="checkbox" name="is_active" value="1" />
 												<span class="input_name">Активен</span>
 											</div>
 										</section>
@@ -513,7 +513,7 @@ if ($id = get('m_products_attributes_list_id')) {
 			  <span>Раскрыт</span>
 			</label>
 			<label class="checkbox">
-			  <input type="checkbox" class="checkbox style-0 show" data-name="m_products_attributes_list_active" ' . ($_attr['m_products_attributes_list_active'] ? 'checked' : '') . ' data-pk="' . $_attr['m_products_attributes_list_id'] . '">
+			  <input type="checkbox" class="checkbox style-0 show" data-name="is_active" ' . ($_attr['is_active'] ? 'checked' : '') . ' data-pk="' . $_attr['m_products_attributes_list_id'] . '">
 			  <span>Активен</span>
 			</label>
 		</td>';
@@ -610,7 +610,7 @@ if ($id = get('m_products_attributes_list_id')) {
 										<section class="col col-4">
 											<label class="label">Параметры</label>
 											<div class="label_checkbox">
-												<input type="checkbox" name="m_products_attributes_list_active" value="1" />
+												<input type="checkbox" name="is_active" value="1" />
 												<span class="input_name">Активен</span>
 											</div>
 											<div class="label_checkbox">

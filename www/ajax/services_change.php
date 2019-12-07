@@ -187,10 +187,10 @@ if(!$e){
 				`m_products_attributes_list_site_open`='.$data['value'].'
 				WHERE `m_products_attributes_list_id`='.$data['pk'].' LIMIT 1;';
 			break;
-		case 'm_products_attributes_list_active':
+		case 'is_active':
 			$data['value']=$data['value']=='true'?1:0;
 			$q='UPDATE `formetoo_main`.`m_products_attributes_list` SET 
-				`m_products_attributes_list_active`='.$data['value'].'
+				`is_active`='.$data['value'].'
 				WHERE `m_products_attributes_list_id`='.$data['pk'].' LIMIT 1;';
 			break;
 		//удаление атрибута
