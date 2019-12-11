@@ -72,7 +72,6 @@ function uploadExcelFile($fileName)
     array(
       'm_products_id',
       'm_products_id_isolux',
-      'm_products_main_product',
       "m_products_contragents_id",
 
       "m_products_name",
@@ -123,7 +122,6 @@ function uploadExcelFile($fileName)
     array(
       "bigint(20) UNSIGNED NOT NULL", //m_products_id
       "char(10) NOT NULL DEFAULT '0'", //m_products_id_isolux
-      "bigint(20) UNSIGNED NOT NULL DEFAULT '0'",  //m_products_main_product   
       "bigint(20) NOT NULL DEFAULT '1000000000'", //m_products_contragents_id
 
       "varchar(200) NOT NULL COMMENT 'Наименование'", //m_products_name
@@ -257,7 +255,6 @@ function downloadExcelFile($fileName)
     array(
       'm_products_id',
       'm_products_id_isolux',
-      'm_products_main_product',
       "m_products_contragents_id",
 
       "m_products_name",
@@ -295,7 +292,6 @@ function downloadExcelFile($fileName)
     array(
       "Артикул",
       "m_products_id_isolux",
-      "m_products_main_product",
 
       "Организация (id)",
       "Категория (id)",

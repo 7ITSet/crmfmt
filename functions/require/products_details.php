@@ -41,31 +41,6 @@ if (get('action') == 'change' && $id = get('m_products_id')) {
 	$product['m_products_links'] = explode('|', $product['m_products_links']);
 	$foto = $product['m_products_foto'] ? json_decode($product['m_products_foto']) : array();
 
-	//массив c id атрибутов обязательный к заполнению
-	$attr_required_array = [];
-	foreach ($products->attr_groups as $group) {
-		if ($group[0]['m_products_attributes_groups_required']) {
-			$m_products_attributes_groups_list_id_array = explode('|', $group[0]['m_products_attributes_groups_list_id']);
-			foreach ($m_products_attributes_groups_list_id_array as $at) {
-				$attr_required_array[] = $at;
-			}
-		}
-	}
-
-	//атрибуты и их значения обязательные для заполнения
-	$attr_required_array_value = [];
-	foreach ($attr as $attrItem) {
-
-		if (in_array($attrItem['m_products_attributes_list_id'], $attr_required_array)) {
-			$attr_required_array_value[] = [
-				'm_products_attributes_list_name' => $attrItem['m_products_attributes_list_name'],
-				'm_products_attributes_list_unit' => $attrItem['m_products_attributes_list_unit'],
-				'm_products_attributes_value' => $attrItem['m_products_attributes_value'],
-				'm_products_attributes_list_id' => $attrItem['m_products_attributes_list_id']
-			];
-		}
-	}
-
 	$content->setJS(' 
 		runAllForms();
 
@@ -1131,11 +1106,9 @@ if (get('action') == 'change' && $id = get('m_products_id')) {
 													<option value="0" checked>выберите из списка...</option>
 													<?
 														foreach ($products->attr_groups as $_group) {
-															if (!$_group[0]['m_products_attributes_groups_required']) {
-																echo '<option data="' . $_group[0]['m_products_attributes_groups_list_id'] . '" value="' . $_group[0]['products_attributes_groups_id'] . '" >',
+															echo '<option data="' . $_group[0]['m_products_attributes_groups_list_id'] . '" value="' . $_group[0]['products_attributes_groups_id'] . '" >',
 																	$_group[0]['m_products_attributes_groups_name'],
 																	'</option>';
-															}
 														}
 														?>
 												</select>
