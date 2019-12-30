@@ -230,7 +230,7 @@ if(isset($_GET['error']))
 											$categories=array();
 											$products->categories_childs(0,$categories,1);
 											foreach($categories as $categories_){
-												echo '<option value="'.$categories_['m_products_categories_id'].'" '.($item_menu['category']==$categories_['m_products_categories_id']?'selected':'').'>
+												echo '<option value="'.$categories_['id'].'" '.($item_menu['category']==$categories_['id']?'selected':'').'>
 														'.$categories_['m_products_categories_name'].'
 													</option>';
 											}
@@ -533,7 +533,7 @@ if(isset($_GET['error']))
 												$categories=array();
 												$products->categories_childs(0,$categories,1);
 												foreach($categories as $categories_){
-													echo '<option value="'.$categories_['m_products_categories_id'].'">
+													echo '<option value="'.$categories_['id'].'">
 															'.$categories_['m_products_categories_name'].'
 														</option>';
 												}

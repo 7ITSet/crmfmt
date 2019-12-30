@@ -2,12 +2,12 @@
 defined('_DSITE') or die('Access denied');
 global $user, $sql, $content, $products, $contragents;
 
-if (get('action') == 'change' && $id = get('m_products_id')) {
+if (get('action') == 'change' && $id = get('id')) {
 	//сам товар
 	$q = 'SELECT `m_products`.*, GROUP_CONCAT(`m_products_category`.`category_id` SEPARATOR \'|\') AS categories_id FROM `formetoo_main`.`m_products` 
 				LEFT JOIN `formetoo_main`.`m_products_category` 
-					ON `m_products_category`.`product_id`=`m_products`.`m_products_id` 
-				WHERE `m_products_id`=' . $id . '  
+					ON `m_products_category`.`product_id`=`m_products`.`id` 
+				WHERE `id`=' . $id . '  
 				GROUP BY `m_products_category`.`product_id`;';
 	$product = $sql->query($q)[0];
 
@@ -522,8 +522,8 @@ if (get('action') == 'change' && $id = get('m_products_id')) {
 																if (strlen($k) == 10 && isset($v['items'])) {
 																	echo '<optgroup label="' . $v['m_products_categories_name'] . '">';
 																	foreach ($v['items'] as $products_)
-																		if ($products_['m_products_id'] != $product['m_products_id'])
-																			echo '<option value="' . $products_['m_products_id'] . '" ' . (in_array($products_['m_products_id'], $product['m_products_links']) !== false ? ' selected ' : '') . '>',
+																		if ($products_['id'] != $product['id'])
+																			echo '<option value="' . $products_['id'] . '" ' . (in_array($products_['id'], $product['m_products_links']) !== false ? ' selected ' : '') . '>',
 																				'[' . $v['m_products_categories_name'] . '] ' . $products_['m_products_name'],
 																				'</option>';
 																	echo '</optgroup>';
@@ -545,12 +545,12 @@ if (get('action') == 'change' && $id = get('m_products_id')) {
 														echo '
 														<div class="ajax-file-upload-statusbar">
 															<div class="ajax-file-upload-preview-container">',
-															($product['m_products_id_isolux']
-																? '<a class="fancybox-button" rel="group" href="//crm.formetoo.ru/images/products/' . $product['m_products_id'] . '/' . $_foto->file . '_max.'.$_foto->ext.'">
-																		<img class="ajax-file-upload-preview" src="//crm.formetoo.ru/images/products/' . $product['m_products_id'] . '/' . $_foto->file . '_min.'.$_foto->ext.'" style="width: auto; height: auto;">
+															($product['id_isolux']
+																? '<a class="fancybox-button" rel="group" href="//crm.formetoo.ru/images/products/' . $product['id'] . '/' . $_foto->file . '_max.'.$_foto->ext.'">
+																		<img class="ajax-file-upload-preview" src="//crm.formetoo.ru/images/products/' . $product['id'] . '/' . $_foto->file . '_min.'.$_foto->ext.'" style="width: auto; height: auto;">
 																	</a>'
-																: '<a class="fancybox-button" rel="group" href="//crm.formetoo.ru/images/products/' . $product['m_products_id'] . '/' . $_foto->file . '_max.'.$_foto->ext.'">
-																		<img class="ajax-file-upload-preview" src="//crm.formetoo.ru/images/products/' . $product['m_products_id'] . '/' . $_foto->file . '_min.'.$_foto->ext.'" style="width: auto; height: auto;">
+																: '<a class="fancybox-button" rel="group" href="//crm.formetoo.ru/images/products/' . $product['id'] . '/' . $_foto->file . '_max.'.$_foto->ext.'">
+																		<img class="ajax-file-upload-preview" src="//crm.formetoo.ru/images/products/' . $product['id'] . '/' . $_foto->file . '_min.'.$_foto->ext.'" style="width: auto; height: auto;">
 																	</a>'),
 															'</div>
 															<label class="checkbox ajax-file-upload-info" style="margin-top:8px;">
@@ -604,7 +604,7 @@ if (get('action') == 'change' && $id = get('m_products_id')) {
 												Сохранить данные
 											</button>
 										</footer>
-										<input type="hidden" name="m_products_id" value="<?= $product['m_products_id'] ?>" />
+										<input type="hidden" name="id" value="<?= $product['id'] ?>" />
 										<input type="hidden" name="action" value="products_change" />
 									</form>
 								</div>
@@ -623,7 +623,7 @@ if (get('action') == 'change' && $id = get('m_products_id')) {
 		if (strlen($k) == 10 && isset($v['items'])) {
 			$products_select2 .= '<optgroup label="' . $v['m_products_categories_name'] . '">';
 			foreach ($v['items'] as $products_)
-				$products_select2 .= '<option value="' . $products_['m_products_id'] . '">' . '[' . $v['m_products_categories_name'] . '] ' . $products_['m_products_name'] . '</option>';
+				$products_select2 .= '<option value="' . $products_['id'] . '">' . '[' . $v['m_products_categories_name'] . '] ' . $products_['m_products_name'] . '</option>';
 			$products_select2 .= '</optgroup>';
 		}
 
@@ -741,17 +741,17 @@ if (get('action') == 'change' && $id = get('m_products_id')) {
 
 	$("#products-group-change").on("submit",function(){
 		var ids=[];
-		$("input.m_products_id:checked").each(function(index,el){
+		$("input.id:checked").each(function(index,el){
 			ids[ids.length]=$(el).val();
 		});
-		$("input[name=\'group_m_products_id[]\']").val(ids);
+		$("input[name=\'group_id[]\']").val(ids);
 	});
 
-	$("#m_products_id_all").on("change",function(){
-		if($("#m_products_id_all:checked").length)
-			$(".m_products_id").prop("checked",true);
+	$("#id_all").on("change",function(){
+		if($("#id_all:checked").length)
+			$(".id").prop("checked",true);
 		else
-			$(".m_products_id").prop("checked",false);
+			$(".id").prop("checked",false);
 	});
 
 	/* СКИДКИ */
@@ -1141,7 +1141,7 @@ if (get('action') == 'change' && $id = get('m_products_id')) {
 																if (strlen($k) == 10 && isset($v['items'])) {
 																	echo '<optgroup label="' . $v['m_products_categories_name'] . '">';
 																	foreach ($v['items'] as $products_)
-																		echo '<option value="' . $products_['m_products_id'] . '">',
+																		echo '<option value="' . $products_['id'] . '">',
 																			'[' . $v['m_products_categories_name'] . '] ' . $products_['m_products_name'],
 																			'</option>';
 																	echo '</optgroup>';
@@ -1225,7 +1225,7 @@ if (get('action') == 'change' && $id = get('m_products_id')) {
 									</button>
 								</footer>
 								<input type="hidden" name="action" value="products_add" />
-								<input type="hidden" name="group_m_products_id[]" />
+								<input type="hidden" name="group_id[]" />
 							</form>
 						</div>
 					</div>
@@ -1307,11 +1307,11 @@ if (get('action') == 'change' && $id = get('m_products_id')) {
 	}
 
 	$('#attr-group').on('change', function(e) {
-		e.val != 0 && renderAttributesGroup(e.val, <?= get('m_products_id') ? get('m_products_id') : '' ?>);
+		e.val != 0 && renderAttributesGroup(e.val, <?= get('id') ? get('id') : '' ?>);
 	});
 	<?
 	if (!empty($productAttributesGroupsId)) {
-		echo 'renderAttributesGroup("' . $productAttributesGroupsId . '", "' . get('m_products_id') . '");';
+		echo 'renderAttributesGroup("' . $productAttributesGroupsId . '", "' . get('id') . '");';
 	}
 	?>
 </script>

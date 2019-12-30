@@ -116,38 +116,38 @@ if(!$e){
 			$data['value']=str_replace(array(' ',','),array('','.'),$data['value']);
 			$q='UPDATE `formetoo_main`.`m_products` SET 
 				`m_products_price_general`='.$data['value'].' 
-				WHERE `m_products_id`='.$data['pk'].' LIMIT 1;';
+				WHERE `id`='.$data['pk'].' LIMIT 1;';
 			break;
 		//изменение значения показа в прайсе
 		case 'm_products_show_price':
 			$data['value']=$data['value']=='true'?1:0;
 			$q='UPDATE `formetoo_main`.`m_products` SET 
 				`m_products_show_price`='.$data['value'].'
-				WHERE `m_products_id`='.$data['pk'].' LIMIT 1;';
+				WHERE `id`='.$data['pk'].' LIMIT 1;';
 			break;
 		//изменение значения показа на сайте
 		case 'm_products_show_site':
 			$data['value']=$data['value']=='true'?1:0;
 			$q='UPDATE `formetoo_main`.`m_products` SET 
 				`m_products_show_site`='.$data['value'].'
-				WHERE `m_products_id`='.$data['pk'].' LIMIT 1;';
+				WHERE `id`='.$data['pk'].' LIMIT 1;';
 			break;
 		//изменение порядкового номера
 		case 'm_products_order':
 			$q='UPDATE `formetoo_main`.`m_products` SET 
 				`m_products_order`='.$data['value'].'
-				WHERE `m_products_id`='.$data['pk'].' LIMIT 1;';
+				WHERE `id`='.$data['pk'].' LIMIT 1;';
 			break;
 		//изменение порядкового номера
 		case 'm_products_check_it':
 			$q='UPDATE `formetoo_main`.`m_products` SET 
 				`m_products_check_it`=1
-				WHERE `m_products_id`='.$data['pk'].' LIMIT 1;';
+				WHERE `id`='.$data['pk'].' LIMIT 1;';
 			break;	
 		//удаление товара
-		case 'm_products_id':
+		case 'id':
 			if($data['value']==fmt)
-				$q='DELETE FROM `formetoo_main`.`m_products` WHERE `m_products_id`='.$data['pk'].' LIMIT 1;';
+				$q='DELETE FROM `formetoo_main`.`m_products` WHERE `id`='.$data['pk'].' LIMIT 1;';
 			else{
 				header('HTTP 400 Bad Request',true,400);
 				echo "неверный пароль".$q;
@@ -275,30 +275,30 @@ if(!$e){
 			$q='UPDATE `formetoo_main`.`m_products_categories` SET 
 				`m_products_categories_name`=\''.$data['value'].'\',
 				`m_products_categories_name_seo`=\''.transform::translit($data['value']).'\'		
-				WHERE `m_products_categories_id`='.$data['pk'].' LIMIT 1;';
+				WHERE `id`='.$data['pk'].' LIMIT 1;';
 			break;
 		case 'm_products_categories_show_goods':
 			$data['value']=$data['value']=='true'?1:0;
 			$q='UPDATE `formetoo_main`.`m_products_categories` SET 
 				`m_products_categories_show_goods`='.$data['value'].'
-				WHERE `m_products_categories_id`='.$data['pk'].' LIMIT 1;';
+				WHERE `id`='.$data['pk'].' LIMIT 1;';
 			break;
 		case 'm_products_categories_show_attributes':
 			$data['value']=$data['value']=='true'?1:0;
 			$q='UPDATE `formetoo_main`.`m_products_categories` SET 
 				`m_products_categories_show_attributes`='.$data['value'].'
-				WHERE `m_products_categories_id`='.$data['pk'].' LIMIT 1;';
+				WHERE `id`='.$data['pk'].' LIMIT 1;';
 			break;
 		case 'm_products_categories_show_categories':
 			$data['value']=$data['value']=='true'?1:0;
 			$q='UPDATE `formetoo_main`.`m_products_categories` SET 
 				`m_products_categories_show_categories`='.$data['value'].'
-				WHERE `m_products_categories_id`='.$data['pk'].' LIMIT 1;';
+				WHERE `id`='.$data['pk'].' LIMIT 1;';
 			break;
 		//удаление категории товара
-		case 'm_products_categories_id':
+		case 'id':
 			if($data['value']==fmt)
-				$q='DELETE FROM `formetoo_main`.`m_products_categories` WHERE `m_products_categories_id`='.$data['pk'].' LIMIT 1;';
+				$q='DELETE FROM `formetoo_main`.`m_products_categories` WHERE `id`='.$data['pk'].' LIMIT 1;';
 			else{
 				header('HTTP 400 Bad Request',true,400);
 				echo "неверный пароль".$q;
@@ -318,7 +318,7 @@ if(!$e){
 					//если родительский пункт обновился
 					if($products->categories_nodes_id[$v['id']]['m_products_categories_parent']!=$parent)
 						$q.=($products->categories_nodes_id[$v['id']]['m_products_categories_order']!=$k?',':'').'`m_products_categories_parent`='.$parent;
-					$q.=' WHERE `m_products_categories_id`='.$v['id'].' LIMIT 1;';
+					$q.=' WHERE `id`='.$v['id'].' LIMIT 1;';
 					//если есть изменения - выполняем запрос
 					if(strlen($q)>88)
 						$sql->query($q);

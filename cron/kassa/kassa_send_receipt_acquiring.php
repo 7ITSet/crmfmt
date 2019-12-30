@@ -52,8 +52,8 @@ if($orders=$sql->query($q))
 						$data_prod[]=$_pos->id;
 					else $data_serv[]=$_pos->id;
 				}
-			$q='SELECT `m_products_id`,`m_products_name_full`,`m_products_unit` FROM `formetoo_main`.`m_products` WHERE `m_products_id` IN(0,'.implode(',',$data_prod).');';	
-			$data_prod=$sql->query($q,'m_products_id');
+			$q='SELECT `id`,`m_products_name_full`,`m_products_unit` FROM `formetoo_main`.`m_products` WHERE `id` IN(0,'.implode(',',$data_prod).');';	
+			$data_prod=$sql->query($q,'id');
 			$q='SELECT `m_services_id`,`m_services_name`,`m_services_unit` FROM `formetoo_main`.`m_services` WHERE `m_services_id` IN(0,'.implode(',',$data_serv).');';	
 			$data_serv=$sql->query($q,'m_services_id');
 			$data_units=array();

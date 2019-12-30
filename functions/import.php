@@ -70,8 +70,8 @@ function uploadExcelFile($fileName)
     "m_products",
     0,
     array(
-      'm_products_id',
-      'm_products_id_isolux',
+      'id',
+      'id_isolux',
       "m_products_contragents_id",
 
       "m_products_name",
@@ -120,8 +120,8 @@ function uploadExcelFile($fileName)
     ),
     1,
     array(
-      "bigint(20) UNSIGNED NOT NULL", //m_products_id
-      "char(10) NOT NULL DEFAULT '0'", //m_products_id_isolux
+      "bigint(20) UNSIGNED NOT NULL", //id
+      "char(10) NOT NULL DEFAULT '0'", //id_isolux
       "bigint(20) NOT NULL DEFAULT '1000000000'", //m_products_contragents_id
 
       "varchar(200) NOT NULL COMMENT 'Наименование'", //m_products_name
@@ -186,7 +186,7 @@ function uploadExcelSEOFile($fileName)
     "m_products",
     0,
     array(
-      'm_products_id',
+      'id',
       "m_products_name",
       "m_products_name_full",
 
@@ -207,7 +207,7 @@ function uploadExcelSEOFile($fileName)
     ),
     1,
     array(
-      "bigint(20) UNSIGNED NOT NULL", //m_products_id
+      "bigint(20) UNSIGNED NOT NULL", //id
       "varchar(200) NOT NULL COMMENT 'Наименование'", //m_products_name
       "varchar(300) NOT NULL", //m_products_name_full
 
@@ -253,8 +253,8 @@ function downloadExcelFile($fileName)
     "m_products",
     "Экспорт",
     array(
-      'm_products_id',
-      'm_products_id_isolux',
+      'id',
+      'id_isolux',
       "m_products_contragents_id",
 
       "m_products_name",
@@ -291,7 +291,7 @@ function downloadExcelFile($fileName)
     ),
     array(
       "Артикул",
-      "m_products_id_isolux",
+      "id_isolux",
 
       "Организация (id)",
       "Категория (id)",
@@ -375,7 +375,7 @@ function downloadExcelSEOFile($fileName)
     "m_products",
     "Экспорт SEO",
     array(
-      'm_products_id',
+      'id',
       "m_products_name",
       "m_products_name_full",
 

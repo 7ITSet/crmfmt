@@ -102,8 +102,8 @@ if($res_islx)
 
 		//добавляем товар
 		//проверяем, нет ли такого товара, прайс запрашиваем для обновления цены, если товар уже есть
-		$q='SELECT `m_products_id`,`m_products_price_general`,`m_products_check_it`,`m_products_docs`,`m_products_foto` FROM `formetoo_main`.`m_products` WHERE 
-			`m_products_id_isolux`=\''.$_item['id'].'\' LIMIT 1;';
+		$q='SELECT `id`,`m_products_price_general`,`m_products_check_it`,`m_products_docs`,`m_products_foto` FROM `formetoo_main`.`m_products` WHERE 
+			`id_isolux`=\''.$_item['id'].'\' LIMIT 1;';
 		//если товара нет
 		if(!$res=$sql->query($q)){
 			//добавляем категории
@@ -160,16 +160,16 @@ if($res_islx)
 				$product_links=array();
 				if($_item['links']){
 					//находим id товаров в рабочей базе по id isolux
-					$q='SELECT `m_products_id` FROM `formetoo_main`.`m_products` WHERE `m_products_id_isolux` IN ('.implode(',',$_item['links']).');';
+					$q='SELECT `id` FROM `formetoo_main`.`m_products` WHERE `id_isolux` IN ('.implode(',',$_item['links']).');';
 					if($res=$sql->query($q))
 						foreach($res as $_res)
-							$product_links[]=$_res['m_products_id'];
+							$product_links[]=$_res['id'];
 				}
 						
 				$q='INSERT INTO `formetoo_main`.`m_products` SET 
-					`m_products_id`='.$product_id.',
-					`m_products_id_isolux`=\''.$_item['id'].'\',
-					`m_products_categories_id`='.$product_cat.',
+					`id`='.$product_id.',
+					`id_isolux`=\''.$_item['id'].'\',
+					`id`='.$product_cat.',
 					`m_products_name`=\''.val($_item['price_name']).'\',
 					`m_products_name_full`=\''.($_item['name']?val($_item['name']):val($_item['price_name'])).'\',
 					`m_products_unit`='.$product_unit.',
@@ -291,17 +291,17 @@ if($res_islx)
 						}
 						if($product_foto){	
 							$product_foto=json_encode($product_foto,JSON_UNESCAPED_SLASHES|JSON_UNESCAPED_UNICODE);
-							$q='UPDATE `formetoo_main`.`m_products` SET `m_products_foto`=\''.$product_foto.'\' WHERE `m_products_id`=\''.$product_id.'\' LIMIT 1;';
+							$q='UPDATE `formetoo_main`.`m_products` SET `m_products_foto`=\''.$product_foto.'\' WHERE `id`=\''.$product_id.'\' LIMIT 1;';
 						}
 						//не показываем товары, у которых нет фото
 						else{
-							$q='UPDATE `formetoo_main`.`m_products` SET `m_products_show_site`=0 WHERE `m_products_id`='.$product_id.' LIMIT 1;';
+							$q='UPDATE `formetoo_main`.`m_products` SET `m_products_show_site`=0 WHERE `id`='.$product_id.' LIMIT 1;';
 						}
 						$sql->query($q);
 					}
 					//если фото нет - отменяем показ товара
 					else{
-						$q='UPDATE `formetoo_main`.`m_products` SET `m_products_show_site`=0 WHERE `m_products_id`='.$product_id.' LIMIT 1;';
+						$q='UPDATE `formetoo_main`.`m_products` SET `m_products_show_site`=0 WHERE `id`='.$product_id.' LIMIT 1;';
 						$sql->query($q);
 					}
 				}
@@ -311,7 +311,7 @@ if($res_islx)
 		elseif(abs($_item['price']-$res[0]['m_products_price_general'])<$res[0]['m_products_price_general']*.3){
 			$q='UPDATE `formetoo_main`.`m_products` SET 
 				`m_products_price_general`='.($_item['price']*1.15).'
-				WHERE `m_products_id`='.$res[0]['m_products_id'].' LIMIT 1;';
+				WHERE `id`='.$res[0]['id'].' LIMIT 1;';
 			$sql->query($q);
 			//ЕСЛИ СТОИТ ПОМЕТКА ПРОВЕРКИ ТОВАРА
 			if($res[0]['m_products_check_it']){
@@ -321,7 +321,7 @@ if($res_islx)
 					$attr_values_all=$sql->query('SELECT * FROM `formetoo_main`.`m_products_attributes_values`;','m_products_attributes_values_value');
 					
 					//добавляем товар
-					$product_id=$res[0]['m_products_id'];
+					$product_id=$res[0]['id'];
 					
 					//ОБНОВЛЯЕМ ДОКУМЕНТЫ К ТОВАРУ
 					//если стоит пометка обновления или документы не добавлялись ранее
@@ -376,10 +376,10 @@ if($res_islx)
 					$product_links=array();
 					if($_item['links']){
 						//находим id товаров в рабочей базе по id isolux
-						$q='SELECT `m_products_id` FROM `formetoo_main`.`m_products` WHERE `m_products_id_isolux` IN ('.implode(',',$_item['links']).');';
+						$q='SELECT `id` FROM `formetoo_main`.`m_products` WHERE `id_isolux` IN ('.implode(',',$_item['links']).');';
 						if($res_links=$sql->query($q))
 							foreach($res_links as $_res_links)
-								$product_links[]=$_res_links['m_products_id'];
+								$product_links[]=$_res_links['id'];
 					}
 					
 					//ЕД. ИЗМЕРЕНИЯ (ПО УМОЛЧАНИЮ ШТ)
@@ -389,8 +389,8 @@ if($res_islx)
 							$product_unit=$_unit['m_info_units_id'];		
 					
 					$q='UPDATE `formetoo_main`.`m_products` SET 
-						`m_products_id_isolux`=\''.$_item['id'].'\',
-						`m_products_categories_id`='.$product_cat.',
+						`id_isolux`=\''.$_item['id'].'\',
+						`id`='.$product_cat.',
 						`m_products_name`=\''.val($_item['price_name']).'\',
 						`m_products_name_full`=\''.($_item['name']?val($_item['name']):val($_item['price_name'])).'\',
 						`m_products_unit`='.$product_unit.',
@@ -401,7 +401,7 @@ if($res_islx)
 						'.($_item['video']?'`m_products_video`=\''.val($_item['video']).'\',':'').'
 						`m_products_update`=\''.dt().'\',
 						`m_products_date`=\''.dt().'\' 
-						WHERE `m_products_id`='.$product_id.' LIMIT 1;';
+						WHERE `id`='.$product_id.' LIMIT 1;';
 					if($sql->query($q)){
 					
 						//ОБНОВЛЯЕМ ТЕКСТ
@@ -490,7 +490,7 @@ if($res_islx)
 						if($update_foto||!$res[0]['m_products_foto']){
 							if($_item['foto']){
 								$q='SELECT `m_products_foto` FROM `formetoo_main`.`m_products` WHERE 
-									`m_products_id`='.$product_id.' LIMIT 1;';
+									`id`='.$product_id.' LIMIT 1;';
 								if($res_f=$sql->query($q)){
 									$res_f[0]['m_products_foto']=json_decode($res_f[0]['m_products_foto']);
 									if($res_f[0]['m_products_foto'])
@@ -539,17 +539,17 @@ if($res_islx)
 								}
 								if($product_foto){	
 									$product_foto=json_encode($product_foto,JSON_UNESCAPED_SLASHES|JSON_UNESCAPED_UNICODE);
-									$q='UPDATE `formetoo_main`.`m_products` SET `m_products_show_site`=1,`m_products_check_it`=0,`m_products_foto`=\''.$product_foto.'\' WHERE `m_products_id`=\''.$product_id.'\' LIMIT 1;';
+									$q='UPDATE `formetoo_main`.`m_products` SET `m_products_show_site`=1,`m_products_check_it`=0,`m_products_foto`=\''.$product_foto.'\' WHERE `id`=\''.$product_id.'\' LIMIT 1;';
 								}
 								//не показываем товары, у которых нет фото
 								else{
-									$q='UPDATE `formetoo_main`.`m_products` SET `m_products_show_site`=0 WHERE `m_products_id`='.$product_id.' LIMIT 1;';
+									$q='UPDATE `formetoo_main`.`m_products` SET `m_products_show_site`=0 WHERE `id`='.$product_id.' LIMIT 1;';
 								}
 								$sql->query($q);
 							}
 							//если фото нет - отменяем показ товара
 							else{
-								$q='UPDATE `formetoo_main`.`m_products` SET `m_products_show_site`=0 WHERE `m_products_id`='.$product_id.' LIMIT 1;';
+								$q='UPDATE `formetoo_main`.`m_products` SET `m_products_show_site`=0 WHERE `id`='.$product_id.' LIMIT 1;';
 								$sql->query($q);
 							}
 						}
@@ -563,7 +563,7 @@ if($res_islx)
 				`m_products_price_general`='.($_item['price']*1.15).',
 				`m_products_check_it`=1,
 				`m_products_show_site`=0 
-				WHERE `m_products_id`='.$res[0]['m_products_id'].' LIMIT 1;';
+				WHERE `id`='.$res[0]['id'].' LIMIT 1;';
 			$sql->query($q);
 			
 		}
@@ -592,7 +592,7 @@ function addCategory($_cat){
 		$q='';
 		//пробегаемся обратно от неё до родительской, смотрим есть ли нужный ID по совокупности имен родительских категорий
 		for($j=$i;$j>=0;$j--)
-			$q.='SELECT `m_products_categories_id` FROM `formetoo_main`.`m_products_categories` WHERE 
+			$q.='SELECT `id` FROM `formetoo_main`.`m_products_categories` WHERE 
 				`m_products_categories_name`=\''.$_cat[$j]['name'].'\' AND 
 				`m_products_categories_parent`=(';
 		//для первой категории родительская = 0
@@ -604,7 +604,7 @@ function addCategory($_cat){
 		if(!$res=$sql->query($q)){
 			$q='INSERT INTO `formetoo_main`.`m_products_categories` SET 
 				`m_products_categories_parent`='.($id_cat?$id_cat:0).',
-				`m_products_categories_id`='.($id_cat=get_id('m_products_categories')).',
+				`id`='.($id_cat=get_id('m_products_categories')).',
 				`m_products_categories_name`=\''.$_cat[$i]['name'].'\',
 				`m_products_categories_name_seo`=\''.transform::translit($_cat[$i]['name']).'\';';
 			if($sql->query($q)){
@@ -631,7 +631,7 @@ function addCategory($_cat){
 		}
 		//если категория есть - сохраняем как текущий её ID, чтобы присвоить новым дочерним категориям, то же самое с menu_id
 		else{
-			$id_cat=$res[0]['m_products_categories_id'];
+			$id_cat=$res[0]['id'];
 			$q='SELECT `id` FROM `formetoo_main`.`menu` WHERE 
 				`category`='.$id_cat.' LIMIT 1;';
 			if($res=$sql->query($q))

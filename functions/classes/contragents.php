@@ -99,7 +99,7 @@ class contragents{
 		return $id?$this->services[$id][0][$field]:$this->services;
 	}
 	
-	public function getProducts($id='',$field='m_products_id'){
+	public function getProducts($id='',$field='id'){
 		return $id?$this->products[$id][0][$field]:$this->products;
 	}
 	

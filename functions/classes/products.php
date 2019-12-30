@@ -19,7 +19,7 @@ class products{
 		if($res=$sql->query($q)){
 			$this->categories_nodes=$res;
 			foreach($res as $item)
-				$nodes_id[$item['m_products_categories_id']]=$item;
+				$nodes_id[$item['id']]=$item;
 			$this->categories_nodes_id=$nodes_id;
 			foreach($res as $item)
 				$nodes_parent[$item['m_products_categories_parent']][]=$item;
@@ -27,14 +27,14 @@ class products{
 		}
 
 		/* $q='SELECT * FROM `formetoo_main`.`m_products` ORDER BY `m_products_name`,`m_products_date` DESC;';
-		$this->products_id=$sql->query($q,'m_products_id'); */
+		$this->products_id=$sql->query($q,'id'); */
 		
-		$q = 'SELECT `m_products`.`m_products_id`, `m_products`.`m_products_unit`,`m_products`.`m_products_name`,`m_products`.`m_products_date`, GROUP_CONCAT(`m_products_category`.`category_id` SEPARATOR \'|\') AS categories_id FROM `formetoo_main`.`m_products` 
+		$q = 'SELECT `m_products`.`id`, `m_products`.`m_products_unit`,`m_products`.`m_products_name`,`m_products`.`m_products_date`, GROUP_CONCAT(`m_products_category`.`category_id` SEPARATOR \'|\') AS categories_id FROM `formetoo_main`.`m_products` 
 			LEFT JOIN `formetoo_main`.`m_products_category` 
-				ON `m_products_category`.`product_id`=`m_products`.`m_products_id` 
+				ON `m_products_category`.`product_id`=`m_products`.`id` 
 			GROUP BY `m_products_category`.`product_id` 
 			ORDER BY `m_products_name`,`m_products_date` DESC;';
-		$this->products_id=$sql->query($q,'m_products_id');
+		$this->products_id=$sql->query($q,'id');
 
 		$q='SELECT * FROM `formetoo_cdb`.`m_info_units`;';
 		$this->units_id=$sql->query($q,'m_info_units_id');
@@ -57,7 +57,7 @@ class products{
 		$categories=array();
 		$this->categories_childs(0,$categories);
 		foreach($categories as &$categories_)
-			$categories[$categories_['m_products_categories_id']]=$categories_;
+			$categories[$categories_['id']]=$categories_;
 		//привязываем услуги к категориям
 		if($this->products_id) {
 			foreach($this->products_id as $t) {
@@ -79,7 +79,7 @@ class products{
 	public function categories_parent($el,&$nodes){
 		foreach($this->categories_nodes_id as $t)
 			//если очередная категория является родительской для заданной
-			if($t['m_products_categories_id']==$this->categories_nodes_id[$el]['m_products_categories_parent']){
+			if($t['id']==$this->categories_nodes_id[$el]['m_products_categories_parent']){
 				//добавляем ее в массив
 				$nodes[]=$t;
 				break;
@@ -89,11 +89,11 @@ class products{
 	public function categories_parents($el,&$nodes){
 		foreach($this->categories_nodes_id as $t)
 			//если текущая категория является родительской для заданной
-			if(isset($this->categories_nodes_id[$el])&&$t['m_products_categories_id']==$this->categories_nodes_id[$el]['m_products_categories_parent']){
+			if(isset($this->categories_nodes_id[$el])&&$t['id']==$this->categories_nodes_id[$el]['m_products_categories_parent']){
 				//добавляем ее в массив
-				$nodes[$t['m_products_categories_id']]=$t;
+				$nodes[$t['id']]=$t;
 				//ищем родительскую категорию для найденной, если нужно найти все родительские
-					$this->categories_parents($t['m_products_categories_id'],$nodes);
+					$this->categories_parents($t['id'],$nodes);
 				break;
 			}
 	}
@@ -117,7 +117,7 @@ class products{
 						$t['m_products_categories_name']='&nbsp;&nbsp;&nbsp;&nbsp;'.$t['m_products_categories_name'];
 				elseif($tab===2){
 					$parents=array();
-					$this->categories_parents($t['m_products_categories_id'],$parents);
+					$this->categories_parents($t['id'],$parents);
 					$parents=array_reverse($parents);
 					$name='';
 					foreach($parents as $parents_)
@@ -126,7 +126,7 @@ class products{
 				}
 				$nodes[]=$t;
 				//ищем дочернюю категорию для найденной
-				$this->categories_childs($t['m_products_categories_id'],$nodes,$tab,$level+1);
+				$this->categories_childs($t['id'],$nodes,$tab,$level+1);
 			}
 		--$level;
 	}
@@ -136,21 +136,21 @@ class products{
 		//перебираем дочерние пункты текущего пункта
 		foreach($this->categories_nodes_parent[$parent] as $nodes_parent__){
 			//выводим пункт меню
-			echo '<li class="dd-item dd3-item" data-id="'.$nodes_parent__['m_products_categories_id'].'">
+			echo '<li class="dd-item dd3-item" data-id="'.$nodes_parent__['id'].'">
 					<div class="dd-handle dd3-handle">&nbsp;</div>
 					<div class="dd3-content">
-						<a href="#" class="editable" id="m_products_categories_name_'.$nodes_parent__['m_products_categories_id'].'" data-type="text" data-pk="'.$nodes_parent__['m_products_categories_id'].'" data-name="m_products_categories_name" data-title="Название категории">',
+						<a href="#" class="editable" id="m_products_categories_name_'.$nodes_parent__['id'].'" data-type="text" data-pk="'.$nodes_parent__['id'].'" data-name="m_products_categories_name" data-title="Название категории">',
 						$nodes_parent__['m_products_categories_name'],
 						'</a>
 						<span class="pull-right">
-							<a href="javascript:void(0);" class="editable btn btn-xs btn-default delete" style="margin-left:20px!important;" data-type="text" data-pk="'.$nodes_parent__['m_products_categories_id'].'" data-name="m_products_categories_id" data-title="Введите пароль для удаления записи" data-placement="right">
+							<a href="javascript:void(0);" class="editable btn btn-xs btn-default delete" style="margin-left:20px!important;" data-type="text" data-pk="'.$nodes_parent__['id'].'" data-name="id" data-title="Введите пароль для удаления записи" data-placement="right">
 								<i class="fa fa-lg fa-times"></i>
 							</a>
 						</span>
 						<span class="pull-right">
 							<div class="checkbox no-margin">
 								<label>
-								  <input type="checkbox" class="checkbox style-0 show" data-name="m_products_categories_show_categories" '.($nodes_parent__['m_products_categories_show_categories']?'checked':'').' data-pk="'.$nodes_parent__['m_products_categories_id'].'">
+								  <input type="checkbox" class="checkbox style-0 show" data-name="m_products_categories_show_categories" '.($nodes_parent__['m_products_categories_show_categories']?'checked':'').' data-pk="'.$nodes_parent__['id'].'">
 								  <span class="font-xs">Категории картинками</span>
 								</label>
 							</div>
@@ -158,7 +158,7 @@ class products{
 						<span class="pull-right">
 							<div class="checkbox no-margin" style="margin-left:20px!important;">
 								<label>
-								  <input type="checkbox" class="checkbox style-0 show" data-name="m_products_categories_show_goods" '.($nodes_parent__['m_products_categories_show_goods']?'checked':'').' data-pk="'.$nodes_parent__['m_products_categories_id'].'">
+								  <input type="checkbox" class="checkbox style-0 show" data-name="m_products_categories_show_goods" '.($nodes_parent__['m_products_categories_show_goods']?'checked':'').' data-pk="'.$nodes_parent__['id'].'">
 								  <span class="font-xs" title="Если снять галку — в категории будут показаны дочерние подкатегории (для больших категорий)&#010;Если поставить галку — в категории будут показаны все товары категории и покатегорий с фильтрами атрибутов">Показывать товары</span>
 								</label>
 							</div>
@@ -166,7 +166,7 @@ class products{
 						<span class="pull-right">
 							<div class="checkbox no-margin">
 								<label>
-								  <input type="checkbox" class="checkbox style-0 show" data-name="m_products_categories_show_attributes" '.($nodes_parent__['m_products_categories_show_attributes']?'checked':'').' '.(!$nodes_parent__['m_products_categories_show_goods']||$nodes_parent__['m_products_categories_show_categories']?'disabled':'').' data-pk="'.$nodes_parent__['m_products_categories_id'].'">
+								  <input type="checkbox" class="checkbox style-0 show" data-name="m_products_categories_show_attributes" '.($nodes_parent__['m_products_categories_show_attributes']?'checked':'').' '.(!$nodes_parent__['m_products_categories_show_goods']||$nodes_parent__['m_products_categories_show_categories']?'disabled':'').' data-pk="'.$nodes_parent__['id'].'">
 								  <span class="font-xs">Показывать фильтры</span>
 								</label>
 							</div>
@@ -175,7 +175,7 @@ class products{
 
 					</div>',
 					//если у текущего дочернего пункта есть подпункты рекурсивно выводим их
-					isset($this->categories_nodes_parent[$nodes_parent__['m_products_categories_id']])?$this->categories_display_li($nodes_parent__['m_products_categories_id']):'',
+					isset($this->categories_nodes_parent[$nodes_parent__['id']])?$this->categories_display_li($nodes_parent__['id']):'',
 				'</li>';
 		}
 		echo '</ol>';
@@ -186,23 +186,23 @@ class products{
 		//перебираем дочерние пункты текущего пункта
 		foreach($this->categories_nodes_parent[$parent] as $nodes_parent__){
 			//выводим пункт меню
-			echo '<li class="dd-item dd3-item" data-id="'.$nodes_parent__['m_products_categories_id'].'">
+			echo '<li class="dd-item dd3-item" data-id="'.$nodes_parent__['id'].'">
 					<div class="dd-handle dd3-handle">&nbsp;</div>
 					<div class="dd3-content">
 						<span class="pull-left">
 							<div class="checkbox no-margin">
 								<label>
-								  <input type="checkbox" class="checkbox style-0 show" name="selected_categories_id[]" '.(in_array($nodes_parent__['m_products_categories_id'], $selected_categories_id)?'checked':'').' value="'.$nodes_parent__['m_products_categories_id'].'">
+								  <input type="checkbox" class="checkbox style-0 show" name="selected_categories_id[]" '.(in_array($nodes_parent__['id'], $selected_categories_id)?'checked':'').' value="'.$nodes_parent__['id'].'">
 								  <span class="font-xs"></span>
 								</label>
 							</div>
 						</span>
-						<a href="#" class="editable" id="m_products_categories_name_'.$nodes_parent__['m_products_categories_id'].'">'.
+						<a href="#" class="editable" id="m_products_categories_name_'.$nodes_parent__['id'].'">'.
 						$nodes_parent__['m_products_categories_name'].
 						'</a>
 					</div>',
 					//если у текущего дочернего пункта есть подпункты рекурсивно выводим их
-					isset($this->categories_nodes_parent[$nodes_parent__['m_products_categories_id']])?$this->product_categories_display($nodes_parent__['m_products_categories_id'], $selected_categories_id):'',
+					isset($this->categories_nodes_parent[$nodes_parent__['id']])?$this->product_categories_display($nodes_parent__['id'], $selected_categories_id):'',
 				'</li>';
 		}
 		echo '</ol>';
@@ -218,13 +218,13 @@ class products{
 		array_walk($data,'check');
 
 		if(!$e){
-			$data['m_products_categories_id']=get_id('m_products_categories');
+			$data['id']=get_id('m_products_categories');
 			$data['m_products_categories_parent']=$data['m_products_categories_parent']?$data['m_products_categories_parent']:0;
 			$data['m_products_categories_show_attributes']=$data['m_products_categories_show_attributes']?1:0;
 			$data['m_products_categories_show_goods']=$data['m_products_categories_show_goods']?1:0;
 
 			$q='INSERT `formetoo_main`.`m_products_categories` SET
-				`m_products_categories_id`='.$data['m_products_categories_id'].',
+				`id`='.$data['id'].',
 				`m_products_categories_name`=\''.$data['m_products_categories_name'].'\',
 				`m_products_categories_name_seo`=\''.transform::translit($data['m_products_categories_name']).'\',
 				`m_products_categories_parent`='.$data['m_products_categories_parent'].',
@@ -288,20 +288,20 @@ class products{
 		$data['unit_width'] = $_REQUEST['unit_width'];
 
 		if(!$e){
-			$data['m_products_id']=get_id('m_products');
+			$data['id']=get_id('m_products');
 			$data['m_products_show_site']=$data['m_products_show_site']?1:0;
 			$data['m_products_show_price']=$data['m_products_show_price']?1:0;
 			$data['m_products_exist']=$data['m_products_exist']?1:0;
 			$data['m_products_miltiplicity']=$data['m_products_miltiplicity']?$data['m_products_miltiplicity']:1;
 			$data['m_products_date']=$data['m_products_update']=dt();
 
-			$m_products_id =$data['m_products_id'];
+			$id =$data['id'];
 			$m_products_desc = $data['m_products_desc'];
 
 			//добавляем привязанные категории к продукту
 			$q='INSERT INTO `formetoo_main`.`m_products_category` (`product_id`,`category_id`) VALUES ';
 			for($i=0;$i<count($data['selected_categories_id[]']);$i++){
-				$q.='(\''.$data['m_products_id'].'\', \''.$data['selected_categories_id[]'][$i].'\'), ';
+				$q.='(\''.$data['id'].'\', \''.$data['selected_categories_id[]'][$i].'\'), ';
 			}
 			$q = mb_substr($q, 0, -2);
 				
@@ -330,7 +330,7 @@ class products{
 						for($i=0;$i<count($data['attr_required_val']);$i++){
 							$q='INSERT INTO `formetoo_main`.`m_products_attributes` (`m_products_attributes_product_id`,`m_products_attributes_list_id`,`m_products_attributes_value`) VALUES ';
 							$q.='(
-							\''.$data['m_products_id'].'\',
+							\''.$data['id'].'\',
 							\''.$data['attr_required_val'][$i]->id.'\',
 							\''.$data['attr_required_val'][$i]->value.'\'
 						);';
@@ -352,7 +352,7 @@ class products{
 					foreach($value as $keyAttr => $valueAttr) {
 					if ($valueAttr) {
 						$valuesArray[] = '(
-							\''.$data['m_products_id'].'\', 
+							\''.$data['id'].'\', 
 							\''.$data['m_products_attributes_list_id[]'][$key][0].'\', 
 							\''.$valueAttr.'\'
 						)';
@@ -363,7 +363,7 @@ class products{
 				foreach($data['attribute_value_interval_min[]'] as $key => $value) {
 					foreach($value as $keyAttr => $valueAttr) {
 						$valuesArray[] = '(
-							\''.$data['m_products_id'].'\', 
+							\''.$data['id'].'\', 
 							\''.$data['m_products_attributes_list_id[]'][$key][0].'\', 
 							\''.$valueAttr.'|'.$data['attribute_value_interval_max[]'][$key][0].'\'
 						)';
@@ -373,23 +373,23 @@ class products{
 				//добавляем файлы аттрибутов
 				if (!empty($data['attribute_value_file[]'])) {
 					foreach($data['attribute_value_file[]'] as $keyFileAttr => $valueFileAttr) {
-						if(!file_exists($_SERVER['DOCUMENT_ROOT'].'/uploads/files/products/'.$data['m_products_id']))
-								mkdir($_SERVER['DOCUMENT_ROOT'].'/uploads/files/products/'.$data['m_products_id'], 0777, true);
+						if(!file_exists($_SERVER['DOCUMENT_ROOT'].'/uploads/files/products/'.$data['id']))
+								mkdir($_SERVER['DOCUMENT_ROOT'].'/uploads/files/products/'.$data['id'], 0777, true);
 						$files=array();
 						if($valueFileAttr) {
 							foreach($valueFileAttr as $k=>$v){
 								$files[$k]['file'] = $v;
 								$files[$k]['name'] = $v;
 								//копируем только добавленные файлы
-								if(!file_exists($_SERVER['DOCUMENT_ROOT'].'/uploads/files/products/'.$data['m_products_id'].'/'.$files[$k]['file'])){
-									copy($_SERVER['DOCUMENT_ROOT'].'/temp/uploads/'.$user->getInfo().'/'.$files[$k]['file'], $_SERVER['DOCUMENT_ROOT'].'/uploads/files/products/'.$data['m_products_id'].'/'.$files[$k]['file']);
+								if(!file_exists($_SERVER['DOCUMENT_ROOT'].'/uploads/files/products/'.$data['id'].'/'.$files[$k]['file'])){
+									copy($_SERVER['DOCUMENT_ROOT'].'/temp/uploads/'.$user->getInfo().'/'.$files[$k]['file'], $_SERVER['DOCUMENT_ROOT'].'/uploads/files/products/'.$data['id'].'/'.$files[$k]['file']);
 								}
 							}
 						}
 
 						$files=json_encode($files,JSON_UNESCAPED_SLASHES|JSON_UNESCAPED_UNICODE);
 						$valuesArray[] = '(
-							\''.$data['m_products_id'].'\', 
+							\''.$data['id'].'\', 
 							\''.$data['m_products_attributes_list_id[]'][$keyFileAttr][0].'\', 
 							\''.$files.'\'
 						)';
@@ -409,7 +409,7 @@ class products{
 				for($i=0;$i<$count;$i++)
 					if($data['m_products_prices_price[]'][$i])
 						$q.='(
-							'.$data['m_products_id'].',
+							'.$data['id'].',
 							\''.(float)str_replace(array(' ',','),array('','.'),$data['m_products_prices_limit_count[]'][$i]).'\',
 							\''.(float)str_replace(array(' ',','),array('','.'),$data['m_products_prices_limit_price[]'][$i]).'\',
 							\''.(float)str_replace(array(' ',','),array('','.'),$data['m_products_prices_price[]'][$i]).'\'
@@ -421,14 +421,14 @@ class products{
 
 			//добавляем описание товара
 			if($data['m_products_desc']){
-				$q="INSERT INTO `formetoo_main`.`m_products_desc` (`m_products_desc_id`,`m_products_desc_text`) VALUES ('$m_products_id','$m_products_desc');";
+				$q="INSERT INTO `formetoo_main`.`m_products_desc` (`m_products_desc_id`,`m_products_desc_text`) VALUES ('$id','$m_products_desc');";
 				if(!($sql->query($q)))
 					elogs();
 				}
 
 			//добавляем фото
-			if(!file_exists($_SERVER['DOCUMENT_ROOT'].'/images/products/'.$data['m_products_id']))
-				mkdir($_SERVER['DOCUMENT_ROOT'].'/images/products/'.$data['m_products_id']);
+			if(!file_exists($_SERVER['DOCUMENT_ROOT'].'/images/products/'.$data['id']))
+				mkdir($_SERVER['DOCUMENT_ROOT'].'/images/products/'.$data['id']);
 			$foto=array();
 			if($data['idfoto[]'])
 				foreach($data['idfoto[]'] as $k=>$v){
@@ -439,10 +439,10 @@ class products{
 					$foto[$v]['ext'] = $ext;
 					$foto[$v]['main']=isset($data['m_products_foto_main[]'][0])&&$data['m_products_foto_main[]'][0]==$v?1:0;
 					//копируем только добавленные фотки
-					if(!file_exists($_SERVER['DOCUMENT_ROOT'].'/images/products/'.$data['m_products_id'].'/'.$nameFile.'_min.'.$ext)){
-						copy($_SERVER['DOCUMENT_ROOT'].'/temp/uploads/'.$user->getInfo().'/'.$nameFile.'_max.'.$ext,$_SERVER['DOCUMENT_ROOT'].'/images/products/'.$data['m_products_id'].'/'.$nameFile.'_max.'.$ext);
-						copy($_SERVER['DOCUMENT_ROOT'].'/temp/uploads/'.$user->getInfo().'/'.$nameFile.'_min.'.$ext,$_SERVER['DOCUMENT_ROOT'].'/images/products/'.$data['m_products_id'].'/'.$nameFile.'_min.'.$ext);
-						copy($_SERVER['DOCUMENT_ROOT'].'/temp/uploads/'.$user->getInfo().'/'.$nameFile.'_med.'.$ext,$_SERVER['DOCUMENT_ROOT'].'/images/products/'.$data['m_products_id'].'/'.$nameFile.'_med.'.$ext);
+					if(!file_exists($_SERVER['DOCUMENT_ROOT'].'/images/products/'.$data['id'].'/'.$nameFile.'_min.'.$ext)){
+						copy($_SERVER['DOCUMENT_ROOT'].'/temp/uploads/'.$user->getInfo().'/'.$nameFile.'_max.'.$ext,$_SERVER['DOCUMENT_ROOT'].'/images/products/'.$data['id'].'/'.$nameFile.'_max.'.$ext);
+						copy($_SERVER['DOCUMENT_ROOT'].'/temp/uploads/'.$user->getInfo().'/'.$nameFile.'_min.'.$ext,$_SERVER['DOCUMENT_ROOT'].'/images/products/'.$data['id'].'/'.$nameFile.'_min.'.$ext);
+						copy($_SERVER['DOCUMENT_ROOT'].'/temp/uploads/'.$user->getInfo().'/'.$nameFile.'_med.'.$ext,$_SERVER['DOCUMENT_ROOT'].'/images/products/'.$data['id'].'/'.$nameFile.'_med.'.$ext);
 					}
 				}
 			$foto=json_encode($foto,JSON_UNESCAPED_SLASHES|JSON_UNESCAPED_UNICODE);
@@ -485,7 +485,7 @@ class products{
 			}
 
 			$q = "INSERT INTO `formetoo_main`.`m_products`(
-			`m_products_id`,
+			`id`,
 			`m_products_contragents_id`,
 			`m_products_name`,
 			`m_products_name_full`,
@@ -506,7 +506,7 @@ class products{
 			) 
 			VALUES
 			 (
-			 '$m_products_id',
+			 '$id',
 			 '$m_products_contragents_id',
 			  '$m_products_name',
 			  '$m_products_name',
@@ -548,7 +548,7 @@ class products{
 	public static function products_change(){
 		global $sql,$e,$user,$info;
 
-		$data['m_products_id']=array(1,null,null,10,1);
+		$data['id']=array(1,null,null,10,1);
 		$data['m_products_name']=array(1,null,180);
 		$data['m_products_unit']=array(1,null,3,null,1);
 		$data['m_products_unit_volume']=array(null,null,18);
@@ -595,11 +595,11 @@ class products{
 			$data['m_products_miltiplicity']=$data['m_products_miltiplicity']?$data['m_products_miltiplicity']:1;
 			$data['m_products_date']=$data['m_products_update']=dt();
 
-			$m_products_id =$data['m_products_id'];
+			$id =$data['id'];
 			$m_products_desc = transform::typography($data['m_products_desc']);
 
 			//удаляем привязанные категории к продукту
-			$q='DELETE FROM `formetoo_main`.`m_products_category` WHERE `product_id`=\''.$data['m_products_id'].'\';';
+			$q='DELETE FROM `formetoo_main`.`m_products_category` WHERE `product_id`=\''.$data['id'].'\';';
 			if(!($sql->query($q))){
 				elogs();
 			}
@@ -607,7 +607,7 @@ class products{
 			//добавляем привязанные категории к продукту
 			$q='INSERT INTO `formetoo_main`.`m_products_category` (`product_id`,`category_id`) VALUES ';
 			for($i=0;$i<count($data['selected_categories_id[]']);$i++){
-				$q.='(\''.$data['m_products_id'].'\', \''.$data['selected_categories_id[]'][$i].'\'), ';
+				$q.='(\''.$data['id'].'\', \''.$data['selected_categories_id[]'][$i].'\'), ';
 			}
 			$q = mb_substr($q, 0, -2);
 				
@@ -616,13 +616,13 @@ class products{
 			}
 
 			//добавляем атрибуты
-			$sql->query('DELETE FROM `formetoo_main`.`m_products_attributes` WHERE `m_products_attributes_product_id`='.$data['m_products_id'].';');
+			$sql->query('DELETE FROM `formetoo_main`.`m_products_attributes` WHERE `m_products_attributes_product_id`='.$data['id'].';');
 			if(isset($data['m_products_attributes_value[]'])){
 				foreach($data['m_products_attributes_value[]'] as $key => $value) {
 					foreach($value as $keyAttr => $valueAttr) {
 					if ($valueAttr) {
 						$valuesArray[] = '(
-							\''.$data['m_products_id'].'\', 
+							\''.$data['id'].'\', 
 							\''.$data['m_products_attributes_list_id[]'][$key][0].'\', 
 							\''.$valueAttr.'\'
 						)';
@@ -633,7 +633,7 @@ class products{
 				foreach($data['attribute_value_interval_min[]'] as $key => $value) {
 					foreach($value as $keyAttr => $valueAttr) {
 						$valuesArray[] = '(
-							\''.$data['m_products_id'].'\', 
+							\''.$data['id'].'\', 
 							\''.$data['m_products_attributes_list_id[]'][$key][0].'\', 
 							\''.$valueAttr.'|'.$data['attribute_value_interval_max[]'][$key][0].'\'
 						)';
@@ -645,22 +645,22 @@ class products{
 
 						$files=array();
 						foreach($valueFileAttr['file'] as $valueFileAttrKey => $valueFileAttrValue) {
-							if(!file_exists($_SERVER['DOCUMENT_ROOT'].'/uploads/files/products/'.$data['m_products_id']))
-									mkdir($_SERVER['DOCUMENT_ROOT'].'/uploads/files/products/'.$data['m_products_id'], 0777, true);
+							if(!file_exists($_SERVER['DOCUMENT_ROOT'].'/uploads/files/products/'.$data['id']))
+									mkdir($_SERVER['DOCUMENT_ROOT'].'/uploads/files/products/'.$data['id'], 0777, true);
 
 							//копируем только добавленные файлы
-							if(!file_exists($_SERVER['DOCUMENT_ROOT'].'/uploads/files/products/'.$data['m_products_id'].'/'.$files[$valueFileAttrKey]['file'])){
-								copy($_SERVER['DOCUMENT_ROOT'].'/temp/uploads/'.$user->getInfo().'/'.$files[$valueFileAttrKey]['file'], $_SERVER['DOCUMENT_ROOT'].'/uploads/files/products/'.$data['m_products_id'].'/'.$files[$valueFileAttrKey]['file']);
+							if(!file_exists($_SERVER['DOCUMENT_ROOT'].'/uploads/files/products/'.$data['id'].'/'.$files[$valueFileAttrKey]['file'])){
+								copy($_SERVER['DOCUMENT_ROOT'].'/temp/uploads/'.$user->getInfo().'/'.$files[$valueFileAttrKey]['file'], $_SERVER['DOCUMENT_ROOT'].'/uploads/files/products/'.$data['id'].'/'.$files[$valueFileAttrKey]['file']);
 							}
 
 							$files[$valueFileAttrKey]['file'] = $valueFileAttrValue;
 							$files[$valueFileAttrKey]['name'] = $valueFileAttr['name'][$valueFileAttrKey];
-							$files[$valueFileAttrKey]['size'] = self::get_filesize($_SERVER['DOCUMENT_ROOT'].'/uploads/files/products/'.$data['m_products_id'].'/'.$files[$valueFileAttrKey]['file']);
+							$files[$valueFileAttrKey]['size'] = self::get_filesize($_SERVER['DOCUMENT_ROOT'].'/uploads/files/products/'.$data['id'].'/'.$files[$valueFileAttrKey]['file']);
 						}
 
 						$files=json_encode($files,JSON_UNESCAPED_SLASHES|JSON_UNESCAPED_UNICODE);
 						$valuesArray[] = '(
-							\''.$data['m_products_id'].'\', 
+							\''.$data['id'].'\', 
 							\''.$data['m_products_attributes_list_id[]'][$keyFileAttr][0].'\', 
 							\''.$files.'\'
 						)';
@@ -674,13 +674,13 @@ class products{
 			}
 
 			//добавляем скидки
-			$sql->query('DELETE FROM `formetoo_main`.`m_products_prices` WHERE `m_products_prices_product_id`='.$data['m_products_id'].';');
+			$sql->query('DELETE FROM `formetoo_main`.`m_products_prices` WHERE `m_products_prices_product_id`='.$data['id'].';');
 			if($data['m_products_prices_price[]'][0]!=''&&$count=sizeof($data['m_products_prices_price[]'])){
 				$q='INSERT INTO `formetoo_main`.`m_products_prices` (`m_products_prices_product_id`,`m_products_prices_limit_count`,`m_products_prices_limit_price`,`m_products_prices_price`) VALUES ';
 				for($i=0;$i<$count;$i++)
 					if($data['m_products_prices_price[]'][$i])
 						$q.='(
-							'.$data['m_products_id'].',
+							'.$data['id'].',
 							\''.(float)str_replace(array(' ',','),array('','.'),$data['m_products_prices_limit_count[]'][$i]).'\',
 							\''.(float)str_replace(array(' ',','),array('','.'),$data['m_products_prices_limit_price[]'][$i]).'\',
 							\''.(float)str_replace(array(' ',','),array('','.'),$data['m_products_prices_price[]'][$i]).'\'
@@ -691,15 +691,15 @@ class products{
 
 			//добавляем описание товара
 			if($data['m_products_desc']){
-				$sql->query("DELETE FROM `formetoo_main`.`m_products_desc` WHERE `m_products_desc_id`='$m_products_id';");
-				$q="INSERT INTO `formetoo_main`.`m_products_desc` (`m_products_desc_id`,`m_products_desc_text`) VALUES ('$m_products_id','$m_products_desc');";
+				$sql->query("DELETE FROM `formetoo_main`.`m_products_desc` WHERE `m_products_desc_id`='$id';");
+				$q="INSERT INTO `formetoo_main`.`m_products_desc` (`m_products_desc_id`,`m_products_desc_text`) VALUES ('$id','$m_products_desc');";
 				if(!($sql->query($q)))
 					elogs();
 			}
 
 			//добавляем фото
-			if(!file_exists($_SERVER['DOCUMENT_ROOT'].'/images/products/'.$data['m_products_id']))
-				mkdir($_SERVER['DOCUMENT_ROOT'].'/images/products/'.$data['m_products_id']);
+			if(!file_exists($_SERVER['DOCUMENT_ROOT'].'/images/products/'.$data['id']))
+				mkdir($_SERVER['DOCUMENT_ROOT'].'/images/products/'.$data['id']);
 			$foto=array();
 			if($data['idfoto[]'])
 				foreach($data['idfoto[]'] as $k=>$v){
@@ -710,10 +710,10 @@ class products{
 					$foto[$v]['ext'] = $ext;
 					$foto[$v]['main']=isset($data['m_products_foto_main[]'][0])&&$data['m_products_foto_main[]'][0]==$v?1:0;
 					//копируем только добавленные фотки
-					if(!file_exists($_SERVER['DOCUMENT_ROOT'].'/images/products/'.$data['m_products_id'].'/'.$nameFile.'_min.'.$ext)){
-						copy($_SERVER['DOCUMENT_ROOT'].'/temp/uploads/'.$user->getInfo().'/'.$nameFile.'_max.'.$ext,$_SERVER['DOCUMENT_ROOT'].'/images/products/'.$data['m_products_id'].'/'.$nameFile.'_max.'.$ext);
-						copy($_SERVER['DOCUMENT_ROOT'].'/temp/uploads/'.$user->getInfo().'/'.$nameFile.'_min.'.$ext,$_SERVER['DOCUMENT_ROOT'].'/images/products/'.$data['m_products_id'].'/'.$nameFile.'_min.'.$ext);
-						copy($_SERVER['DOCUMENT_ROOT'].'/temp/uploads/'.$user->getInfo().'/'.$nameFile.'_med.'.$ext,$_SERVER['DOCUMENT_ROOT'].'/images/products/'.$data['m_products_id'].'/'.$nameFile.'_med.'.$ext);
+					if(!file_exists($_SERVER['DOCUMENT_ROOT'].'/images/products/'.$data['id'].'/'.$nameFile.'_min.'.$ext)){
+						copy($_SERVER['DOCUMENT_ROOT'].'/temp/uploads/'.$user->getInfo().'/'.$nameFile.'_max.'.$ext,$_SERVER['DOCUMENT_ROOT'].'/images/products/'.$data['id'].'/'.$nameFile.'_max.'.$ext);
+						copy($_SERVER['DOCUMENT_ROOT'].'/temp/uploads/'.$user->getInfo().'/'.$nameFile.'_min.'.$ext,$_SERVER['DOCUMENT_ROOT'].'/images/products/'.$data['id'].'/'.$nameFile.'_min.'.$ext);
+						copy($_SERVER['DOCUMENT_ROOT'].'/temp/uploads/'.$user->getInfo().'/'.$nameFile.'_med.'.$ext,$_SERVER['DOCUMENT_ROOT'].'/images/products/'.$data['id'].'/'.$nameFile.'_med.'.$ext);
 					}
 				}
 
@@ -780,13 +780,13 @@ class products{
 				`unit_length`='$unit_length',
 				`unit_width`='$unit_width',
 				`products_attributes_groups_id`='$products_attributes_groups_id'
-				WHERE `m_products_id`='$m_products_id';";				
+				WHERE `id`='$id';";				
 
 			if($sql->query($q))
-				header('Location: '.url().'?success&action=change&m_products_id='.$data['m_products_id']);
+				header('Location: '.url().'?success&action=change&id='.$data['id']);
 			else{
 				elogs();
-				header('Location: '.url().'?error&action=change&m_products_id='.$data['m_products_id']);
+				header('Location: '.url().'?error&action=change&id='.$data['id']);
 			}
 		}
 		else{
@@ -807,7 +807,7 @@ class products{
 
 	public static function products_group_change() {
 		global $sql,$e;
-		$data['group_m_products_id[]']=array();
+		$data['group_id[]']=array();
 		$data['m_products_unit']=array(null,null,3,null,1);
 		$data['on_m_products_unit']=array(null,null,3);
 		$data['m_products_unit_weight']=array(null,null,18);
@@ -816,8 +816,8 @@ class products{
 		$data['on_m_products_unit_volume']=array(null,null,3);
 		$data['m_products_price_general']=array(null,null,18);
 		$data['on_m_products_price_general']=array(null,null,3);
-		$data['m_products_categories_id[]']=array(null);
-		$data['on_m_products_categories_id']=array(null,null,3);
+		$data['id[]']=array(null);
+		$data['on_id']=array(null,null,3);
 		$data['m_products_links[]']=array();
 		$data['on_m_products_links']=array(null,null,3);
 		$data['m_products_contragents_id']=array(null,null,null,10,1);
@@ -840,12 +840,12 @@ class products{
 				'.($data['on_m_products_unit_weight']&&$data['m_products_unit_weight']?'`m_products_unit_weight`='.(float)str_replace(array(' ',','),array('','.'),$data['m_products_unit_weight']).',':'').'
 				'.($data['on_m_products_unit_volume']&&$data['m_products_unit_volume']?'`m_products_unit_volume`='.(float)str_replace(array(' ',','),array('','.'),$data['m_products_unit_volume']).',':'').'
 				'.($data['on_m_products_price_general']&&$data['m_products_price_general']?'`m_products_price_general`=`m_products_price_general`'.transform::sum_change($data['m_products_price_general']).',':'').'
-				'.($data['on_m_products_categories_id']&&$data['m_products_categories_id[]']?'`m_products_categories_id`=\''.implode('|',$data['m_products_categories_id[]']).'\',':'').'
+				'.($data['on_id']&&$data['id[]']?'`id`=\''.implode('|',$data['id[]']).'\',':'').'
 				'.($data['on_m_products_links']?'`m_products_links`=\''.($data['m_products_links[]']?implode('|',$data['m_products_links[]']):'').'\',':'').'
 				'.($data['on_m_products_show_site']?'`m_products_show_site`='.$data['m_products_show_site'].',':'').'
 				'.($data['on_m_products_show_price']?'`m_products_show_price`='.$data['m_products_show_price'].',':'').'
 				`m_products_update`=\''.$data['m_products_update'].'\'
-				WHERE `m_products_id` IN (0,'.implode(',',$data['group_m_products_id[]']).');';
+				WHERE `id` IN (0,'.implode(',',$data['group_id[]']).');';
 			if($sql->query($q))
 				header('Location: '.url().'?success');
 			else{
@@ -864,7 +864,7 @@ class products{
 		global $sql;
 
 		//достаем продукт
-		$q = "SELECT * FROM `formetoo_main`.`m_products` WHERE `m_products_id` = '$id';";
+		$q = "SELECT * FROM `formetoo_main`.`m_products` WHERE `id` = '$id';";
 
 		if(!($product = $sql->query($q))){
 			elogs();
@@ -892,7 +892,7 @@ class products{
 		}
 
 		//id
-		$m_products_id = get_id('m_products');
+		$id = get_id('m_products');
 
 		//копируем скидки
 		if(!empty($discount)){
@@ -903,7 +903,7 @@ class products{
 
 			$q='INSERT INTO `formetoo_main`.`m_products_prices` (`m_products_prices_product_id`,`m_products_prices_limit_count`,`m_products_prices_limit_price`,`m_products_prices_price`) VALUES ';
 			$q.="(
-						'$m_products_id',
+						'$id',
 						'$m_products_prices_limit_count',
 						'$m_products_prices_limit_price',							
 						'$m_products_prices_price'	
@@ -921,7 +921,7 @@ class products{
 
 				$q='INSERT INTO `formetoo_main`.`m_products_attributes` (`m_products_attributes_product_id`,`m_products_attributes_list_id`,`m_products_attributes_value`) VALUES ';
 				$q.="(
-							'$m_products_id',
+							'$id',
 							'$m_products_attributes_list_id',
 							'$m_products_attributes_value'
 						);";
@@ -935,7 +935,7 @@ class products{
 
 			$m_products_desc = $description[0]['m_products_desc_text'];
 
-			$q="INSERT INTO `formetoo_main`.`m_products_desc` (`m_products_desc_id`,`m_products_desc_text`) VALUES ('$m_products_id','$m_products_desc');";
+			$q="INSERT INTO `formetoo_main`.`m_products_desc` (`m_products_desc_id`,`m_products_desc_text`) VALUES ('$id','$m_products_desc');";
 			if(!($sql->query($q)))
 				elogs();
 		}
@@ -945,15 +945,15 @@ class products{
 		if(!empty($product[0]['m_products_foto'])){
 			if(file_exists($_SERVER['DOCUMENT_ROOT'].'/images/products/'.$id)){
 
-				mkdir($_SERVER['DOCUMENT_ROOT'].'/images/products/'.$m_products_id);
+				mkdir($_SERVER['DOCUMENT_ROOT'].'/images/products/'.$id);
 
 				$param = json_decode($product[0]['m_products_foto']);
 
 				foreach($param as $item){
 
-					copy($_SERVER['DOCUMENT_ROOT'].'/images/products/'.$id.'/'.$item->file.'_max.jpg',$_SERVER['DOCUMENT_ROOT'].'/images/products/'.$m_products_id.'/'.$item->file.'_max.jpg');
-					copy($_SERVER['DOCUMENT_ROOT'].'/images/products/'.$id.'/'.$item->file.'_min.jpg',$_SERVER['DOCUMENT_ROOT'].'/images/products/'.$m_products_id.'/'.$item->file.'_min.jpg');
-					copy($_SERVER['DOCUMENT_ROOT'].'/images/products/'.$id.'/'.$item->file.'_med.jpg',$_SERVER['DOCUMENT_ROOT'].'/images/products/'.$m_products_id.'/'.$item->file.'_med.jpg');
+					copy($_SERVER['DOCUMENT_ROOT'].'/images/products/'.$id.'/'.$item->file.'_max.jpg',$_SERVER['DOCUMENT_ROOT'].'/images/products/'.$id.'/'.$item->file.'_max.jpg');
+					copy($_SERVER['DOCUMENT_ROOT'].'/images/products/'.$id.'/'.$item->file.'_min.jpg',$_SERVER['DOCUMENT_ROOT'].'/images/products/'.$id.'/'.$item->file.'_min.jpg');
+					copy($_SERVER['DOCUMENT_ROOT'].'/images/products/'.$id.'/'.$item->file.'_med.jpg',$_SERVER['DOCUMENT_ROOT'].'/images/products/'.$id.'/'.$item->file.'_med.jpg');
 				}
 
 			}
@@ -978,7 +978,7 @@ class products{
 		$m_products_seo_description = $product[0]['m_products_seo_description'];
 
 		$q = "INSERT INTO `formetoo_main`.`m_products`(
-			`m_products_id`,
+			`id`,
 			`m_products_contragents_id`,
 			`m_products_name`,
 			`m_products_name_full`,
@@ -996,7 +996,7 @@ class products{
 			`m_products_seo_description`
 			) 
 			VALUES (
-			  '$m_products_id',
+			  '$id',
 			 ' $m_products_contragents_id',
 			  '$m_products_name',
 			  '$m_products_name',
@@ -1024,7 +1024,7 @@ class products{
 			//добавляем привязанные категории к продукту
 			$q='INSERT INTO `formetoo_main`.`m_products_category` (`product_id`,`category_id`) VALUES ';
 			foreach ($resCategories as $resCategory) {
-				$q.='(\''.$m_products_id.'\', \''.$resCategory["category_id"].'\'), ';
+				$q.='(\''.$id.'\', \''.$resCategory["category_id"].'\'), ';
 			}
 			$q = mb_substr($q, 0, -2);
 				
@@ -1044,23 +1044,23 @@ class products{
 //	public static function products_copy(){
 //	global $user,$services,$contragents,$info,$documents,$sql,$e,$products;
 //
-//		$data['m_products_id']=array(1,null,null,10,1);
+//		$data['id']=array(1,null,null,10,1);
 //
 //		array_walk($data,'check',true);
 //
 //		if(!$e){
-//			$product=$products->products_id[$data['m_products_id']][0];
-//			$prices=$products->products_price[$product['m_products_id']];
-//			$attrs=$products->products_attr[$product['m_products_id']];
+//			$product=$products->products_id[$data['id']][0];
+//			$prices=$products->products_price[$product['id']];
+//			$attrs=$products->products_attr[$product['id']];
 //
-//			$data['m_products_id']=get_id('m_products');
+//			$data['id']=get_id('m_products');
 //
 //			//добавляем скидки
 //			if($prices){
 //				$q='INSERT INTO `formetoo_main`.`m_products_prices` (`m_products_prices_product_id`,`m_products_prices_limit_count`,`m_products_prices_limit_price`,`m_products_prices_price`) VALUES ';
 //				foreach($prices as $_price)
 //					$q.='(
-//						'.$data['m_products_id'].',
+//						'.$data['id'].',
 //						\''.$_price['m_products_prices_limit_count'].'\',
 //						\''.$_price['m_products_prices_limit_price'].'\',
 //						\''.$_price['m_products_prices_price'].'\'
@@ -1074,7 +1074,7 @@ class products{
 //				$q='INSERT INTO `formetoo_main`.`m_products_attributes` (`m_products_attributes_product_id`,`m_products_attributes_list_id`,`m_products_attributes_value`) VALUES ';
 //				foreach($attrs as $_attr)
 //					$q.='(
-//						\''.$data['m_products_id'].'\',
+//						\''.$data['id'].'\',
 //						\''.$_attr['m_products_attributes_list_id'].'\',
 //						\''.$_attr['m_products_attributes_value'].'\'
 //					),';
@@ -1083,27 +1083,27 @@ class products{
 //			}
 //
 //			//добавляем фото
-//			mkdir($_SERVER['DOCUMENT_ROOT'].'/images/products/'.$data['m_products_id']);
+//			mkdir($_SERVER['DOCUMENT_ROOT'].'/images/products/'.$data['id']);
 //			$foto=json_decode($product['m_products_foto'],true);
 //			if($foto)
 //				foreach($foto as $_foto){
 //					//копируем фотки
-//					if(!file_exists($_SERVER['DOCUMENT_ROOT'].'/images/products/'.$data['m_products_id'].'/'.$v.'_m.jpg')){
+//					if(!file_exists($_SERVER['DOCUMENT_ROOT'].'/images/products/'.$data['id'].'/'.$v.'_m.jpg')){
 //						//1200
-//						copy($_SERVER['DOCUMENT_ROOT'].'/images/products/'.$product['m_products_id'].'/'.$_foto['file'].'_b.jpg',$_SERVER['DOCUMENT_ROOT'].'/images/products/'.$data['m_products_id'].'/'.$_foto['file'].'_b.jpg');
+//						copy($_SERVER['DOCUMENT_ROOT'].'/images/products/'.$product['id'].'/'.$_foto['file'].'_b.jpg',$_SERVER['DOCUMENT_ROOT'].'/images/products/'.$data['id'].'/'.$_foto['file'].'_b.jpg');
 //						//200
-//						copy($_SERVER['DOCUMENT_ROOT'].'/images/products/'.$product['m_products_id'].'/'.$_foto['file'].'_m.jpg',$_SERVER['DOCUMENT_ROOT'].'/images/products/'.$data['m_products_id'].'/'.$_foto['file'].'_m.jpg');
+//						copy($_SERVER['DOCUMENT_ROOT'].'/images/products/'.$product['id'].'/'.$_foto['file'].'_m.jpg',$_SERVER['DOCUMENT_ROOT'].'/images/products/'.$data['id'].'/'.$_foto['file'].'_m.jpg');
 //					}
 //				}
 //
 //			$q='INSERT `formetoo_main`.`m_products` SET
-//				`m_products_id`='.$data['m_products_id'].',
+//				`id`='.$data['id'].',
 //				`m_products_contragents_id`='.$product['m_products_contragents_id'].',
 //				`m_products_name`=\''.$product['m_products_name'].'\',
 //				`m_products_unit`='.$product['m_products_unit'].',
 //				`m_products_price_general`='.$product['m_products_price_general'].',
 //				`m_products_price_currency`='.$product['m_products_price_currency'].',
-//				`m_products_categories_id`=\''.$product['m_products_categories_id'].'\',
+//				`id`=\''.$product['id'].'\',
 //				`m_products_links`=\''.$product['m_products_links'].'\',
 //				`m_products_show_site`='.$product['m_products_show_site'].',
 //				`m_products_show_price`='.$product['m_products_show_price'].',
@@ -1115,7 +1115,7 @@ class products{
 //				`m_products_update`=\''.$product['m_products_update'].'\';';
 //
 //			if($sql->query($q)){
-//				header('Location: /companies/products/new/?action=change&m_products_id='.$data['m_products_id'].'&copy_success');
+//				header('Location: /companies/products/new/?action=change&id='.$data['id'].'&copy_success');
 //			}
 //			else{
 //				header('Location: '.url().'error');

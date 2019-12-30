@@ -28,7 +28,7 @@ if($res_islx)
 		$ids[]='\''.$_item['id'].'\'';
 	}
 
-$q='SELECT * FROM `formetoo_main`.`m_products` WHERE `m_products_id_isolux` IN (';
+$q='SELECT * FROM `formetoo_main`.`m_products` WHERE `id_isolux` IN (';
 $ids=implode(',',$ids);
 $q.=$ids.');';
 
@@ -38,9 +38,9 @@ foreach($res as $_p){
 	if($_p['m_products_foto']){
 		foreach($_p['m_products_foto'] as $_foto){
 			if($_foto->file){
-				$f_max=$_SERVER['DOCUMENT_ROOT'].'/../../p-islx.Formetoo.ru/documents/'.substr($_p['m_products_id_isolux'],0,2).'/SN'.$_p['m_products_id_isolux'].'/'.$_foto->file.'_max.jpg';
-				$f_med=$_SERVER['DOCUMENT_ROOT'].'/../../p-islx.Formetoo.ru/documents/'.substr($_p['m_products_id_isolux'],0,2).'/SN'.$_p['m_products_id_isolux'].'/'.$_foto->file.'_med.jpg';
-				$f_min=$_SERVER['DOCUMENT_ROOT'].'/../../p-islx.Formetoo.ru/documents/'.substr($_p['m_products_id_isolux'],0,2).'/SN'.$_p['m_products_id_isolux'].'/'.$_foto->file.'_min.jpg';
+				$f_max=$_SERVER['DOCUMENT_ROOT'].'/../../p-islx.Formetoo.ru/documents/'.substr($_p['id_isolux'],0,2).'/SN'.$_p['id_isolux'].'/'.$_foto->file.'_max.jpg';
+				$f_med=$_SERVER['DOCUMENT_ROOT'].'/../../p-islx.Formetoo.ru/documents/'.substr($_p['id_isolux'],0,2).'/SN'.$_p['id_isolux'].'/'.$_foto->file.'_med.jpg';
+				$f_min=$_SERVER['DOCUMENT_ROOT'].'/../../p-islx.Formetoo.ru/documents/'.substr($_p['id_isolux'],0,2).'/SN'.$_p['id_isolux'].'/'.$_foto->file.'_min.jpg';
 				if(file_exists($f_max)){
 					list($w,$h)=getimagesize($f_max);
 					if($w)

@@ -2,9 +2,9 @@
 defined ('_DSITE') or die ('Access denied');
 global $user,$sql,$content,$contragents,$logistic,$info;
 
-if($id=get('m_products_id')){
+if($id=get('id')){
 	$product=$products->products_id[$id][0];
-	$product['m_products_categories_id']=explode('|',$product['categories_id']);
+	$product['id']=explode('|',$product['categories_id']);
 	$product['m_products_links']=explode('|',$product['m_products_links']);
 	
 	$content->setJS('
@@ -39,7 +39,7 @@ if($id=get('m_products_id')){
 				m_products_contragents_id : {
 					required : true
 				},
-				"m_products_categories_id[]" : {
+				"id[]" : {
 					required : true
 				}
 			},
@@ -106,12 +106,12 @@ if($id=get('m_products_id')){
 									<div class="row">
 										<section class="col col-9">
 											<label class="label">Нахождение в категориях</label>
-											<select name="m_products_categories_id[]" style="width:100%" multiple class="autoselect" placeholder="выберите из списка...">
+											<select name="id[]" style="width:100%" multiple class="autoselect" placeholder="выберите из списка...">
 												<? 
 													$categories=array();
 													$products->categories_childs(0,$categories,2);
 													foreach($categories as $categories_){
-														echo '<option value="'.$categories_['m_products_categories_id'].'" '.(in_array($categories_['m_products_categories_id'],$product['m_products_categories_id'])?' selected':'').'>
+														echo '<option value="'.$categories_['id'].'" '.(in_array($categories_['id'],$product['id'])?' selected':'').'>
 																'.$categories_['m_products_categories_name'].'
 															</option>';																
 													}
@@ -173,8 +173,8 @@ if($id=get('m_products_id')){
 														if(strlen($k)==10&&isset($v['items'])){
 															echo '<optgroup label="'.$v['m_products_categories_name'].'">';
 																foreach($v['items'] as $products_)
-																	if($products_['m_products_id']!=$product['m_products_id'])
-																		echo '<option value="'.$products_['m_products_id'].'" '.(in_array($products_['m_products_id'],$product['m_products_links'])!==false?' selected ':'').'>',
+																	if($products_['id']!=$product['id'])
+																		echo '<option value="'.$products_['id'].'" '.(in_array($products_['id'],$product['m_products_links'])!==false?' selected ':'').'>',
 																				'['.$v['m_products_categories_name'].'] '.$products_['m_products_name'],
 																			'</option>';
 															echo '</optgroup>';			
@@ -190,7 +190,7 @@ if($id=get('m_products_id')){
 										Сохранить данные
 									</button>
 								</footer>
-								<input type="hidden" name="m_products_id" value="<?=$product['m_products_id']?>"/>
+								<input type="hidden" name="id" value="<?=$product['id']?>"/>
 								<input type="hidden" name="action" value="products_change"/>
 							</form>
 						</div>
@@ -229,7 +229,7 @@ $content->setJS('
 			m_products_contragents_id : {
 				required : true
 			},
-			"m_products_categories_id[]" : {
+			"id[]" : {
 				required : true
 			}
 		},
@@ -311,17 +311,17 @@ $content->setJS('
 	
 	$("#products-group-change").on("submit",function(){
 		var ids=[];
-		$("input.m_products_id:checked").each(function(index,el){
+		$("input.id:checked").each(function(index,el){
 			ids[ids.length]=$(el).val();
 		});
-		$("input[name=\'group_m_products_id[]\']").val(ids);
+		$("input[name=\'group_id[]\']").val(ids);
 	});
 	
-	$("#m_products_id_all").on("change",function(){
-		if($("#m_products_id_all:checked").length)
-			$(".m_products_id").prop("checked",true);
+	$("#id_all").on("change",function(){
+		if($("#id_all:checked").length)
+			$(".id").prop("checked",true);
 		else
-			$(".m_products_id").prop("checked",false);
+			$(".id").prop("checked",false);
 	});
 	
 	$("[name=m_delivery_price_contragents_id]").on("click",function(){
@@ -475,7 +475,7 @@ if(1==2&&$products->products_id){
 												$categories1=array();
 												$products->categories_childs(0,$categories1,2);
 												foreach($categories1 as $categories_){
-													echo '<option value="'.$categories_['m_products_categories_id'].'">
+													echo '<option value="'.$categories_['id'].'">
 															'.$categories_['m_products_categories_name'].'
 														</option>';													
 												}
@@ -492,7 +492,7 @@ if(1==2&&$products->products_id){
 										<label>
 											<div class="checkbox">
 											  <label>
-												<input type="checkbox" class="checkbox tr" id="m_products_id_all"/>
+												<input type="checkbox" class="checkbox tr" id="id_all"/>
 												<span></span>
 											  </label>
 											</div>
@@ -517,11 +517,11 @@ if(1==2&&$products->products_id){
 $i=0;
 foreach($products->products_id as $products_){
 	$products_=$products_[0];
-	$m_products_categories_id=array();
-	$products_['m_products_categories_id']=explode('|',$products_['categories_id']);
-	if($products_['m_products_categories_id'][0])
-		foreach($products_['m_products_categories_id'] as $t_)
-			$m_products_categories_id[]=$categories[$t_]['m_products_categories_name'];
+	$id=array();
+	$products_['id']=explode('|',$products_['categories_id']);
+	if($products_['id'][0])
+		foreach($products_['id'] as $t_)
+			$id[]=$categories[$t_]['m_products_categories_name'];
 	
 	$m_products_links=array();
 	$products_['m_products_links']=explode('|',$products_['m_products_links']);
@@ -534,14 +534,14 @@ foreach($products->products_id as $products_){
 			<label>
 				<div class="checkbox">
 				  <label>
-					<input type="checkbox" class="checkbox tr m_products_id" value="'.$products_['m_products_id'].'">
+					<input type="checkbox" class="checkbox tr id" value="'.$products_['id'].'">
 					<span></span>
 				  </label>
 				</div>
 			</label>
 		</td>
 		<td>
-			<a href="#" class="m_products_order" data-type="text" data-pk="'.$products_['m_products_id'].'" data-name="m_products_order" data-title="Порядковый номер">',
+			<a href="#" class="m_products_order" data-type="text" data-pk="'.$products_['id'].'" data-name="m_products_order" data-title="Порядковый номер">',
 				$products_['m_products_order'],
 			'</a>
 		</td>
@@ -558,12 +558,12 @@ foreach($products->products_id as $products_){
 			$products_['m_products_unit_volume'],
 		'</td>
 		<td>
-			<table class="minitable price"><tr><td>Клиент</td><td><a href="#" class="m_product_price_general" data-type="text" data-pk="'.$products_['m_products_id'].'" data-name="m_products_price_general" data-title="Основная для клиента">',
+			<table class="minitable price"><tr><td>Клиент</td><td><a href="#" class="m_product_price_general" data-type="text" data-pk="'.$products_['id'].'" data-name="m_products_price_general" data-title="Основная для клиента">',
 				$products_['m_products_price_general'],
 			'</a></td><tr></table>
 		</td>
 		<td>',
-			implode('<br/>',$m_products_categories_id),
+			implode('<br/>',$id),
 		'</td>
 		<td>',
 			implode('<br/>',$m_products_links),
@@ -573,25 +573,25 @@ foreach($products->products_id as $products_){
 		'</td>
 		<td>
 			<label class="checkbox">
-			  <input type="checkbox" class="checkbox style-0 show" data-name="m_products_show_price" '.($products_['m_products_show_price']?'checked':'').' data-pk="'.$products_['m_products_id'].'">
+			  <input type="checkbox" class="checkbox style-0 show" data-name="m_products_show_price" '.($products_['m_products_show_price']?'checked':'').' data-pk="'.$products_['id'].'">
 			  <span>В прайсе</span>
 			</label>
 			<label class="checkbox">
-			  <input type="checkbox" class="checkbox style-0 show" data-name="m_products_show_site" '.($products_['m_products_show_site']?'checked':'').' data-pk="'.$products_['m_products_id'].'">
+			  <input type="checkbox" class="checkbox style-0 show" data-name="m_products_show_site" '.($products_['m_products_show_site']?'checked':'').' data-pk="'.$products_['id'].'">
 			  <span>На сайте</span>
 			</label>
 		</td>
 		<td>
-			<a href="javascript:void(0);" title="Изменить позицию (выше)" class="btn btn-xs btn-default changepos" data-value="'.$products_['m_products_order'].'" data-type="text" data-pk="'.$products_['m_products_id'].'" data-name="m_products_order_up" data-placement="left">
+			<a href="javascript:void(0);" title="Изменить позицию (выше)" class="btn btn-xs btn-default changepos" data-value="'.$products_['m_products_order'].'" data-type="text" data-pk="'.$products_['id'].'" data-name="m_products_order_up" data-placement="left">
 				<i class="fa fa-angle-up"></i>
 			</a>
-			<a href="javascript:void(0);" title="Изменить позицию (ниже)" class="btn btn-xs btn-default changepos" data-value="'.$products_['m_products_order'].'" data-type="text" data-pk="'.$products_['m_products_id'].'" data-name="m_products_order_down" data-placement="left">
+			<a href="javascript:void(0);" title="Изменить позицию (ниже)" class="btn btn-xs btn-default changepos" data-value="'.$products_['m_products_order'].'" data-type="text" data-pk="'.$products_['id'].'" data-name="m_products_order_down" data-placement="left">
 				<i class="fa fa-angle-down"></i>
 			</a>&nbsp;&nbsp;
-			<a href="'.url().'?action=change&m_products_id='.$products_['m_products_id'].'" title="Редактировать" class="btn btn-primary btn-xs btn-default change" data-type="text">
+			<a href="'.url().'?action=change&id='.$products_['id'].'" title="Редактировать" class="btn btn-primary btn-xs btn-default change" data-type="text">
 				<i class="fa fa-pencil"></i>
 			</a>
-			<a href="javascript:void(0);" title="Удалить" class="btn btn-xs btn-danger delete" data-type="text" data-pk="'.$products_['m_products_id'].'" data-name="m_products_id" data-title="Введите пароль для удаления записи" data-placement="left">
+			<a href="javascript:void(0);" title="Удалить" class="btn btn-xs btn-danger delete" data-type="text" data-pk="'.$products_['id'].'" data-name="id" data-title="Введите пароль для удаления записи" data-placement="left">
 				<i class="fa fa-trash-o"></i>
 			</a>
 		</td>

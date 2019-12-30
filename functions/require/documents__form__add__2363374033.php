@@ -562,7 +562,7 @@ if($_service->table=='products'){
 									<input type="text" name="m_orders_smeta_services_name[]"  placeholder="вид работ" value="<?=$products->products_id[$_service->id][0]['m_products_name']?>" title="Наименование работ">
 									<input type="hidden" name="m_orders_smeta_services_id[]" value="<?=$_service->id?>">
 									<input type="hidden" name="m_orders_smeta_table[]" value="<?=$_service->table?>">
-									<input type="hidden" name="m_orders_smeta_services_category[]" value="<?=$products->products_id[$_service->id][0]['m_products_categories_id']?>">
+									<input type="hidden" name="m_orders_smeta_services_category[]" value="<?=$products->products_id[$_service->id][0]['id']?>">
 								</label>
 							</section>
 							<section class="col col-1">

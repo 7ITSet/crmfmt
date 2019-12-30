@@ -21,16 +21,16 @@ foreach($docs as $_doc){
 	foreach($p->items as $_section)
 		foreach($_section->services as $_item){
 			if($_item->table=='products'){
-				if(isset($products->products_id[$_item->id][0]['m_products_categories_id'])){
-					$c=explode('|',$products->products_id[$_item->id][0]['m_products_categories_id']);
+				if(isset($products->products_id[$_item->id][0]['id'])){
+					$c=explode('|',$products->products_id[$_item->id][0]['id']);
 					//если позиция находится в "Без категории", добавляем ее для переноса в "Без категории ОПЛАЧЕННЫЕ"
 					if(in_array('1263923105',$c)!==false)
 						$prod[]=$_item->id;
 				}
 			}
 			else{
-				if(isset($products->products_id[$_item->id][0]['m_products_categories_id'])){
-					$c=explode('|',$products->products_id[$_item->id][0]['m_products_categories_id']);
+				if(isset($products->products_id[$_item->id][0]['id'])){
+					$c=explode('|',$products->products_id[$_item->id][0]['id']);
 					//если позиция находится в "Без категории", добавляем ее для переноса в "Без категории ОПЛАЧЕННЫЕ"
 					if(in_array('1326613691',$c)!==false)
 						$serv[]=$_item->id;
@@ -39,7 +39,7 @@ foreach($docs as $_doc){
 			}
 		}
 }
-$q='UPDATE `formetoo_main`.`m_products` SET `m_products_categories_id`=1123549104 WHERE `m_products_id` IN(';
+$q='UPDATE `formetoo_main`.`m_products` SET `id`=1123549104 WHERE `id` IN(';
 $q_a=array();
 foreach($prod as $_prod)
 	$q_a[]=$_prod;

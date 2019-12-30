@@ -107,25 +107,25 @@ if ($w){
 	
 	if($products=='true'){
 		//ТОВАРЫ
-		//$q='SELECT * FROM `formetoo_main`.`m_products` WHERE `m_products_name` LIKE \'%'.implode(' ',$w).'%\' AND `m_products_categories_id`!=1263923105 LIMIT 7;';
+		//$q='SELECT * FROM `formetoo_main`.`m_products` WHERE `m_products_name` LIKE \'%'.implode(' ',$w).'%\' AND `id`!=1263923105 LIMIT 7;';
 		$q='SELECT * FROM `formetoo_main`.`m_products` WHERE `m_products_name` LIKE \'%'.implode(' ',$w).'%\' LIMIT 7;';
 		if($res=$sql->query($q)){
 			echo '<span class="suggest-delimeter">Товары</span>';
 			foreach($res as $record)
 				echo '<a data-id="',
-					$record['m_products_id'],
+					$record['id'],
 					'" rel="',
-					$record['m_products_id'],
+					$record['id'],
 					'" href="',
 					$record['m_products_name'],
 					'" data-price="',
 					number_format($record['m_products_price_general']*currency($record['m_products_price_currency']),2,'.',''),
 					// '" data-category="',
-					// $record['m_products_categories_id'],
+					// $record['id'],
 					'" data-unit="',
 					$info->getUnitsNoHTML($record['m_products_unit'],false),
 					'" data-table="products">',
-					'<span style="color:#999">['.$record['m_products_id'].']</span> ',
+					'<span style="color:#999">['.$record['id'].']</span> ',
 					tag_b($record['m_products_name'],$w),
 					'</a>';
 		}
@@ -136,7 +136,7 @@ if ($w){
 				$like[]='`m_products_name` LIKE \'%'.$_w.'%\'';
 			}
 			$like=implode(' AND ',$like);
-			//$q='SELECT * FROM `formetoo_main`.`m_products` WHERE `m_products_categories_id`!=1263923105 AND '.$like.';';
+			//$q='SELECT * FROM `formetoo_main`.`m_products` WHERE `id`!=1263923105 AND '.$like.';';
 			$q='SELECT * FROM `formetoo_main`.`m_products` WHERE '.$like.';';
 			if($res=$sql->query($q)){
 				echo '<span class="suggest-delimeter">Товары</span>';
@@ -147,19 +147,19 @@ if ($w){
 				foreach($res as $record){
 					if($i<=10)
 						echo '<a data-id="',
-							$record['m_products_id'],
+							$record['id'],
 							'" rel="',
-							$record['m_products_id'],
+							$record['id'],
 							'" href="',
 							str_replace(array(0=>'<b>',1=>'</b>'),'',$record['m_products_name']),
 							'" data-price="',
 							$record['m_products_price_general'],
 							// '" data-category="',
-							// $record['m_products_categories_id'],
+							// $record['id'],
 							'" data-unit="',
 							$info->getUnitsNoHTML($record['m_products_unit'],false),
 							'" data-table="products">',
-							'<span style="color:#999">['.$record['m_products_id'].']</span> ',
+							'<span style="color:#999">['.$record['id'].']</span> ',
 							$record['m_products_name'],
 							'</a>';
 					$i++;

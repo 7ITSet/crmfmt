@@ -8,7 +8,7 @@ foreach($products->products_display_li() as $k=>$v)
 	if(strlen($k)==10&&isset($v['items'])){
 		$products_select2.='<optgroup label="'.$v['m_products_categories_name'].'">';
 			foreach($v['items'] as $products_)
-				$products_select2.='<option value="'.$products_['m_products_id'].'">'.'['.$v['m_products_categories_name'].'] '.$products_['m_products_name'].'</option>';
+				$products_select2.='<option value="'.$products_['id'].'">'.'['.$v['m_products_categories_name'].'] '.$products_['m_products_name'].'</option>';
 		$products_select2.='</optgroup>';
 	}
 
@@ -17,11 +17,11 @@ $products_select='';
 $categories=array();
 $products->categories_childs(0,$categories,2,0,true);
 foreach($categories as $categories_){
-	$products_select.='<option value="'.$categories_['m_products_categories_id'].'">'.$categories_['m_products_categories_name'].'</option>';
+	$products_select.='<option value="'.$categories_['id'].'">'.$categories_['m_products_categories_name'].'</option>';
 }
 $t=array();
 foreach($categories as $k=>$v)
-	$t[$v['m_products_categories_id']]=$v;
+	$t[$v['id']]=$v;
 $categories=$t;
 
 //список своих организаций
@@ -57,7 +57,7 @@ $content->setJS('
 			m_products_contragents_id : {
 				required : true
 			},
-			"m_products_categories_id[]" : {
+			"id[]" : {
 				required : true
 			}
 		},
@@ -131,17 +131,17 @@ $content->setJS('
 
 	$("#products-group-change").on("submit",function(){
 		var ids=[];
-		$("input.m_products_id:checked").each(function(index,el){
+		$("input.id:checked").each(function(index,el){
 			ids[ids.length]=$(el).val();
 		});
-		$("input[name=\'group_m_products_id[]\']").val(ids);
+		$("input[name=\'group_id[]\']").val(ids);
 	});
 
-	$("#m_products_id_all").on("change",function(){
-		if($("#m_products_id_all:checked").length)
-			$(".m_products_id").prop("checked",true);
+	$("#id_all").on("change",function(){
+		if($("#id_all:checked").length)
+			$(".id").prop("checked",true);
 		else
-			$(".m_products_id").prop("checked",false);
+			$(".id").prop("checked",false);
 	});
 
 
@@ -294,7 +294,7 @@ if(isset($_GET['error']))
 											$categories1=array();
 											$products->categories_childs(0,$categories1,2);
 											foreach($categories1 as $categories_){
-												echo '<option value="'.$categories_['m_products_categories_id'].'">
+												echo '<option value="'.$categories_['id'].'">
 														'.$categories_['m_products_categories_name'].'
 													</option>';
 											}
@@ -342,7 +342,7 @@ if(isset($_GET['error']))
 									<tr>
 										<th style="width:2%" class="no-order">
 											<label class="checkbox">
-												<input type="checkbox" class="checkbox tr" id="m_products_id_all">
+												<input type="checkbox" class="checkbox tr" id="id_all">
 												<i></i>
 											</label>
 										</th>

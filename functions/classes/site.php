@@ -25,10 +25,10 @@ class site{
 		$categories=array();
 		$this->categories_childs(0,$categories);
 		foreach($categories as &$categories_)
-			$categories[$categories_['m_products_categories_id']]=$categories_;
+			$categories[$categories_['id']]=$categories_;
 		//привязываем услуги к категориям
 		foreach($this->products_id as $t)
-			if($ct=explode('|',$t[0]['m_products_categories_id']))
+			if($ct=explode('|',$t[0]['id']))
 				//пробегаемся по каждой категории услуги
 				foreach($ct as $ct_)
 					//если эта категория существует

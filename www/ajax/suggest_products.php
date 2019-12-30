@@ -24,9 +24,9 @@ if ($w){
 	if($res=$sql->query($q))
 		foreach($res as $record)
 			echo '<a data-id="',
-				$record['m_products_id'],
+				$record['id'],
 				'" rel="',
-				$record['m_products_id'],
+				$record['id'],
 				'" href="',
 				$record['m_products_name'],
 				'" data-price="',
@@ -59,9 +59,9 @@ if ($w){
 			foreach($res as $record){
 				if($i<=10)
 					echo '<a data-id="',
-						$record['m_products_id'],
+						$record['id'],
 						'" rel="',
-						$record['m_products_id'],
+						$record['id'],
 						'" href="',
 						str_replace(array(0=>'<b>',1=>'</b>'),'',$record['m_products_name']),
 						'" data-price="',

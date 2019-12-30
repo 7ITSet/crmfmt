@@ -144,7 +144,7 @@ if($products->categories_nodes){
 												$categories=array();
 												$products->categories_childs(0,$categories,1);
 												foreach($categories as $categories_){
-													echo '<option value="'.$categories_['m_products_categories_id'].'">
+													echo '<option value="'.$categories_['id'].'">
 															'.$categories_['m_products_categories_name'].'
 														</option>';																
 												}
